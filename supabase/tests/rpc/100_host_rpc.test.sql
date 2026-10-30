@@ -150,22 +150,18 @@ reset role;
 
 -- Setup member langsung untuk menguji batas kapasitas dan moderasi.
 insert into public.room_members (
-  room_id, member_no, display_name, status, password_version
+  room_id, handle, status, password_version
 )
-select r.id, n, format('Guest-%s', lpad(n::text, 2, '0')),
+select r.id, 'm' || lpad(n::text, 8, '0'),
        'APPROVED'::public.member_status, r.password_version
 from public.rooms r
 cross join generate_series(1, 3) as n
 where r.name = 'Room Dua';
 
-update public.rooms
-set member_counter = 3
-where name = 'Room Dua';
-
 insert into public.room_members (
-  room_id, member_no, display_name, status, password_version
+  room_id, handle, status, password_version
 )
-select r.id, null, null, 'PENDING'::public.member_status, r.password_version
+select r.id, 'm00000004', 'PENDING'::public.member_status, r.password_version
 from public.rooms r
 where r.name = 'Room Dua';
 
@@ -240,7 +236,7 @@ select lives_ok(
         select m.id from public.room_members m
         join public.rooms r on r.id = m.room_id
         where r.name = 'Room Dua'
-          and m.member_no = 1
+          and m.handle = 'm00000001'
       )
     )$$,
   'kick_member mengubah status menjadi KICKED'
@@ -250,7 +246,7 @@ select is(
   (
     select status::text from public.room_members m
     join public.rooms r on r.id = m.room_id
-    where r.name = 'Room Dua' and m.member_no = 1
+    where r.name = 'Room Dua' and m.handle = 'm00000001'
   ),
   'KICKED',
   'status member ter-kick tersimpan'

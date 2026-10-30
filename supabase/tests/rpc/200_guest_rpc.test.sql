@@ -114,16 +114,16 @@ select is(
   'join_room menerima password case-insensitive'
 );
 
-select is(
+select ok(
   (
-    select display_name
+    select m.handle
     from public.room_members m
     join public.rooms r on r.id = m.room_id
+    join public.member_identities mi on mi.member_id = m.id
     where r.slug = 'aaaaaaaaaaaaaaaa'
-      and m.member_no = 1
-  ),
-  'Guest-01',
-  'nomor Guest dimulai dari 01'
+      and mi.user_id = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'
+  ) ~ '^[a-z0-9]{9}$',
+  'handle Guest berpola sistem 9 karakter'
 );
 
 select throws_ok(
@@ -179,8 +179,13 @@ select is(
 
 select is(
   (select display_name from public.my_rooms()),
-  'Guest-01',
-  'my_rooms membawa display_name'
+  (
+    select m.handle
+    from public.room_members m
+    where m.status = 'APPROVED'::public.member_status
+    limit 1
+  ),
+  'my_rooms membawa handle member'
 );
 
 select is(
@@ -198,13 +203,16 @@ select is(
 select is(
   (
     select sender_name
-    from public.send_message(
-      (select room_id from public.get_room_public('aaaaaaaaaaaaaaaa')),
-      'Halo room', 'aaaaaaaa-0000-4000-8000-000000000001'
-    )
+    from public.messages
+    where client_msg_id = 'aaaaaaaa-0000-4000-8000-000000000001'
   ),
-  'Guest-01',
-  'sender_name Guest dari database'
+  (
+    select m.handle
+    from public.room_members m
+    where m.status = 'APPROVED'::public.member_status
+    limit 1
+  ),
+  'sender_name Guest dari handle database'
 );
 
 select is(
@@ -255,8 +263,12 @@ select is(
     from public.messages
     where client_msg_id = 'aaaaaaaa-0000-4000-8000-000000000002'
   ),
-  'Host',
-  'sender_name Host = Host'
+  (
+    select p.handle
+    from public.profiles p
+    where p.user_id = '11111111-1111-4111-8111-111111111111'
+  ),
+  'sender_name Host = handle Host'
 );
 
 reset role;
@@ -351,8 +363,10 @@ select is(
   (
     select m.status::text
     from public.room_members m
+    join public.member_identities mi on mi.member_id = m.id
     join public.rooms r on r.id = m.room_id
-    where r.slug = 'dddddddddddddddd' and m.member_no = 1
+    where r.slug = 'dddddddddddddddd'
+      and mi.user_id = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee'
   ),
   'IDLE',
   'release_idle_members melepas kursi idle'
@@ -378,8 +392,10 @@ set status = 'IDLE'::public.member_status
 where m.id = (
   select m2.id
   from public.room_members m2
+  join public.member_identities mi on mi.member_id = m2.id
   join public.rooms r on r.id = m2.room_id
-  where r.slug = 'dddddddddddddddd' and m2.member_no = 1
+  where r.slug = 'dddddddddddddddd'
+    and mi.user_id = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee'
 );
 
 set local role authenticated;
@@ -483,7 +499,7 @@ select lives_ok(
         join public.rooms r on r.id = m.room_id
         where r.slug = 'bbbbbbbbbbbbbbbb'
           and m.status = 'APPROVED'::public.member_status
-        order by m.member_no
+        order by m.created_at
         limit 1
       )
     )$$,
@@ -681,22 +697,18 @@ reset role;
 
 -- Siapkan dua APPROVED + satu PENDING untuk menguji ROOM_FULL saat approve.
 insert into public.room_members (
-  room_id, member_no, display_name, status, password_version
+  room_id, handle, status, password_version
 )
-select r.id, n, format('Guest-%s', lpad(n::text, 2, '0')),
+select r.id, 'm' || lpad(n::text, 8, '0'),
        'APPROVED'::public.member_status, r.password_version
 from public.rooms r
 cross join generate_series(21, 22) as n
 where r.slug = 'bbbbbbbbbbbbbbbb';
 
-update public.rooms
-set member_counter = 22
-where slug = 'bbbbbbbbbbbbbbbb';
-
 insert into public.room_members (
-  room_id, member_no, display_name, status, password_version
+  room_id, handle, status, password_version
 )
-select r.id, null, null, 'PENDING'::public.member_status, r.password_version
+select r.id, 'm00000023', 'PENDING'::public.member_status, r.password_version
 from public.rooms r
 where r.slug = 'bbbbbbbbbbbbbbbb';
 
