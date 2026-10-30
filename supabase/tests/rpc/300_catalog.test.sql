@@ -226,15 +226,19 @@ select is(
     select count(*)::int
     from public.app_config
     where key in (
-      'message_max_length', 'messages_per_minute', 'max_rooms_per_guest',
+      'message_max_length', 'messages_per_minute',
+      'anon_max_active_rooms', 'login_max_active_rooms',
       'password_length', 'lockout_fail_threshold', 'lockout_window_minutes',
       'lockout_duration_minutes', 'room_failure_cap_per_hour',
       'room_cooldown_minutes', 'room_active_days', 'room_grace_days',
       'pending_ttl_hours', 'pending_cap_multiplier',
-      'typing_global_enabled', 'typing_default_on_max_guests'
+      'typing_global_enabled', 'typing_default_on_max_guests',
+      'public_rooms_enabled', 'public_join_per_ip_per_hour',
+      'report_hide_threshold', 'public_idle_default_minutes',
+      'feed_cache_seconds', 'public_description_max', 'categories'
     )
   ),
-  15,
+  23,
   'semua kunci app_config ter-seed'
 );
 

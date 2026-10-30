@@ -550,7 +550,7 @@ select throws_ok(
   'kursi penuh menolak Guest berikutnya'
 );
 
-update public.app_config set value = '1'::jsonb where key = 'max_rooms_per_guest';
+update public.app_config set value = '1'::jsonb where key = 'anon_max_active_rooms';
 
 select is(
   (
@@ -720,7 +720,7 @@ select throws_ok(
 );
 
 reset role;
-update public.app_config set value = '5'::jsonb where key = 'max_rooms_per_guest';
+update public.app_config set value = '5'::jsonb where key = 'anon_max_active_rooms';
 update public.app_config set value = '1'::jsonb where key = 'pending_cap_multiplier';
 
 select is(
