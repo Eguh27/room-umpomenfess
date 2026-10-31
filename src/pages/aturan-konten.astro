@@ -1,0 +1,123 @@
+---
+import Base from '../layouts/Base.astro';
+import { reportHideThreshold } from '../components/reportTypes';
+
+export const prerender = false;
+---
+
+<Base title="Aturan konten — umpomenfess room">
+  <article class="narrow policy">
+    <p class="eyebrow">kebijakan</p>
+    <h1>Aturan konten</h1>
+    <p class="policy__sub">
+      Patokan penegakan pada room (privat maupun publik). Baca bersama
+      <a href="/privasi">privasi</a> dan <a href="/batas-anonimitas">batas anonimitas</a>.
+    </p>
+
+    <div class="card warn policy__note">
+      <p>
+        <strong>Status moderasi.</strong> Tombol Laporkan dan antrean Admin masih dalam
+        pengembangan. Aturan di halaman ini menjadi patokan saat fitur moderasi aktif.
+      </p>
+    </div>
+
+    <h2>Prinsipnya</h2>
+    <p>
+      Room dibuat untuk obrolan berbatas waktu yang tetap dalam batas sopan. Host bertanggung jawab
+      pada room-nya (bisa menolak dan mengeluarkan pengganggu), Guest bisa melaporkan isi yang
+      menyimpang, dan Admin platform menindaklanjuti pada room maupun akun.
+    </p>
+
+    <h2>Yang tidak diterima</h2>
+    <ul>
+      <li>Konten ilegal: penipuan, SARA, kekerasan, atau konten anak.</li>
+      <li>Perundungan: serangan pribadi, menghina, atau menekan orang lain.</li>
+      <li>Doxxing: menyebar identitas, alamat, atau data pribadi orang.</li>
+      <li>Spam: iklan, promosi, atau pengulangan yang mengganggu percakapan.</li>
+      <li>Penyamaran identitas orang atau organisasi lain.</li>
+    </ul>
+
+    <h2>Jalan penegakan</h2>
+    <ol>
+      <li>
+        <strong>Host</strong> menolak, mengeluarkan, atau menutup room-nya sendiri — tanpa menunggu
+        laporan.
+      </li>
+      <li>
+        <strong>Guest</strong> menekan tombol Laporkan dan memilih alasan (spam, perundungan,
+        melanggar hukum, lainnya). Identitas pelapor tidak ditampilkan ke Host maupun Admin; server
+        memakai penanda unik untuk mencegah laporan ganda.
+      </li>
+      <li>
+        {reportHideThreshold} laporan unik — pelapor berbeda, satu pelapor dihitung sekali — membuat
+        room publik otomatis turun dari daftar FYP (status tersembunyi) sampai selesai ditinjau.
+      </li>
+      <li>
+        <strong>Admin</strong> meninjau laporan dengan metadata room: membiarkan, menurunkan dari
+        FYP, memblokir dari FYP selamanya, menutup room, atau menangguhkan akun.
+      </li>
+    </ol>
+
+    <h2>Tindakan pada konten melanggar hukum</h2>
+    <p>
+      Penghapusan konten berlangsung pada level room dan akun — pesan tidak disunting satu-satu,
+      jadi room yang tidak layak ditutup atau diblokir daripada disortir per baris. Isi chat tetap
+      tersimpan pada umurnya (aktif 7 hari, arsip 15 hari) lalu terhapus permanen. Permintaan
+      takedown dari pihak terkait diteruskan ke kanal kontak pengelola untuk ditindak admin.
+    </p>
+
+    <h2>Soal pelaporan</h2>
+    <ul>
+      <li>
+        Identitas pelapor tidak pernah tampil di UI mana pun; server hanya memakai penanda unik.
+      </li>
+      <li>
+        Room privat hanya bisa dilaporkan oleh membernya; Host tidak bisa melaporkan room sendiri.
+      </li>
+      <li>
+        Laporan ganda dari pelapor yang sama tidak mengubah hitungan — hitungan bergerak karena
+        jumlah pelapor unik, bukan jumlah laporan.
+      </li>
+      <li>Keputusan Admin selalu tercermin di audit log konsol.</li>
+    </ul>
+  </article>
+</Base>
+
+<style>
+  .policy {
+    padding-top: var(--space-5);
+  }
+  .policy h1 {
+    font-size: var(--step-3);
+    margin-bottom: var(--space-2);
+  }
+  .policy__sub {
+    color: var(--ink-soft);
+    margin: 0 0 var(--space-5);
+  }
+  .policy__note {
+    margin-bottom: var(--space-5);
+  }
+  .policy__note p {
+    margin: 0;
+  }
+  .policy h2 {
+    font-size: var(--step-1);
+    margin: var(--space-5) 0 var(--space-2);
+  }
+  .policy ul,
+  .policy ol {
+    margin: 0;
+    padding-left: 1.2em;
+    display: grid;
+    gap: var(--space-2);
+    color: var(--ink-soft);
+  }
+  .policy ul strong,
+  .policy ol strong {
+    color: var(--ink);
+  }
+  .policy p {
+    color: var(--ink-soft);
+  }
+</style>

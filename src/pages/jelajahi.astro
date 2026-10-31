@@ -1,0 +1,70 @@
+---
+/** Kartu lihat FYP (T-32). Default: flag FYP mati (D-21) — hanya empty state yang jujur.
+    ?state=aktif → pratinjau daftar tiruan supaya kartu/filter/modal bisa ditinjau;
+    sambungan nyata lewat RPC list_public_rooms + GET /api/rooms/public (T-24). */
+import Base from '../layouts/Base.astro';
+import ExploreRooms from '../components/ExploreRooms';
+import { publicRooms } from '../components/mockData';
+import { reportRule } from '../components/reportTypes';
+
+export const prerender = false;
+const fypPreview = Astro.url.searchParams.get('state') === 'aktif';
+const fypEnabled = fypPreview; // D-21: flag public_rooms_enabled default false.
+---
+
+<Base title="Jelajah room publik — umpomenfess room" noindex>
+  <section class="narrow jelajahi">
+    <p class="eyebrow">FYP · room publik {fypEnabled && '· pratinjau T-32'}</p>
+    <h1>Jelajah</h1>
+    <p class="jelajahi__sub">
+      Daftar room publik yang terbuka untuk siapa pun. Yang tampil hanya metadata — nama, deskripsi
+      singkat, kategori, jumlah anggota, dan aktivitas terakhir. Isi chat baru terbaca setelah kamu
+      join, dan join memakai satu kursi.
+    </p>
+
+    {fypEnabled ? (
+      <ExploreRooms client:load rooms={publicRooms} />
+    ) : (
+      <>
+        <div class="card warn jelajahi__closed">
+          <h2>Ruang terbuka sedang ditutup</h2>
+          <p>
+            Pengelola belum menyalakan daftar room publik. Room privat tetap bisa dibuka lewat link
+            yang dibagikan Host — daftar terbuka tidak mengubah itu.
+          </p>
+        </div>
+        <details class="demo-links">
+          <summary>Pratinjau kerangka daftar (T-32)</summary>
+          <p class="help">
+            Daftar nyata memakai RPC <code>list_public_rooms</code> dan API
+            <code>GET /api/rooms/public</code> saat T-24. Pratinjau memakai data tiruan yang
+            mengikuti whitelist kolom (D-18) — identitas host tidak tampil di kartu.
+          </p>
+          <a href="/jelajahi?state=aktif">Buka pratinjau daftar →</a>
+        </details>
+      </>
+    )}
+
+    <div class="card jelajahi__rules">
+      <h2>Tentang laporan</h2>
+      <p>{reportRule}</p>
+      <p class="help">
+        Laporan lengkap di <a href="/aturan-konten">aturan konten</a>. Lapor bisa dari member room;
+        akun login bisa melapor room publik; Host tidak bisa melaporkan room miliknya.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .jelajahi__sub {
+    color: var(--text-muted);
+    max-width: 620px;
+  }
+  .jelajahi__closed {
+    margin-top: var(--space-4);
+  }
+  .jelajahi__rules {
+    margin-top: var(--space-5);
+  }
+</style>

@@ -1,0 +1,128 @@
+---
+import Base from '../../layouts/Base.astro';
+import AdminListingBadge from '../../components/admin/AdminListingBadge.astro';
+import AdminShell from '../../components/admin/AdminShell.astro';
+import Handle from '../../components/Handle.astro';
+import { adminHref } from '../../components/admin/adminHref';
+import { adminPageAccess } from '../../components/auth/adminGuard.server';
+import { adminAuditLog, adminReports, adminRooms, adminUsers } from '../../components/mockAdmin';
+
+export const prerender = false;
+const access = await adminPageAccess(Astro.cookies, Astro.url);
+if (access.kind === 'login') return Astro.redirect('/login?next=/admin');
+if (access.kind === 'mfa') return Astro.redirect('/admin/mfa?next=/admin');
+
+const preview = access.kind === 'preview';
+const href = (path: string) => adminHref(path, preview);
+const needsReview = adminReports.filter((report) => report.listing !== 'LISTED').length;
+const hiddenRooms = adminRooms.filter(
+  (room) => room.visibility === 'PUBLIC' && room.listing === 'HIDDEN',
+).length;
+const bannedRooms = adminRooms.filter((room) => room.listing === 'BANNED').length;
+---
+
+<Base title="Konsol Admin — umpomenfess room" noindex>
+  <AdminShell access={access} title="Konsol Admin" active="overview">
+    <p class="admin-sub">
+      Ringkasan moderasi platform. Semua angka dan baris di bawah adalah data tiruan sampai RPC
+      Admin T-57 tersambung.
+    </p>
+
+    <div class="admin-stats">
+      <a class="admin-stat" href={href('/admin/users')}>
+        <strong>{adminUsers.length}</strong>
+        <span>Akun login terpantau</span>
+      </a>
+      <a class="admin-stat" href={href('/admin/reports')}>
+        <strong>{needsReview}</strong>
+        <span>Laporan perlu tinjauan</span>
+      </a>
+      <a class="admin-stat" href={href('/admin/rooms')}>
+        <strong>{hiddenRooms + bannedRooms}</strong>
+        <span>Room tersembunyi / banned</span>
+      </a>
+      <a class="admin-stat" href={href('/admin/audit')}>
+        <strong>{adminAuditLog.length}</strong>
+        <span>Aktivitas audit terakhir</span>
+      </a>
+    </div>
+
+    <div class="grid--2">
+      <section class="card" aria-labelledby="admin-reports-title">
+        <div class="row row--between">
+          <h2 id="admin-reports-title">Perlu tinjauan</h2>
+          <a class="btn btn--sm btn--ghost" href={href('/admin/reports')}>
+            Semua laporan
+          </a>
+        </div>
+        <ul class="admin-list">
+          {adminReports.slice(0, 3).map((report) => (
+            <li class="admin-list__item">
+              <div class="admin-list__main">
+                <strong>{report.roomName}</strong>
+                <p class="help">
+                  {report.uniqueReports} pelapor unik · {report.lastReportAt}
+                </p>
+              </div>
+              <AdminListingBadge visibility={report.visibility} listing={report.listing} />
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="card" aria-labelledby="admin-audit-title">
+        <div class="row row--between">
+          <h2 id="admin-audit-title">Aktivitas admin</h2>
+          <a class="btn btn--sm btn--ghost" href={href('/admin/audit')}>
+            Audit log
+          </a>
+        </div>
+        <ul class="admin-list">
+          {adminAuditLog.slice(0, 4).map((entry) => (
+            <li class="admin-list__item">
+              <div class="admin-list__main">
+                <strong>{entry.action}</strong>
+                <p class="help">
+                  <Handle handle={entry.actor} />
+                  {' · '}
+                  {entry.at}
+                </p>
+              </div>
+              <span
+                class:list={[
+                  'badge',
+                  entry.result === 'berhasil' ? 'badge--active' : 'badge--danger',
+                ]}
+              >
+                {entry.result}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+
+    <div class="card warn admin-note">
+      <h2>Pintasan</h2>
+      <div class="row">
+        <a class="btn btn--sm btn--primary" href={href('/admin/users')}>
+          Kelola pengguna
+        </a>
+        <a class="btn btn--sm btn--ghost" href={href('/admin/reports')}>
+          Tinjau laporan
+        </a>
+        <a class="btn btn--sm btn--ghost" href={href('/admin/rooms')}>
+          Kelola room
+        </a>
+        <a class="btn btn--sm btn--ghost" href={href('/admin/audit')}>
+          Baca audit log
+        </a>
+      </div>
+      <p class="help">
+        Admin tidak membaca isi pesan secara default. Tindakan moderasi dan akses data tetap
+        tercatat di <code>admin_audit_log</code>; rincian kebijakan ada di
+        <a href="/privasi">Privasi</a>.
+      </p>
+    </div>
+  </AdminShell>
+</Base>

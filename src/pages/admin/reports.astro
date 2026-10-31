@@ -1,0 +1,86 @@
+---
+import Base from '../../layouts/Base.astro';
+import AdminListingBadge from '../../components/admin/AdminListingBadge.astro';
+import AdminShell from '../../components/admin/AdminShell.astro';
+import { adminPageAccess } from '../../components/auth/adminGuard.server';
+import { adminReports } from '../../components/mockAdmin';
+import { reportHideThreshold } from '../../components/reportTypes';
+
+export const prerender = false;
+const access = await adminPageAccess(Astro.cookies, Astro.url);
+if (access.kind === 'login') return Astro.redirect('/login?next=/admin/reports');
+if (access.kind === 'mfa') return Astro.redirect('/admin/mfa?next=/admin/reports');
+---
+
+<Base title="Laporan — Konsol Admin" noindex>
+  <AdminShell access={access} title="Laporan" active="reports">
+    <p class="admin-sub">
+      Antrean laporan sesuai <code>admin_list_reports</code>: laporan ditampilkan bersama metadata
+      room dan status katalog. Identitas pelapor tidak pernah ditampilkan — yang dihitung hanya
+      pelapor unik (satu pelapor dihitung sekali per room, D-20).
+    </p>
+
+    <div class="card table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">Room</th>
+            <th scope="col">Status katalog</th>
+            <th scope="col">Laporan unik</th>
+            <th scope="col">Alasan</th>
+            <th scope="col">Terakhir</th>
+            <th scope="col">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {adminReports.map((row) => (
+            <tr>
+              <td>
+                <p class="table-strong">{row.roomName}</p>
+                <p class="help table-mono">{row.roomSlug}</p>
+              </td>
+              <td>
+                <AdminListingBadge visibility={row.visibility} listing={row.listing} />
+              </td>
+              <td>
+                <span
+                  class={`badge ${row.uniqueReports >= reportHideThreshold ? 'badge--danger' : 'badge--muted'}`}
+                >
+                  {row.uniqueReports}/{reportHideThreshold}
+                </span>
+              </td>
+              <td>
+                <div class="table-actions">
+                  {row.reasons.map((reason) => (
+                    <span class="pill pill--ghost">{reason}</span>
+                  ))}
+                </div>
+              </td>
+              <td>{row.lastReportAt}</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn btn--sm btn--ghost-danger" type="button" disabled>
+                    Blokir
+                  </button>
+                  <button class="btn btn--sm btn--ghost" type="button" disabled>
+                    Turun dari FYP
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card warn admin-note">
+      <h2>Niat laporan</h2>
+      <p>
+        "Turun dari FYP" menyetel katalog ke <code>HIDDEN</code> tanpa mengunci akses member yang
+        sudah ada; "Blokir" menyetel <code>BANNED</code> lewat <code>admin_set_listing</code>. Room
+        privat tidak bisa dikembalikan ke FYP (<code>VISIBILITY_LOCKED</code>).
+      </p>
+      <p class="help">Aksi dalam tabel belum berfungsi — disambungkan saat T-57.</p>
+    </div>
+  </AdminShell>
+</Base>

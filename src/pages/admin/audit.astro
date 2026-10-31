@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import AdminShell from '../../components/admin/AdminShell.astro';
+import Handle from '../../components/Handle.astro';
+import { adminPageAccess } from '../../components/auth/adminGuard.server';
+import { adminAuditLog } from '../../components/mockAdmin';
+
+export const prerender = false;
+const access = await adminPageAccess(Astro.cookies, Astro.url);
+if (access.kind === 'login') return Astro.redirect('/login?next=/admin/audit');
+if (access.kind === 'mfa') return Astro.redirect('/admin/mfa?next=/admin/audit');
+---
+
+<Base title="Audit — Konsol Admin" noindex>
+  <AdminShell access={access} title="Audit" active="audit">
+    <p class="admin-sub">
+      Jejak aksi Admin platform ({`admin_audit_log`}): waktu, aksi, target, dan Admin pelakunya. Log
+      hanya tertulis dari server — Admin tidak bisa menyunting catatan lewat client.
+    </p>
+
+    <div class="card table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">Waktu</th>
+            <th scope="col">Aksi</th>
+            <th scope="col">Target</th>
+            <th scope="col">Admin</th>
+            <th scope="col">Hasil</th>
+          </tr>
+        </thead>
+        <tbody>
+          {adminAuditLog.map((entry) => (
+            <tr>
+              <td>{entry.at}</td>
+              <td>
+                <span class="table-mono">{entry.action}</span>
+              </td>
+              <td>{entry.target}</td>
+              <td>
+                <Handle handle={entry.actor} />
+              </td>
+              <td>
+                {entry.result === 'berhasil' ? (
+                  <span class="badge badge--active">berhasil</span>
+                ) : (
+                  <span class="badge badge--danger">ditolak</span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card warn admin-note">
+      <p class="help">
+        Pratinjau memuat contoh baris saja (T-32); daftar nyata membaca <code>admin_audit_log</code>
+        saat T-57. Kegagalan aksi ikut tercatat sebagaimana ditulis oleh fungsi RPC di server.
+      </p>
+    </div>
+  </AdminShell>
+</Base>

@@ -1,0 +1,89 @@
+---
+import Base from '../../layouts/Base.astro';
+import AdminShell from '../../components/admin/AdminShell.astro';
+import Handle from '../../components/Handle.astro';
+import { adminPageAccess } from '../../components/auth/adminGuard.server';
+import { adminUsers } from '../../components/mockAdmin';
+
+export const prerender = false;
+const access = await adminPageAccess(Astro.cookies, Astro.url);
+if (access.kind === 'login') return Astro.redirect('/login?next=/admin/users');
+if (access.kind === 'mfa') return Astro.redirect('/admin/mfa?next=/admin/users');
+---
+
+<Base title="Pengguna — Konsol Admin" noindex>
+  <AdminShell access={access} title="Pengguna" active="users">
+    <p class="admin-sub">
+      Daftar akun sesuai <code>admin_list_users</code> — kolom handle, lencana, peran, tier, status,
+      dan waktu dibuat. Identitas internal tidak ditampilkan di tabel.
+    </p>
+
+    <div class="field admin-search">
+      <label for="adm-q">Cari handle</label>
+      <input class="input" id="adm-q" type="search" placeholder="mis. bem.kampus" disabled />
+      <p class="help">Pencarian live menyusul saat T-57 menyambungkan RPC.</p>
+    </div>
+
+    <div class="card table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">Handle</th>
+            <th scope="col">Peran</th>
+            <th scope="col">Tier</th>
+            <th scope="col">Status</th>
+            <th scope="col">Dibuat</th>
+            <th scope="col">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {adminUsers.map((user) => (
+            <tr>
+              <td>
+                <Handle handle={user.handle} badge={user.handleVerified ? 'VERIFIED' : null} />
+              </td>
+              <td>
+                <span class={`pill ${user.role === 'admin' ? 'pill--on' : 'pill--ghost'}`}>
+                  {user.role}
+                </span>
+              </td>
+              <td>
+                {user.tier === 'premium' && <span class="badge badge--gold">premium</span>}
+                {user.tier === 'free' && <span class="badge badge--muted">free</span>}
+              </td>
+              <td>
+                {user.suspended ? (
+                  <span class="badge badge--danger">ditangguhkan</span>
+                ) : (
+                  <span class="badge badge--muted">aktif</span>
+                )}
+              </td>
+              <td>{user.createdAt}</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn btn--sm btn--ghost" type="button" disabled>
+                    Ganti handle
+                  </button>
+                  <button class="btn btn--sm btn--ghost" type="button" disabled>
+                    {user.suspended ? 'Buka' : 'Tangguhkan'}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card warn admin-note">
+      <h2>Tata aksi</h2>
+      <p>
+        Ganti handle memakai <code>admin_rename_handle</code>: pola buatan Admin
+        <code>{'[a-z0-9._-]{3,24}'}</code> dengan lencana VERIFIED; pola 9-acak sistem tidak bisa
+        diberi lencana, handle tersimpan khidmat dan kata reserved ditolak. Semua aksi menulis
+        <em>audit log</em> otomatis.
+      </p>
+      <p class="help">Aksi dalam tabel belum berfungsi — disambungkan saat T-57.</p>
+    </div>
+  </AdminShell>
+</Base>

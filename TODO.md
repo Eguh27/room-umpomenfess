@@ -36,7 +36,7 @@ Legenda prioritas ADDENDUM-01: **(M1)** chat inti · **(M2)** aturan lengkap · 
 - [ ] T-18 [D] (M3) Migration **0012**: FYP — `list_public_rooms` (grant `anon`+`authenticated`, hanya kolom whitelist), `report_room` (+auto-`HIDDEN` pada ambang laporan unik), job `refresh_room_stats` tiap menit; `admin_set_listing`/`admin_list_reports` dari T-17 dipakai — depends T-13a, T-17 — verifikasi: pgTAP: privat tidak pernah ter-list, ambang laporan unik, `HIDDEN`/`BANNED` tidak bisa di-join
 - [ ] T-19 [D] (M3) Tes SQL tambahan S-21…S-32 di sisi database + perbarui `supabase/seed.sql` (room PRIVATE/PUBLIC, handle, laporan) — depends T-18 — verifikasi: `supabase test db` hijau
 - [x] T-31a [@F 2026-10-29] Tugas susulan T-31: buang semua `Guest-NN` di UI statis; komponen `<Handle>` + lencana `HOST`/`VERIFIED`; layar `ONE_ROOM_LIMIT`; pemilih visibilitas/deskripsi/kategori di form buat room; teks disclaimer room publik — depends T-31 — verifikasi: `npm run build`; `grep -r "Guest-" src` kosong (kecuali catatan migrasi) — selesai 2026-10-29 11:06; gate grep bersih setelah fixture R diubah atas izin manusia
-- [ ] T-32 [F] (M3) UI statis tiruan: `/jelajahi` (kartu room, filter, sort, cari), modal Laporkan, kerangka `/admin/*` (pengguna, laporan, room, audit), `/aturan-konten` — depends T-31a — verifikasi: `npm run build`
+- [~] T-32 [@F 2026-10-30] (M3) UI statis tiruan: `/jelajahi` (kartu room, filter, sort, cari), modal Laporkan, kerangka `/admin/*` (pengguna, laporan, room, audit), `/aturan-konten` — depends T-31a — verifikasi: `npm run build` (dikerjakan; guard admin reuse `adminAccess` T-50; hasil rekonsiliasi dua sesi F; selesai & teruji 2026-10-30 11:03, dibuku 10-31, menunggu tinjauan; catatan di `docs/progress.md`)
 
 ## Wave 2 — Integrasi server dan realtime (paralel setelah kontrak RPC stabil)
 
@@ -59,7 +59,7 @@ Legenda prioritas ADDENDUM-01: **(M1)** chat inti · **(M2)** aturan lengkap · 
 
 ## Wave 3 — UI terhubung
 
-- [ ] T-50 [F] (M1) Auth Host: satu alur register/login untuk Host dan Guest login, Turnstile, konfirmasi email (wajib untuk room publik), MFA enroll/verify TOTP untuk Admin — depends T-31a, T-20 — verifikasi: alur manual end-to-end; admin tanpa MFA ditolak
+- [x] T-50 [F 2026-10-30] (M1) Auth Host: satu alur register/login untuk Host dan Guest login, Turnstile, konfirmasi email (wajib untuk room publik), MFA enroll/verify TOTP untuk Admin — depends T-31a, T-20 — verifikasi: alur manual end-to-end; admin tanpa MFA ditolak (selesai 2026-10-30; rincian di `docs/progress.md`)
 - [ ] T-51 [F] (M1) Dasbor Host: daftar room, sisa waktu, kuota, form buat room (kapasitas ≤ cap tier; visibilitas default privat; deskripsi; kategori; sisa kuota publik; default idle publik 15 menit), tampilkan password sekali, regenerate, tutup — depends T-50, T-12a — verifikasi: manual; kuota habis menampilkan pesan yang benar
 - [~] T-52 [@F 2026-10-29] Halaman Guest `/r/<slug>`: disclaimer → Turnstile → sign-in anonim → `POST /api/rooms/join` → semua keadaan bagian 11 — depends T-21, T-31 — verifikasi: manual tiap keadaan (island JoinRoom nyata; pratinjau statis `?state=` dipertahankan)
 - [ ] T-53 [F] (M1) Ruang chat Host & Guest + panel member (Approve/Reject/Kick) + countdown + tampilan mengetik/idle + `<Handle>` + lencana `HOST`/`VERIFIED` + tombol Laporkan di room publik — depends T-40a, T-41, T-42, T-43, T-52a, T-25 — verifikasi: dua browser berbeda

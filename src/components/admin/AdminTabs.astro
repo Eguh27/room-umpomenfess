@@ -1,0 +1,27 @@
+---
+/** Tab konsol Admin (T-32). Kerangka T-57 akan mengisi data; navigasi tetap di sini. */
+import { adminHref } from './adminHref';
+
+const tabs = [
+  { key: 'overview', href: '/admin', label: 'Ringkasan' },
+  { key: 'users', href: '/admin/users', label: 'Pengguna' },
+  { key: 'reports', href: '/admin/reports', label: 'Laporan' },
+  { key: 'rooms', href: '/admin/rooms', label: 'Room' },
+  { key: 'audit', href: '/admin/audit', label: 'Audit' },
+] as const;
+
+interface Props {
+  active: (typeof tabs)[number]['key'];
+  preview?: boolean;
+}
+
+const { active, preview = false } = Astro.props;
+---
+
+<nav class="admin-tabs" aria-label="Menu konsol admin">
+  {tabs.map((tab) => (
+    <a href={adminHref(tab.href, preview)} aria-current={tab.key === active ? 'page' : undefined}>
+      {tab.label}
+    </a>
+  ))}
+</nav>

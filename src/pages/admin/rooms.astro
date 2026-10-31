@@ -1,0 +1,80 @@
+---
+import Base from '../../layouts/Base.astro';
+import AdminListingBadge from '../../components/admin/AdminListingBadge.astro';
+import AdminShell from '../../components/admin/AdminShell.astro';
+import { adminPageAccess } from '../../components/auth/adminGuard.server';
+import { adminRooms } from '../../components/mockAdmin';
+
+export const prerender = false;
+const access = await adminPageAccess(Astro.cookies, Astro.url);
+if (access.kind === 'login') return Astro.redirect('/login?next=/admin/rooms');
+if (access.kind === 'mfa') return Astro.redirect('/admin/mfa?next=/admin/rooms');
+---
+
+<Base title="Room — Konsol Admin" noindex>
+  <AdminShell access={access} title="Room" active="rooms">
+    <p class="admin-sub">
+      Semua room dengan status katalognya — privat maupun publik. Room privat tampil di konsol
+      tetapi tidak pernah bisa dikembalikan ke FYP (<code>VISIBILITY_LOCKED</code>).
+    </p>
+
+    <div class="card table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">Room</th>
+            <th scope="col">Visibilitas</th>
+            <th scope="col">Status katalog</th>
+            <th scope="col">Anggota</th>
+            <th scope="col">Umur</th>
+            <th scope="col">Laporan</th>
+            <th scope="col">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {adminRooms.map((row) => (
+            <tr>
+              <td>
+                <p class="table-strong">{row.name}</p>
+                <p class="help table-mono">{row.slug}</p>
+              </td>
+              <td>
+                <span class={`pill ${row.visibility === 'PUBLIC' ? 'pill--on' : 'pill--ghost'}`}>
+                  {row.visibility === 'PUBLIC' ? 'publik' : 'privat'}
+                </span>
+              </td>
+              <td>
+                <AdminListingBadge visibility={row.visibility} listing={row.listing} />
+              </td>
+              <td>
+                {row.approvedCount}/{row.maxGuests}
+              </td>
+              <td>{row.endsIn}</td>
+              <td>{row.reportCount}</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn btn--sm btn--ghost-danger" type="button" disabled>
+                    Blokir
+                  </button>
+                  <button class="btn btn--sm btn--ghost" type="button" disabled>
+                    Tutup room
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card warn admin-note">
+      <h2>Niat aksi</h2>
+      <p>
+        "Tutup room" memakai <code>admin_close_room</code>: Guest kehilangan akses, arsip tetap
+        separuh umur room. Blokir dan turun dari FYP memakai <code>admin_set_listing</code>;
+        perubahan status katalog tercatat di audit log.
+      </p>
+      <p class="help">Aksi dalam tabel belum berfungsi — disambungkan saat T-57.</p>
+    </div>
+  </AdminShell>
+</Base>

@@ -1,0 +1,56 @@
+---
+/** Cangkang halaman `/admin/*` (T-32): judul + tab + gerbang guard.
+    Redirect login/MFA tetap di frontmatter tiap halaman (butuh early-return Astro). */
+import AdminTabs from './AdminTabs.astro';
+import type { AdminPageAccess } from '../auth/adminGuard.server';
+
+interface Props {
+  access: AdminPageAccess;
+  title: string;
+  active: 'overview' | 'users' | 'reports' | 'rooms' | 'audit';
+}
+
+const { access, title, active } = Astro.props;
+const open = access.kind === 'ok' || access.kind === 'preview';
+
+if (access.kind === 'forbidden') Astro.response.status = 403;
+if (access.kind === 'unavailable') Astro.response.status = 503;
+---
+
+<section class="narrow admin-page">
+  <p class="eyebrow">admin platform · AAL2 {access.kind === 'preview' && '· pratinjau T-32'}</p>
+  <h1>{title}</h1>
+
+  {open ? (
+    <>
+      {access.kind === 'preview' && (
+        <div class="card warn admin-preview">
+          <p>
+            Pratinjau kerangka (dev saja) memakai data tiruan <code>mockAdmin</code>. Data nyata
+            menyusul lewat RPC Admin saat T-57.
+          </p>
+        </div>
+      )}
+      <AdminTabs active={active} preview={access.kind === 'preview'} />
+      <slot />
+    </>
+  ) : access.kind === 'forbidden' ? (
+    <>
+      <span class="badge badge--danger">DITOLAK</span>
+      <p class="auth__sub">Halaman ini hanya untuk Admin platform dengan MFA aktif.</p>
+      <a class="btn btn--ghost btn--block" href="/">
+        Kembali ke beranda
+      </a>
+    </>
+  ) : access.kind === 'unavailable' ? (
+    <>
+      <span class="badge badge--danger">BELUM SIAP</span>
+      <p class="auth__sub">
+        Guard server aktif, tetapi data skema tidak bisa dibaca. Hubungi pengelola.
+      </p>
+      <a class="btn btn--ghost btn--block" href="/">
+        Kembali ke beranda
+      </a>
+    </>
+  ) : null}
+</section>

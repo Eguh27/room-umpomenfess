@@ -1,0 +1,25 @@
+---
+/**
+ * Lencana status katalog room (T-32). Room privat tidak pernah masuk FYP,
+ * jadi `HIDDEN` milik room privat tidak boleh dibaca sebagai "tersembunyi".
+ */
+import { listingLabels, type ListingStatus } from '../mockAdmin';
+
+interface Props {
+  visibility: 'PRIVATE' | 'PUBLIC';
+  listing: ListingStatus;
+}
+
+const { visibility, listing } = Astro.props;
+const isPrivate = visibility === 'PRIVATE';
+const label = isPrivate ? 'Tidak di FYP' : listingLabels[listing];
+const tone = isPrivate
+  ? 'badge--muted'
+  : listing === 'LISTED'
+    ? 'badge--active'
+    : listing === 'BANNED'
+      ? 'badge--danger'
+      : 'badge--pending';
+---
+
+<span class={`badge ${tone}`}>{label}</span>
