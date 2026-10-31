@@ -23,11 +23,18 @@ if (access.kind === 'unavailable') Astro.response.status = 503;
 
   {open ? (
     <>
-      {access.kind === 'preview' && (
+      {access.kind === 'preview' ? (
         <div class="card warn admin-preview">
           <p>
             Pratinjau kerangka (dev saja) memakai data tiruan <code>mockAdmin</code>. Data nyata
             menyusul lewat RPC Admin saat T-57.
+          </p>
+        </div>
+      ) : (
+        <div class="card warn admin-preview">
+          <p>
+            Kerangka T-32 memakai data tiruan <code>mockAdmin</code>. Data nyata menyusul lewat RPC
+            Admin saat T-57.
           </p>
         </div>
       )}

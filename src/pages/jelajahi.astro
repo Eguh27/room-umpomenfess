@@ -8,7 +8,9 @@ import { publicRooms } from '../components/mockData';
 import { reportRule } from '../components/reportTypes';
 
 export const prerender = false;
-const fypPreview = Astro.url.searchParams.get('state') === 'aktif';
+// Pratinjau mock hanya untuk QA lokal; produksi selalu mengikuti flag
+// `public_rooms_enabled` (default false) sampai T-56 tersambung.
+const fypPreview = import.meta.env.DEV && Astro.url.searchParams.get('state') === 'aktif';
 const fypEnabled = fypPreview; // D-21: flag public_rooms_enabled default false.
 ---
 
@@ -33,15 +35,17 @@ const fypEnabled = fypPreview; // D-21: flag public_rooms_enabled default false.
             yang dibagikan Host — daftar terbuka tidak mengubah itu.
           </p>
         </div>
-        <details class="demo-links">
-          <summary>Pratinjau kerangka daftar (T-32)</summary>
-          <p class="help">
-            Daftar nyata memakai RPC <code>list_public_rooms</code> dan API
-            <code>GET /api/rooms/public</code> saat T-24. Pratinjau memakai data tiruan yang
-            mengikuti whitelist kolom (D-18) — identitas host tidak tampil di kartu.
-          </p>
-          <a href="/jelajahi?state=aktif">Buka pratinjau daftar →</a>
-        </details>
+        {import.meta.env.DEV && (
+          <details class="demo-links">
+            <summary>Pratinjau kerangka daftar (T-32)</summary>
+            <p class="help">
+              Daftar nyata memakai RPC <code>list_public_rooms</code> dan API
+              <code>GET /api/rooms/public</code> saat T-24. Pratinjau memakai data tiruan yang
+              mengikuti whitelist kolom (D-18) — identitas host tidak tampil di kartu.
+            </p>
+            <a href="/jelajahi?state=aktif">Buka pratinjau daftar →</a>
+          </details>
+        )}
       </>
     )}
 

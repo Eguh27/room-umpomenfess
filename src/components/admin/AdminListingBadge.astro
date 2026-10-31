@@ -12,14 +12,16 @@ interface Props {
 
 const { visibility, listing } = Astro.props;
 const isPrivate = visibility === 'PRIVATE';
-const label = isPrivate ? 'Tidak di FYP' : listingLabels[listing];
-const tone = isPrivate
-  ? 'badge--muted'
-  : listing === 'LISTED'
-    ? 'badge--active'
-    : listing === 'BANNED'
-      ? 'badge--danger'
-      : 'badge--pending';
+const label =
+  listing === 'BANNED' ? listingLabels.BANNED : isPrivate ? 'Tidak di FYP' : listingLabels[listing];
+const tone =
+  listing === 'BANNED'
+    ? 'badge--danger'
+    : isPrivate
+      ? 'badge--muted'
+      : listing === 'LISTED'
+        ? 'badge--active'
+        : 'badge--pending';
 ---
 
 <span class={`badge ${tone}`}>{label}</span>
