@@ -106,7 +106,7 @@ select is(
   (
     select status::text
     from public.join_room(
-      'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', true,
       'aaaaaaaaaaaaaaaa', 'abc234', repeat('1', 64)
     )
   ),
@@ -128,7 +128,7 @@ select ok(
 
 select throws_ok(
   $$select * from public.join_room(
-      'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', true,
       'aaaaaaaaaaaaaaaa', 'SALAH1', repeat('b', 64)
     )$$,
   'P0001', 'WRONG_PASSWORD',
@@ -140,7 +140,7 @@ from generate_series(1, 5);
 
 select throws_ok(
   $$select * from public.join_room(
-      'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', true,
       'aaaaaaaaaaaaaaaa', 'ABC234', repeat('b', 64)
     )$$,
   'P0001', 'LOCKED',
@@ -171,21 +171,16 @@ select throws_ok(
   'get_room_public slug tidak ada'
 );
 
-select is(
-  (select count(*)::int from public.my_rooms()),
-  1,
-  'my_rooms menampilkan satu keanggotaan'
+select throws_ok(
+  $$select * from public.my_rooms()$$,
+  'P0001', 'NOT_MEMBER',
+  'my_rooms menolak JWT anonim'
 );
 
 select is(
-  (select display_name from public.my_rooms()),
-  (
-    select m.handle
-    from public.room_members m
-    where m.status = 'APPROVED'::public.member_status
-    limit 1
-  ),
-  'my_rooms membawa handle member'
+  (select visibility from public.get_room_public('aaaaaaaaaaaaaaaa')),
+  'PRIVATE',
+  'get_room_public membawa visibility'
 );
 
 select is(
@@ -334,7 +329,7 @@ select is(
   (
     select status::text
     from public.join_room(
-      'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+      'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', true,
       'dddddddddddddddd', 'ABC234', repeat('3', 64)
     )
   ),
@@ -413,7 +408,7 @@ select is(
   (
     select status::text
     from public.join_room(
-      'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', true,
       'bbbbbbbbbbbbbbbb', 'ABC234', repeat('4', 64)
     )
   ),
@@ -448,7 +443,7 @@ select is(
   (
     select status::text
     from public.join_room(
-      'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+      'cccccccc-cccc-4ccc-8ccc-cccccccccccc', true,
       'bbbbbbbbbbbbbbbb', 'ABC234', repeat('5', 64)
     )
   ),
@@ -481,7 +476,7 @@ select is(
 reset role;
 select throws_ok(
   $$select * from public.join_room(
-      'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+      'cccccccc-cccc-4ccc-8ccc-cccccccccccc', true,
       'bbbbbbbbbbbbbbbb', 'ABC234', repeat('5', 64)
     )$$,
   'P0001', 'REJECTED',
@@ -526,7 +521,7 @@ select throws_ok(
 reset role;
 select throws_ok(
   $$select * from public.join_room(
-      'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', true,
       'bbbbbbbbbbbbbbbb', 'ABC234', repeat('6', 64)
     )$$,
   'P0001', 'KICKED',
@@ -537,7 +532,7 @@ select is(
   (
     select status::text
     from public.join_room(
-      'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', true,
       'cccccccccccccccc', 'ABC234', repeat('7', 64)
     )
   ),
@@ -549,7 +544,7 @@ select is(
   (
     select status::text
     from public.join_room(
-      'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+      'cccccccc-cccc-4ccc-8ccc-cccccccccccc', true,
       'cccccccccccccccc', 'ABC234', repeat('8', 64)
     )
   ),
@@ -559,7 +554,7 @@ select is(
 
 select throws_ok(
   $$select * from public.join_room(
-      'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+      'dddddddd-dddd-4ddd-8ddd-dddddddddddd', true,
       'cccccccccccccccc', 'ABC234', repeat('9', 64)
     )$$,
   'P0001', 'ROOM_FULL',
@@ -572,7 +567,7 @@ select is(
   (
     select status::text
     from public.join_room(
-      'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+      'dddddddd-dddd-4ddd-8ddd-dddddddddddd', true,
       'eeeeeeeeeeeeeeee', 'ABC234', repeat('a', 64)
     )
   ),
@@ -582,11 +577,11 @@ select is(
 
 select throws_ok(
   $$select * from public.join_room(
-      'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+      'dddddddd-dddd-4ddd-8ddd-dddddddddddd', true,
       'ffffffffffffffff', 'ABC234', repeat('b', 64)
     )$$,
-  'P0001', 'MAX_ROOMS_PER_GUEST',
-  'batas keanggotaan aktif per Guest ditegakkan'
+  'P0001', 'ONE_ROOM_LIMIT',
+  'batas keanggotaan aktif anonim ditegakkan'
 );
 
 set local role authenticated;
@@ -633,7 +628,7 @@ reset role;
 
 select throws_ok(
   $$select * from public.join_room(
-      'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+      'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', true,
       'aaaaaaaaaaaaaaaa', 'ABC234', repeat('c', 64)
     )$$,
   'P0001', 'ROOM_CLOSED',
@@ -679,7 +674,7 @@ select is(
 
 select throws_ok(
   $$select * from public.join_room(
-      'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', true,
       'aaaaaaaaaaaaaaaa', 'ABC234', repeat('d', 64)
     )$$,
   '42501', null,
@@ -739,7 +734,7 @@ select is(
   (
     select status::text
     from public.join_room(
-      'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', true,
       'iiiiiiiiiiiiiiii', 'ABC234', repeat('e', 64)
     )
   ),
@@ -751,7 +746,7 @@ select is(
   (
     select status::text
     from public.join_room(
-      'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+      'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', true,
       'iiiiiiiiiiiiiiii', 'ABC234', repeat('f', 64)
     )
   ),
@@ -761,7 +756,7 @@ select is(
 
 select throws_ok(
   $$select * from public.join_room(
-      'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+      'dddddddd-dddd-4ddd-8ddd-dddddddddddd', true,
       'iiiiiiiiiiiiiiii', 'ABC234', repeat('0', 64)
     )$$,
   'P0001', 'ROOM_FULL',
@@ -811,7 +806,7 @@ select is(
   (
     select status::text
     from public.join_room(
-      'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+      'dddddddd-dddd-4ddd-8ddd-dddddddddddd', true,
       'jjjjjjjjjjjjjjjj', 'ABC234', repeat('2', 64)
     )
   ),

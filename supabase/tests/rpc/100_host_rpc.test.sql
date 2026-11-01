@@ -373,7 +373,7 @@ select throws_ok(
 
 select throws_ok(
   $$select * from public.join_room(
-    '11111111-1111-4111-8111-111111111111', 'x', 'x', repeat('a', 64)
+    '11111111-1111-4111-8111-111111111111', false, 'x', 'x', repeat('a', 64)
   )$$,
   '42501', null,
   'authenticated tidak bisa memanggil join_room'

@@ -479,9 +479,9 @@ create temporary table test_handles (
 ) on commit drop;
 
 insert into test_handles (key, handle)
-select 'anon1_room1', display_name
+select 'anon1_room1', handle
 from public.join_room(
-  'a0000000-0000-4000-8000-000000000003',
+  'a0000000-0000-4000-8000-000000000003', true,
   'handleroom000001', 'ABC234', repeat('1', 64)
 );
 
@@ -500,9 +500,9 @@ select is(
 
 select is(
   (
-    select display_name
+    select handle
     from public.join_room(
-      'a0000000-0000-4000-8000-000000000003',
+      'a0000000-0000-4000-8000-000000000003', true,
       'handleroom000001', 'ABC234', repeat('2', 64)
     )
   ),
@@ -511,9 +511,9 @@ select is(
 );
 
 insert into test_handles (key, handle)
-select 'anon1_room2', display_name
+select 'anon1_room2', handle
 from public.join_room(
-  'a0000000-0000-4000-8000-000000000003',
+  'a0000000-0000-4000-8000-000000000003', true,
   'handleroom000002', 'ABC234', repeat('3', 64)
 );
 
@@ -544,9 +544,9 @@ select isnt(
 
 select is(
   (
-    select display_name
+    select handle
     from public.join_room(
-      'a0000000-0000-4000-8000-000000000002',
+      'a0000000-0000-4000-8000-000000000002', false,
       'handleroom000001', 'ABC234', repeat('4', 64)
     )
   ),

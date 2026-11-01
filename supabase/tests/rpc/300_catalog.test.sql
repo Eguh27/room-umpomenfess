@@ -49,7 +49,7 @@ select is(
 select ok(
   not has_function_privilege(
     'authenticated',
-    'public.join_room(uuid,text,text,text)'::regprocedure,
+    'public.join_room(uuid,boolean,text,text,text)'::regprocedure,
     'EXECUTE'
   ),
   'join_room hanya untuk service_role'
@@ -58,7 +58,7 @@ select ok(
 select ok(
   has_function_privilege(
     'service_role',
-    'public.join_room(uuid,text,text,text)'::regprocedure,
+    'public.join_room(uuid,boolean,text,text,text)'::regprocedure,
     'EXECUTE'
   ),
   'service_role bisa memanggil join_room'
