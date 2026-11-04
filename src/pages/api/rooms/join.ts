@@ -1,10 +1,15 @@
 import type { APIRoute } from 'astro';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { IP_HASH_SALT, TURNSTILE_SECRET_KEY } from 'astro:env/server';
+import { IP_HASH_SALT } from 'astro:env/server';
 import { hashIp } from '../../../lib/ip';
 import { joinRequestSchema } from '../../../lib/schemas';
 import { mapJoinError } from '../../../lib/server/join-errors';
-import { verifyTurnstile } from '../../../lib/server/turnstile';
+import {
+  enforceTurnstile,
+  getBearerToken,
+  json,
+  readJsonBody,
+} from '../../../lib/server/api';
 import {
   getServiceClient,
   verifyAccessTokenUser,
@@ -13,28 +18,6 @@ import {
 } from '../../../lib/supabase/server';
 
 export const prerender = false;
-
-function json(
-  body: unknown,
-  status = 200,
-  headers: Record<string, string> = {},
-): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      'content-type': 'application/json',
-      'cache-control': 'no-store',
-      ...headers,
-    },
-  });
-}
-
-function getBearerToken(request: Request): string | null {
-  const header = request.headers.get('authorization');
-  if (!header?.startsWith('Bearer ')) return null;
-  const token = header.slice('Bearer '.length).trim();
-  return token || null;
-}
 
 /**
  * Catat kegagalan password di statement terpisah. join_room melakukan
@@ -64,10 +47,8 @@ async function recordJoinFailure(
  * build produksi selalu mewajibkan TURNSTILE_SECRET_KEY.
  */
 export const POST: APIRoute = async ({ request, clientAddress }) => {
-  let payload: unknown;
-  try {
-    payload = await request.json();
-  } catch {
+  const payload = await readJsonBody(request);
+  if (payload === null) {
     return json({ error: 'INVALID_INPUT' }, 400);
   }
 
@@ -82,19 +63,9 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     return json({ error: 'SERVER_ERROR' }, 500);
   }
 
-  if (TURNSTILE_SECRET_KEY) {
-    let turnstileOk = false;
-    try {
-      turnstileOk = await verifyTurnstile(turnstileToken, clientAddress);
-    } catch {
-      turnstileOk = false;
-    }
-    if (!turnstileOk) {
-      return json({ error: 'TURNSTILE_FAILED' }, 403);
-    }
-  } else if (!import.meta.env.DEV) {
-    // Jangan pernah membuka join tanpa Turnstile di production.
-    return json({ error: 'SERVER_ERROR' }, 500);
+  const turnstileFail = await enforceTurnstile(turnstileToken, clientAddress);
+  if (turnstileFail) {
+    return turnstileFail;
   }
 
   const accessToken = getBearerToken(request);

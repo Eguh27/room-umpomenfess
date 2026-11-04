@@ -33,6 +33,20 @@ export function getAnonClient(): SupabaseClient {
   });
 }
 
+/**
+ * Client kunci publik yang selalu mengirim JWT user. RPC yang identitasnya
+ * dari `auth.uid()` (mis. report_room) wajib lewat client ini, BUKAN
+ * service_role (yang tidak punya identitas user).
+ */
+export function getUserClient(token: string): SupabaseClient {
+  const url = requireEnv(PUBLIC_SUPABASE_URL, 'PUBLIC_SUPABASE_URL');
+  const key = requireEnv(PUBLIC_SUPABASE_ANON_KEY, 'PUBLIC_SUPABASE_ANON_KEY');
+  return createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { headers: { Authorization: `Bearer ${token}` } },
+  });
+}
+
 export type VerifiedUser = {
   userId: string;
   isAnonymous: boolean;

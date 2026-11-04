@@ -16,6 +16,15 @@ export const joinRequestSchema = z.object({
 });
 export type JoinRequest = z.infer<typeof joinRequestSchema>;
 
+export const reportReasons = ['SPAM', 'ABUSE', 'ILLEGAL', 'OTHER'] as const;
+
+export const reportRequestSchema = z.object({
+  roomId: z.uuid(),
+  reason: z.enum(reportReasons),
+  turnstileToken: z.string().min(1).max(4096),
+});
+export type ReportRequest = z.infer<typeof reportRequestSchema>;
+
 export const createRoomSchema = z.object({
   name: z.string().trim().min(1).max(80),
   maxGuests: z.number().int().min(2).max(75),

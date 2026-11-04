@@ -23,6 +23,25 @@ const FORBIDDEN_CODES = new Set([
 
 const NOT_FOUND_CODES = new Set(['ROOM_NOT_FOUND', 'ROOM_HIDDEN', 'ROOM_BANNED']);
 
+/** Kode error RPC report_room (migrasi 0012) dan status HTTP-nya. */
+const REPORT_CODE_STATUS: Record<string, number> = {
+  ALREADY_REPORTED: 409,
+  REPORT_NOT_ALLOWED: 403,
+  USER_SUSPENDED: 403,
+  NOT_FOUND: 404,
+  INVALID_INPUT: 400,
+};
+
+/** Memetakan kode error RPC report_room ke respons HTTP. */
+export function mapReportError(code: string): JoinErrorMapping {
+  const status = REPORT_CODE_STATUS[code];
+  if (status !== undefined) {
+    return { status, body: { error: code } };
+  }
+  // Kode tak dikenal tidak membocorkan detail internal.
+  return { status: 500, body: { error: 'SERVER_ERROR' } };
+}
+
 /** DETAIL dari Postgres berupa JSON, mis. {"retry_after":600}. */
 export function parseRetryAfter(details: string | null | undefined): number | null {
   if (!details) return null;
