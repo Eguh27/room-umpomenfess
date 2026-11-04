@@ -41,7 +41,8 @@ begin
   from public.profiles p
   where p.user_id = auth.uid();
 
-  if not found or v_role is distinct from 'admin' then
+  if not found or v_role is distinct from 'admin'
+     or app_private.is_anonymous() then
     perform app_private.raise_error('NOT_ADMIN');
   end if;
 

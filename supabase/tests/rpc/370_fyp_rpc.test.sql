@@ -2,6 +2,10 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
+-- Room publik dari seed dev (devpub%) menambah baris FYP; file tes ini
+-- wajib deterministik terhadap isi seed.
+delete from public.rooms where slug like 'devpub%';
+
 create schema test_helpers_t18;
 grant usage on schema test_helpers_t18 to authenticated;
 

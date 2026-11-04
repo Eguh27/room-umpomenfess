@@ -2,6 +2,10 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
+-- Room publik dari seed dev (devpub%) menggeser hitungan agregat laporan;
+-- file tes ini wajib deterministik terhadap isi seed.
+delete from public.rooms where slug like 'devpub%';
+
 -- Helper JWT untuk simulasi sesi Admin/Authenticated/AAL2/tanpa sesi.
 -- RPC Admin SECURITY DEFINER: identitas hanya dari GUC JWT, jadi semua
 -- pemanggilan cukup memakai GUC di atas role koneksi; hak EXECUTE tetap
