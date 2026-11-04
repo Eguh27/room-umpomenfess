@@ -54,7 +54,7 @@ Legenda prioritas ADDENDUM-01: **(M1)** chat inti · **(M2)** aturan lengkap · 
 - [ ] T-23 [B] (M3) `POST /api/admin/users`: buat akun organisasi via Supabase Admin API (`inviteUserByEmail`), wajib admin AAL2 (verifikasi klaim JWT), panggil `admin_rename_handle`, catat audit — depends T-17, T-20 — verifikasi: tes unit pemetaan; uji manual lokal
 - [ ] T-24 [B] (M3) `GET /api/rooms/public`: zod (sort/category/q/cursor/limit), `Cache-Control: public, s-maxage=30, stale-while-revalidate=60`, panggil `list_public_rooms` — depends T-18, T-20 — verifikasi: header cache benar; tidak ada kolom di luar whitelist
 - [x] T-25 [@B 2026-11-04] (M3) `POST /api/rooms/report`: Turnstile + verifikasi JWT + `report_room`, petakan error — depends T-18, T-20 — verifikasi: tes unit; laporan ganda ditolak
-- [ ] T-40a [R] (M1) Tugas susulan T-40: pakai `handle` + `sender_badge`/`handle_verified` (bukan `display_name`/`Guest-NN`) di tipe, store, dan hook realtime — depends T-13a, T-40 — verifikasi: tes unit diperbarui; `grep -r "display_name\|Guest-" src/lib/realtime` kosong
+- [x] T-40a [@R 2026-11-04] (M1) Tugas susulan T-40: pakai `handle` + `sender_badge`/`handle_verified` (bukan `display_name`/`Guest-NN`) di tipe, store, dan hook realtime — depends T-13a, T-40 — verifikasi: tes unit diperbarui; `grep -r "display_name\|Guest-" src/lib/realtime` kosong
 - [ ] T-44 [R] (M1) Modul sesi & tipe user: sign-in anonim persisten, deteksi anonim/login/admin dari JWT, state "room aktif saya" untuk anonim, helper pindah room (leave lalu join) — depends T-40a — verifikasi: tes unit dengan client tiruan
 
 ## Wave 3 — UI terhubung
