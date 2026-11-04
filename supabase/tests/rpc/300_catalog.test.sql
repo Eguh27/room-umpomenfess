@@ -34,16 +34,14 @@ select is(
   'semua fungsi SECURITY DEFINER memasang search_path'
 );
 
-select is(
-  (
-    select count(*)::int
+select set_eq(
+  $$select p.proname::text
     from pg_proc p
     join pg_namespace n on n.oid = p.pronamespace
     where n.nspname in ('public', 'app_private')
-      and has_function_privilege('anon', p.oid, 'EXECUTE')
-  ),
-  0,
-  'role anon tidak punya EXECUTE pada fungsi aplikasi'
+      and has_function_privilege('anon', p.oid, 'EXECUTE')$$,
+  $$values ('list_public_rooms'), ('report_room')$$,
+  'role anon hanya punya EXECUTE pada RPC FYP publik'
 );
 
 select ok(
@@ -145,8 +143,9 @@ select set_eq(
       ('release-idle-members'),
       ('expire-pending-members'),
       ('purge-join-attempts'),
-      ('delete-expired-rooms')$$,
-  'empat job cron terdaftar'
+      ('delete-expired-rooms'),
+      ('refresh-room-stats')$$,
+  'lima job cron terdaftar'
 );
 
 select ok(
