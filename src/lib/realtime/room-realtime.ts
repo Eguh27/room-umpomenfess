@@ -11,6 +11,7 @@ import type {
   RoomMember,
   RoomRealtimeSnapshot,
   SendResult,
+  SenderBadge,
 } from './types';
 
 const CHANNEL_PREFIX = 'room:';
@@ -32,7 +33,7 @@ export interface RoomRealtimeOptions {
   client: RealtimeClientLike;
   roomId: string;
   memberId: string | null;
-  self: { senderType: 'HOST' | 'GUEST'; senderName: string };
+  self: { senderType: 'HOST' | 'GUEST'; handle: string; senderBadge?: SenderBadge | null };
   initialMessages?: ChatMessage[];
   initialMembers?: RoomMember[];
   initialStatus?: MemberStatus | null;
@@ -173,7 +174,8 @@ export class RoomRealtime {
       roomId: this.roomId,
       memberId: this.memberId,
       senderType: this.self.senderType,
-      senderName: this.self.senderName,
+      handle: this.self.handle,
+      senderBadge: this.self.senderBadge ?? null,
       content: trimmed,
       clientMsgId,
       createdAt: this.now().toISOString(),
@@ -373,9 +375,8 @@ function toArray<T>(data: T[] | T | null): T[] {
 }
 
 function compareMembers(a: RoomMember, b: RoomMember): number {
-  const aNo = a.member_no ?? Number.MAX_SAFE_INTEGER;
-  const bNo = b.member_no ?? Number.MAX_SAFE_INTEGER;
-  if (aNo !== bNo) return aNo - bNo;
+  const byCreated = (a.created_at ?? '').localeCompare(b.created_at ?? '');
+  if (byCreated !== 0) return byCreated;
   return a.id.localeCompare(b.id);
 }
 
@@ -388,6 +389,7 @@ function isChatMessage(value: unknown): value is ChatMessage {
     (row.sender_type === 'HOST' || row.sender_type === 'GUEST') &&
     (row.member_id === null || typeof row.member_id === 'string') &&
     typeof row.sender_name === 'string' &&
+    (row.sender_badge === null || row.sender_badge === 'HOST' || row.sender_badge === 'VERIFIED') &&
     typeof row.content === 'string' &&
     typeof row.client_msg_id === 'string' &&
     typeof row.created_at === 'string'
@@ -399,9 +401,10 @@ function isRoomMember(value: unknown): value is RoomMember {
   const row = value as Record<string, unknown>;
   return (
     typeof row.id === 'string' &&
+    typeof row.handle === 'string' &&
+    typeof row.handle_verified === 'boolean' &&
     typeof row.status === 'string' &&
     MEMBER_STATUSES.has(row.status as MemberStatus) &&
-    (row.display_name === null || typeof row.display_name === 'string') &&
     (row.room_id === undefined || typeof row.room_id === 'string')
   );
 }

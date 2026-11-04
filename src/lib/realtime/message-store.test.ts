@@ -8,7 +8,8 @@ function message(overrides: Partial<ChatMessage> = {}): ChatMessage {
     room_id: 'room-1',
     sender_type: 'GUEST',
     member_id: 'member-1',
-    sender_name: 'Guest-01',
+    sender_name: 'wu32t76e3',
+    sender_badge: null,
     content: 'halo',
     client_msg_id: 'client-1',
     created_at: '2026-10-29T00:00:00.000Z',
@@ -21,7 +22,8 @@ function optimistic(store: MessageStore, clientMsgId: string, content = 'halo') 
     roomId: 'room-1',
     memberId: 'member-1',
     senderType: 'GUEST',
-    senderName: 'Guest-01',
+    handle: 'wu32t76e3',
+    senderBadge: 'VERIFIED',
     content,
     clientMsgId,
     createdAt: '2026-10-29T00:00:00.000Z',
@@ -55,6 +57,8 @@ describe('MessageStore', () => {
     const store = new MessageStore();
     const pending = optimistic(store, 'client-1');
     expect(pending.optimistic).toBe(true);
+    expect(pending.sender_name).toBe('wu32t76e3');
+    expect(pending.sender_badge).toBe('VERIFIED');
     expect(store.getMessages()[0]?.id).toBeLessThan(0);
 
     store.addServer(message({ id: 10, client_msg_id: 'client-1' }));

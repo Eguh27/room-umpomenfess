@@ -1,12 +1,9 @@
 export type SenderType = 'HOST' | 'GUEST';
 
-export type MemberStatus =
-  | 'PENDING'
-  | 'APPROVED'
-  | 'REJECTED'
-  | 'KICKED'
-  | 'IDLE'
-  | 'LEFT';
+/** Lencana server: HOST untuk Host, VERIFIED untuk handle buatan Admin. */
+export type SenderBadge = 'HOST' | 'VERIFIED';
+
+export type MemberStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'KICKED' | 'IDLE' | 'LEFT';
 
 /** Baris public.messages. Pesan optimistis memakai id negatif sementara. */
 export interface ChatMessage {
@@ -14,7 +11,10 @@ export interface ChatMessage {
   room_id: string;
   sender_type: SenderType;
   member_id: string | null;
+  /** Snapshot handle saat pesan dikirim; rename tidak mengubah pesan lama. */
   sender_name: string;
+  /** Lencana dari server; null untuk Guest tanpa handle terverifikasi. */
+  sender_badge: SenderBadge | null;
   content: string;
   client_msg_id: string;
   created_at: string;
@@ -23,12 +23,13 @@ export interface ChatMessage {
   errorCode?: string;
 }
 
-/** Baris public.room_members; sebagian kolom opsional karena list_members hanya mengirim subset. */
+/** Baris public.room_members; list_members hanya mengirim subset kolom. */
 export interface RoomMember {
   id: string;
   room_id?: string;
-  member_no?: number | null;
-  display_name: string | null;
+  /** Handle per room (anonim) atau handle profil (login). */
+  handle: string;
+  handle_verified: boolean;
   status: MemberStatus;
   password_version?: number;
   created_at?: string;
@@ -51,9 +52,7 @@ export interface RoomRealtimeSnapshot {
   lastError: RealtimeError | null;
 }
 
-export type SendResult =
-  | { ok: true; message: ChatMessage }
-  | { ok: false; error: string };
+export type SendResult = { ok: true; message: ChatMessage } | { ok: false; error: string };
 
 export interface PostgresChangeFilter {
   event: 'INSERT' | 'UPDATE' | 'DELETE' | '*';

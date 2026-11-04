@@ -7,6 +7,7 @@ import type {
   RoomMember,
   RoomRealtimeSnapshot,
   SendResult,
+  SenderBadge,
   SenderType,
 } from './types';
 
@@ -15,7 +16,10 @@ export interface UseRoomRealtimeOptions {
   roomId: string;
   memberId: string | null;
   senderType: SenderType;
-  senderName: string;
+  /** Handle pengirim saat ini, dari respons join/login. */
+  handle: string;
+  /** Bila belum diketahui, server tetap mengirim lencana final pada baris pesan. */
+  senderBadge?: SenderBadge | null;
   initialMessages?: ChatMessage[];
   initialMembers?: RoomMember[];
   initialStatus?: MemberStatus | null;
@@ -35,7 +39,8 @@ export function useRoomRealtime(options: UseRoomRealtimeOptions): UseRoomRealtim
     roomId,
     memberId,
     senderType,
-    senderName,
+    handle,
+    senderBadge,
     initialMessages,
     initialMembers,
     initialStatus,
@@ -48,14 +53,14 @@ export function useRoomRealtime(options: UseRoomRealtimeOptions): UseRoomRealtim
         client,
         roomId,
         memberId,
-        self: { senderType, senderName },
+        self: { senderType, handle, senderBadge: senderBadge ?? null },
         initialMessages,
         initialMembers,
         initialStatus,
         createClientMsgId,
       }),
     // Data awal bersifat snapshot saat room dibuka; perubahan berikutnya datang dari Realtime.
-    [client, roomId, memberId, senderType, senderName, initialStatus],
+    [client, roomId, memberId, senderType, handle, senderBadge, initialStatus],
   );
 
   useEffect(() => {

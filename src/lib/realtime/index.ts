@@ -15,5 +15,6 @@ export type {
   RoomMember,
   RoomRealtimeSnapshot,
   SendResult,
+  SenderBadge,
   SenderType,
 } from './types';

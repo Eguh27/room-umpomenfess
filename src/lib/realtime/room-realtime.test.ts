@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { RoomRealtime } from './room-realtime';
 import { FakeChannel, FakeClient } from './test-doubles';
-import type { ChatMessage, RoomMember } from './types';
+import type { ChatMessage, MemberStatus, RoomMember, SenderBadge } from './types';
 
 const ROOM_ID = '11111111-1111-4111-8111-111111111111';
 const MEMBER_ID = '22222222-2222-4222-8222-222222222222';
@@ -17,7 +17,8 @@ function message(overrides: Partial<ChatMessage> = {}): ChatMessage {
     room_id: ROOM_ID,
     sender_type: 'GUEST',
     member_id: MEMBER_ID,
-    sender_name: 'Guest-01',
+    sender_name: 'wu32t76e3',
+    sender_badge: null,
     content: 'halo',
     client_msg_id: CLIENT_1,
     created_at: CREATED_AT,
@@ -29,8 +30,8 @@ function member(overrides: Partial<RoomMember> = {}): RoomMember {
   return {
     id: MEMBER_ID,
     room_id: ROOM_ID,
-    member_no: 1,
-    display_name: 'Guest-01',
+    handle: 'wu32t76e3',
+    handle_verified: true,
     status: 'APPROVED',
     created_at: CREATED_AT,
     ...overrides,
@@ -41,12 +42,16 @@ function flush(): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
-function setup(options: {
-  initialMessages?: ChatMessage[];
-  initialMembers?: RoomMember[];
-  memberId?: string | null;
-  senderType?: 'HOST' | 'GUEST';
-} = {}) {
+function setup(
+  options: {
+    initialMessages?: ChatMessage[];
+    initialMembers?: RoomMember[];
+    initialStatus?: MemberStatus | null;
+    memberId?: string | null;
+    senderType?: 'HOST' | 'GUEST';
+    senderBadge?: SenderBadge | null;
+  } = {},
+) {
   const client = new FakeClient();
   const rt = new RoomRealtime({
     client,
@@ -54,10 +59,12 @@ function setup(options: {
     memberId: options.memberId ?? MEMBER_ID,
     self: {
       senderType: options.senderType ?? 'GUEST',
-      senderName: 'Guest-01',
+      handle: 'wu32t76e3',
+      senderBadge: options.senderBadge ?? 'VERIFIED',
     },
     initialMessages: options.initialMessages,
     initialMembers: options.initialMembers,
+    initialStatus: options.initialStatus,
     createClientMsgId: () => CLIENT_1,
     now: () => new Date(CREATED_AT),
   });
@@ -91,10 +98,12 @@ describe('RoomRealtime', () => {
 
     const channel = await start(rt, client);
     expect(client.channelNames).toEqual([`room:${ROOM_ID}`]);
-    expect(channel.handlers.map((handler) => [handler.filter.table, handler.filter.event])).toEqual([
-      ['messages', 'INSERT'],
-      ['room_members', '*'],
-    ]);
+    expect(channel.handlers.map((handler) => [handler.filter.table, handler.filter.event])).toEqual(
+      [
+        ['messages', 'INSERT'],
+        ['room_members', '*'],
+      ],
+    );
     expect(rt.getSnapshot()).toMatchObject({
       status: 'connected',
       historyLoaded: true,
@@ -126,7 +135,10 @@ describe('RoomRealtime', () => {
     const channel = await start(rt, client);
     client.rpcHandler = (name) => {
       if (name === 'send_message') {
-        return { data: message({ id: 7, client_msg_id: CLIENT_1 }), error: null };
+        return {
+          data: message({ id: 7, client_msg_id: CLIENT_1, sender_badge: 'VERIFIED' }),
+          error: null,
+        };
       }
       return { data: null, error: null };
     };
@@ -135,6 +147,8 @@ describe('RoomRealtime', () => {
     expect(rt.getSnapshot().messages[0]).toMatchObject({
       id: -1,
       content: 'halo',
+      sender_name: 'wu32t76e3',
+      sender_badge: 'VERIFIED',
       optimistic: true,
       sendStatus: 'sending',
     });
@@ -145,8 +159,9 @@ describe('RoomRealtime', () => {
     expect(rt.getSnapshot().messages[0]).toMatchObject({
       id: 7,
       content: 'halo',
-      optimistic: undefined,
+      sender_badge: 'VERIFIED',
     });
+    expect(rt.getSnapshot().messages[0]?.optimistic).toBeUndefined();
 
     channel.emitRow('messages', message({ id: 7, client_msg_id: CLIENT_1 }));
     expect(rt.getSnapshot().messages).toHaveLength(1);
@@ -175,10 +190,8 @@ describe('RoomRealtime', () => {
     });
     const retried = await rt.retryMessage(CLIENT_1);
     expect(retried).toMatchObject({ ok: true, message: { id: 8 } });
-    expect(rt.getSnapshot().messages[0]).toMatchObject({
-      id: 8,
-      optimistic: undefined,
-    });
+    expect(rt.getSnapshot().messages[0]).toMatchObject({ id: 8 });
+    expect(rt.getSnapshot().messages[0]?.optimistic).toBeUndefined();
   });
 
   it('backfill lagi setelah reconnect memakai id terakhir', async () => {
@@ -230,15 +243,13 @@ describe('RoomRealtime', () => {
       'room_members',
       member({
         id: MEMBER_2_ID,
-        member_no: 2,
-        display_name: 'Guest-02',
+        handle: 'k7v9m2qx1',
+        handle_verified: false,
         status: 'PENDING',
       }),
     );
-    expect(rt.getSnapshot().members.map((item) => item.display_name)).toEqual([
-      'Guest-01',
-      'Guest-02',
-    ]);
+    expect(rt.getSnapshot().members.map((item) => item.handle)).toEqual(['wu32t76e3', 'k7v9m2qx1']);
+    expect(rt.getSnapshot().members.map((item) => item.handle_verified)).toEqual([true, false]);
 
     channel.emitRow('room_members', member({ status: 'IDLE' }));
     expect(rt.getSnapshot().selfStatus).toBe('IDLE');

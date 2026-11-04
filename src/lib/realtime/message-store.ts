@@ -1,10 +1,12 @@
-import type { ChatMessage, SenderType } from './types';
+import type { ChatMessage, SenderBadge, SenderType } from './types';
 
 export interface OptimisticInput {
   roomId: string;
   memberId: string | null;
   senderType: SenderType;
-  senderName: string;
+  /** Handle pengirim saat ini; disalin ke `sender_name` seperti snapshot server. */
+  handle: string;
+  senderBadge: SenderBadge | null;
   content: string;
   clientMsgId: string;
   createdAt: string;
@@ -44,7 +46,8 @@ export class MessageStore {
       room_id: input.roomId,
       sender_type: input.senderType,
       member_id: input.memberId,
-      sender_name: input.senderName,
+      sender_name: input.handle,
+      sender_badge: input.senderBadge,
       content: input.content,
       client_msg_id: input.clientMsgId,
       created_at: input.createdAt,

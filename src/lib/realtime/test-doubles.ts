@@ -32,9 +32,11 @@ export class FakeChannel implements RealtimeChannelLike {
     return Promise.resolve('ok');
   }
 
-  emitRow(table: string, row: Record<string, unknown>): void {
+  emitRow(table: string, row: object): void {
     for (const handler of this.handlers) {
-      if (handler.filter.table === table) handler.callback({ new: row });
+      if (handler.filter.table === table) {
+        handler.callback({ new: row as Record<string, unknown> });
+      }
     }
   }
 
