@@ -51,18 +51,44 @@ describe('mapJoinError', () => {
     });
   });
 
-  it.each([
-    'ROOM_FULL',
-    'MAX_ROOMS_PER_GUEST',
-    'KICKED',
-    'REJECTED',
-    'ROOM_CLOSED',
-  ])('%s -> 403', (code) => {
+  it('rate limit join publik -> 429 + Retry-After', () => {
+    expect(mapJoinError('RATE_LIMITED', '{"retry_after":3600}')).toEqual({
+      status: 429,
+      body: { error: 'RATE_LIMITED', retryAfter: 3600 },
+      headers: { 'retry-after': '3600' },
+    });
+  });
+
+  it.each(['FEATURE_DISABLED', 'USER_SUSPENDED'])('%s -> 403', (code) => {
     expect(mapJoinError(code)).toEqual({
       status: 403,
       body: { error: code },
     });
   });
+
+  it.each(['ROOM_HIDDEN', 'ROOM_BANNED'])('%s -> 404', (code) => {
+    expect(mapJoinError(code)).toEqual({
+      status: 404,
+      body: { error: code },
+    });
+  });
+
+  it('anonim sudah punya 1 room aktif -> 409', () => {
+    expect(mapJoinError('ONE_ROOM_LIMIT')).toEqual({
+      status: 409,
+      body: { error: 'ONE_ROOM_LIMIT' },
+    });
+  });
+
+  it.each(['ROOM_FULL', 'MAX_ROOMS_PER_GUEST', 'KICKED', 'REJECTED', 'ROOM_CLOSED'])(
+    '%s -> 403',
+    (code) => {
+      expect(mapJoinError(code)).toEqual({
+        status: 403,
+        body: { error: code },
+      });
+    },
+  );
 
   it('room tidak ditemukan -> 404', () => {
     expect(mapJoinError('ROOM_NOT_FOUND')).toEqual({

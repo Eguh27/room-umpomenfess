@@ -7,8 +7,9 @@ import { mapJoinError } from '../../../lib/server/join-errors';
 import { verifyTurnstile } from '../../../lib/server/turnstile';
 import {
   getServiceClient,
-  verifyAccessToken,
+  verifyAccessTokenUser,
   type JoinRoomRow,
+  type VerifiedUser,
 } from '../../../lib/supabase/server';
 
 export const prerender = false;
@@ -101,13 +102,13 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     return json({ error: 'UNAUTHORIZED' }, 401);
   }
 
-  let userId: string | null;
+  let verified: VerifiedUser | null;
   try {
-    userId = await verifyAccessToken(accessToken);
+    verified = await verifyAccessTokenUser(accessToken);
   } catch {
     return json({ error: 'SERVER_ERROR' }, 500);
   }
-  if (!userId) {
+  if (!verified) {
     return json({ error: 'UNAUTHORIZED' }, 401);
   }
 
@@ -129,7 +130,9 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   let rpcError: { message: string; details: string | null } | null;
   try {
     const result = await service.rpc('join_room', {
-      p_user_id: userId,
+      p_user_id: verified.userId,
+      // Kontrak bagian 7: is_anonymous dari token yang diverifikasi, bukan body.
+      p_is_anonymous: verified.isAnonymous,
       p_slug: slug,
       p_password: password,
       p_ip_hash: ipHash,
@@ -158,6 +161,6 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     status: row.status,
     roomId: row.room_id,
     memberId: row.member_id,
-    displayName: row.display_name,
+    handle: row.handle,
   });
 };

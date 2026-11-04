@@ -5,7 +5,13 @@ export const slugSchema = z.string().regex(/^[A-Za-z0-9_-]{12,32}$/);
 
 export const joinRequestSchema = z.object({
   slug: slugSchema,
-  password: z.string().min(1).max(64),
+  // Opsional: hanya room PRIVATE yang butuh password. Kosong/absen -> null
+  // (kontrak bagian 7: server kirim null bila kosong).
+  password: z
+    .string()
+    .max(64)
+    .optional()
+    .transform((value) => (value ? value : null)),
   turnstileToken: z.string().min(1).max(4096),
 });
 export type JoinRequest = z.infer<typeof joinRequestSchema>;

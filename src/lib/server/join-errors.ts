@@ -9,13 +9,19 @@ export type JoinErrorMapping = {
   headers?: Record<string, string>;
 };
 
+const RETRYABLE_CODES = new Set(['LOCKED', 'ROOM_COOLDOWN', 'RATE_LIMITED']);
+
 const FORBIDDEN_CODES = new Set([
   'ROOM_FULL',
   'MAX_ROOMS_PER_GUEST',
   'KICKED',
   'REJECTED',
   'ROOM_CLOSED',
+  'FEATURE_DISABLED',
+  'USER_SUSPENDED',
 ]);
+
+const NOT_FOUND_CODES = new Set(['ROOM_NOT_FOUND', 'ROOM_HIDDEN', 'ROOM_BANNED']);
 
 /** DETAIL dari Postgres berupa JSON, mis. {"retry_after":600}. */
 export function parseRetryAfter(details: string | null | undefined): number | null {
@@ -41,7 +47,7 @@ export function mapJoinError(
     return { status: 401, body: { error: code } };
   }
 
-  if (code === 'LOCKED' || code === 'ROOM_COOLDOWN') {
+  if (RETRYABLE_CODES.has(code)) {
     const retryAfter = parseRetryAfter(details);
     return {
       status: 429,
@@ -54,8 +60,12 @@ export function mapJoinError(
     return { status: 403, body: { error: code } };
   }
 
-  if (code === 'ROOM_NOT_FOUND') {
+  if (NOT_FOUND_CODES.has(code)) {
     return { status: 404, body: { error: code } };
+  }
+
+  if (code === 'ONE_ROOM_LIMIT') {
+    return { status: 409, body: { error: code } };
   }
 
   if (code === 'INVALID_INPUT') {
