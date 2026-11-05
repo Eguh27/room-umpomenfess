@@ -8,8 +8,8 @@ export type JoinSuccess = {
   status: 'APPROVED' | 'PENDING';
   roomId: string;
   memberId: string;
-  /** Kontrak B saat ini masih `displayName`; T-52a menggantinya dengan handle server. */
-  displayName: string;
+  /** Handle acak 9 karakter dari server (bukan nama tampilan). */
+  handle: string;
 };
 
 export type JoinFailure = {

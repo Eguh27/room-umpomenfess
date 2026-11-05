@@ -10,6 +10,15 @@ export type JoinRoomRow = {
   handle: string;
 };
 
+/** Hasil RPC adopt_guest_identity (migrasi 0013). */
+export type AdoptGuestRow = {
+  room_id: string;
+  slug: string;
+  handle: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'KICKED' | 'IDLE' | 'LEFT';
+  old_user_id: string;
+};
+
 function requireEnv(value: string | undefined, name: string): string {
   if (!value) throw new Error(`${name} belum diset`);
   return value;
