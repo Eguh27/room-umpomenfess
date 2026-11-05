@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { joinRequestSchema, publicRoomsQuerySchema, reportRequestSchema } from './schemas';
+import {
+  adminCreateUserSchema,
+  joinRequestSchema,
+  publicRoomsQuerySchema,
+  reportRequestSchema,
+} from './schemas';
 
 const validSlug = 'devroom000000001';
 
@@ -76,5 +81,26 @@ describe('publicRoomsQuerySchema', () => {
     const parsed = publicRoomsQuerySchema.parse({ q: '  ', category: '' });
     expect(parsed.q).toBeNull();
     expect(parsed.category).toBeNull();
+  });
+});
+
+describe('adminCreateUserSchema', () => {
+  const base = { email: 'Org@Example.com', handle: 'org-keamanan' };
+
+  it('email dilowercase, handle dipertahankan', () => {
+    const parsed = adminCreateUserSchema.parse(base);
+    expect(parsed.email).toBe('org@example.com');
+    expect(parsed.handle).toBe('org-keamanan');
+  });
+
+  it.each(['abcdefghi', 'ab', 'org keamanan!', 'org_keamanan#'])(
+    'handle %s ditolak',
+    (handle) => {
+      expect(adminCreateUserSchema.safeParse({ ...base, handle }).success).toBe(false);
+    },
+  );
+
+  it('email tidak valid ditolak', () => {
+    expect(adminCreateUserSchema.safeParse({ ...base, email: 'bukan-email' }).success).toBe(false);
   });
 });

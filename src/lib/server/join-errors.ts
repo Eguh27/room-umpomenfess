@@ -74,6 +74,24 @@ export function mapPublicRoomsError(code: string): JoinErrorMapping {
   return { status: 500, body: { error: 'SERVER_ERROR' } };
 }
 
+/** Kode error RPC Admin (migrasi 0011) dan status HTTP-nya. */
+const ADMIN_CODE_STATUS: Record<string, number> = {
+  NOT_ADMIN: 403,
+  MFA_REQUIRED: 403,
+  HANDLE_TAKEN: 409,
+  HANDLE_INVALID: 400,
+};
+
+/** Memetakan kode error RPC Admin ke respons HTTP. */
+export function mapAdminError(code: string): JoinErrorMapping {
+  const status = ADMIN_CODE_STATUS[code];
+  if (status !== undefined) {
+    return { status, body: { error: code } };
+  }
+  // Kode tak dikenal tidak membocorkan detail internal.
+  return { status: 500, body: { error: 'SERVER_ERROR' } };
+}
+
 /** Memetakan kode error RPC join_room ke respons HTTP. */
 export function mapJoinError(
   code: string,

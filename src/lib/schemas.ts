@@ -45,6 +45,18 @@ export const publicRoomsQuerySchema = z.object({
 });
 export type PublicRoomsQuery = z.infer<typeof publicRoomsQuerySchema>;
 
+export const adminCreateUserSchema = z.object({
+  email: z.string().trim().toLowerCase().max(254).pipe(z.email()),
+  // Handle terverifikasi gaya Admin: bukan pola 9-acak (validasi penuh di RPC).
+  handle: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .regex(/^[a-z0-9._-]{3,24}$/, 'HANDLE_INVALID')
+    .refine((value) => !/^[a-z0-9]{9}$/.test(value), 'HANDLE_INVALID'),
+});
+export type AdminCreateUserRequest = z.infer<typeof adminCreateUserSchema>;
+
 export const createRoomSchema = z.object({
   name: z.string().trim().min(1).max(80),
   maxGuests: z.number().int().min(2).max(75),

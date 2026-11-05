@@ -47,6 +47,24 @@ export function getUserClient(token: string): SupabaseClient {
   });
 }
 
+/**
+ * Dekode payload JWT TANPA verifikasi signature. Hanya untuk klaim non-
+ * keamanan (mis. `aal`); validitas token tetap WAJIB diverifikasi lebih
+ * dulu lewat `verifyAccessTokenUser()` (getUser).
+ */
+export function decodeJwtClaims(token: string): Record<string, unknown> | null {
+  const parts = token.split('.');
+  if (parts.length !== 3) return null;
+  try {
+    const b64 = parts[1].replaceAll('-', '+').replaceAll('_', '/');
+    const parsed: unknown = JSON.parse(Buffer.from(b64, 'base64').toString('utf8'));
+    if (typeof parsed !== 'object' || parsed === null) return null;
+    return parsed as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
 export type VerifiedUser = {
   userId: string;
   isAnonymous: boolean;
