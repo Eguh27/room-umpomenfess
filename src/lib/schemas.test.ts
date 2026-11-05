@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { joinRequestSchema, reportRequestSchema } from './schemas';
+import { joinRequestSchema, publicRoomsQuerySchema, reportRequestSchema } from './schemas';
 
 const validSlug = 'devroom000000001';
 
@@ -46,5 +46,35 @@ describe('reportRequestSchema', () => {
 
   it('alasan di luar enum ditolak', () => {
     expect(reportRequestSchema.safeParse({ ...base, reason: 'HACK' }).success).toBe(false);
+  });
+});
+
+describe('publicRoomsQuerySchema', () => {
+  it('default: sort ACTIVE, limit 20, tanpa filter', () => {
+    const parsed = publicRoomsQuerySchema.parse({});
+    expect(parsed).toEqual({ sort: 'ACTIVE', category: null, q: null, cursor: null, limit: 20 });
+  });
+
+  it('limit dari query string dikonversi ke angka', () => {
+    expect(publicRoomsQuerySchema.parse({ limit: '10' }).limit).toBe(10);
+  });
+
+  it.each(['0', '51', 'abc'])('limit %s ditolak', (limit) => {
+    expect(publicRoomsQuerySchema.safeParse({ limit }).success).toBe(false);
+  });
+
+  it('sort di luar enum ditolak', () => {
+    expect(publicRoomsQuerySchema.safeParse({ sort: 'POPULAR' }).success).toBe(false);
+  });
+
+  it('kursor wajib pola slug', () => {
+    expect(publicRoomsQuerySchema.safeParse({ cursor: 'xx' }).success).toBe(false);
+    expect(publicRoomsQuerySchema.parse({ cursor: validSlug }).cursor).toBe(validSlug);
+  });
+
+  it('q/kategori kosong dinormalisasi ke null', () => {
+    const parsed = publicRoomsQuerySchema.parse({ q: '  ', category: '' });
+    expect(parsed.q).toBeNull();
+    expect(parsed.category).toBeNull();
   });
 });

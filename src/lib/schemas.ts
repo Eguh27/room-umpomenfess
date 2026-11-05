@@ -25,6 +25,26 @@ export const reportRequestSchema = z.object({
 });
 export type ReportRequest = z.infer<typeof reportRequestSchema>;
 
+export const publicRoomsQuerySchema = z.object({
+  sort: z.enum(['ACTIVE', 'NEW']).default('ACTIVE'),
+  category: z
+    .string()
+    .trim()
+    .max(40)
+    .optional()
+    .transform((value) => value || null),
+  q: z
+    .string()
+    .trim()
+    .max(80)
+    .optional()
+    .transform((value) => value || null),
+  // Kursor = slug baris terakhir halaman sebelumnya.
+  cursor: slugSchema.optional().transform((value) => value ?? null),
+  limit: z.coerce.number().int().min(1).max(50).default(20),
+});
+export type PublicRoomsQuery = z.infer<typeof publicRoomsQuerySchema>;
+
 export const createRoomSchema = z.object({
   name: z.string().trim().min(1).max(80),
   maxGuests: z.number().int().min(2).max(75),

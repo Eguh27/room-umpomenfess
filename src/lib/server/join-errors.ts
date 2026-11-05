@@ -57,6 +57,23 @@ export function parseRetryAfter(details: string | null | undefined): number | nu
   }
 }
 
+/** Kode error RPC list_public_rooms (migrasi 0012) dan status HTTP-nya. */
+const FEED_CODE_STATUS: Record<string, number> = {
+  // Flag FYP mati: endpoint publik ini tidak tersedia.
+  FEATURE_DISABLED: 403,
+  INVALID_INPUT: 400,
+};
+
+/** Memetakan kode error RPC list_public_rooms ke respons HTTP. */
+export function mapPublicRoomsError(code: string): JoinErrorMapping {
+  const status = FEED_CODE_STATUS[code];
+  if (status !== undefined) {
+    return { status, body: { error: code } };
+  }
+  // Kode tak dikenal tidak membocorkan detail internal.
+  return { status: 500, body: { error: 'SERVER_ERROR' } };
+}
+
 /** Memetakan kode error RPC join_room ke respons HTTP. */
 export function mapJoinError(
   code: string,
