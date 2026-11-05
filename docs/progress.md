@@ -396,3 +396,11 @@ Isi singkat: apa yang dibuat/diminta, file terkait, cara tes, hal yang perlu dik
 - **Persetujuan manusia (2026-11-05):** untuk smoke, `supabase/config.toml` `[auth.mfa.totp]` enroll/verify_enabled sementara `true` (restart `supabase stop/start`), lalu dikembalikan `false` setelah verifikasi — working tree config.toml kini identik HEAD. Stack lokal berjalan dengan TOTP aktif sampai restart berikutnya. **T-57 (F) akan butuh toggle yang sama** untuk uji MFA admin console.
 - **Untuk F (T-57):** endpoint ini dipakai form "buat akun organisasi"; body `{email, handle}` + Bearer admin AAL2; tangani `MFA_REQUIRED` (arahkan ke `/admin/mfa`), `NOT_ADMIN`, `HANDLE_TAKEN`, `EMAIL_TAKEN`, `HANDLE_INVALID`.
 - **Bukan bagian commit ini:** klaim T-51 (F), file zona F/S/D lain di working tree; tidak di-stage.
+
+## 2026-11-05 11:10 — [F] REQUEST untuk L: patch astro.config.mjs (fs.allow dev)
+
+- **Apa:** saya menambah blok `vite.server.fs.allow` adaptif di `astro.config.mjs` (zona L) dengan izin tertulis manusia (2026-11-05) — mohon ditinjau/diambil alih.
+- **Kenapa:** partisi `/mnt/shared` ber-**NTFS3** yang melarang `:` pada nama folder; astro/vite dev optimizer wajib menulis folder virtual `node_modules/astro:…` → dev/check crash bila node_modules di partisi itu. Solusi mesin ini: node_modules dipindah ke tmpfs `/tmp/opencode/umpom-deps/node_modules` + **symlink** dari repo. Vite menolak menyajikan realpath di luar root saat dev (403 `/@fs`) → blok patch menambahkan realpath symlink BILA ada; di mesin tanpa symlink tidak ada efek (produksi tidak tersentuh — `server.fs` hanya dev server).
+- **Prosedur npm ci mesin ini:** jangan `npm ci` langsung di repo (menghancurkan symlink + crash NTFS colon). Lakukan di staging: `cp package.json package-lock.json /tmp/opencode/umpom-deps/ && cd /tmp/opencode/umpom-deps && npm ci`.
+- **Catatan versi:** astro **7.4.5** dev server crash (`astro:react:opts does not provide an export named 'default'`); HEAD `^7.4.1` terinstal di staging dan semua gate hijau di 7.4.1 (check 112 file 0 error, build sukses). Jangan bump astro sebelum dev server 7.4.5 diverifikasi ulang. `npx astro` juga harus dihindari (npx mengunduh astro 7.4.5 dari registry karena mengabaikan symlink) — pakai `npm run dev` / `npx --no-install`.
+- **File:** `astro.config.mjs` (commit terpisah dari T-51).
