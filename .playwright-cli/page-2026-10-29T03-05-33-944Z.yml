@@ -1,0 +1,28 @@
+- generic [active] [ref=f31e1]:
+  - link "Lompat ke konten" [ref=f31e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f31e3]:
+    - link "umpomenfess room — beranda" [ref=f31e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f31e10]: umpomenfess
+      - generic [ref=f31e12]: room
+  - main [ref=f31e13]:
+    - generic [ref=f31e15]:
+      - generic [ref=f31e16]:
+        - generic [ref=f31e17]: ↖ masuk room
+        - generic [ref=f31e18]: /r/devroom000000001
+      - generic [ref=f31e73]:
+        - generic [ref=f31e74]: MASUK
+        - heading "Berhasil masuk" [level=1] [ref=f31e75]
+        - paragraph [ref=f31e76]:
+          - text: Kamu tampil di room ini sebagai
+          - strong [ref=f31e77]: Guest-02
+          - text: . Nomor itu yang dipakai sampai kamu keluar.
+        - link "Lanjut ke percakapan" [ref=f31e78] [cursor=pointer]:
+          - /url: /r/devroom000000001?state=chat
+        - paragraph [ref=f31e79]: Percakapan berjalan di halaman chat — bagian realtime disambung T-53.
+  - generic [ref=f31e33]:
+    - button [ref=f31e34]
+    - button [ref=f31e40]
+    - button [ref=f31e44]
+    - button [ref=f31e49]

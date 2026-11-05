@@ -1,0 +1,49 @@
+---
+import Base from '../../layouts/Base.astro';
+import MfaEnrollPanel from '../../components/auth/MfaEnrollPanel';
+import { adminEnrollmentAccess } from '../../components/auth/adminGuard.server';
+import { safeNext } from '../../components/auth/authMessages';
+
+export const prerender = false;
+const access = await adminEnrollmentAccess(Astro.cookies);
+
+if (access.kind === 'login') return Astro.redirect('/login?next=/admin/mfa');
+if (access.kind === 'forbidden') Astro.response.status = 403;
+if (access.kind === 'unavailable') Astro.response.status = 503;
+
+const next = safeNext(Astro.url.searchParams.get('next') ?? '/admin');
+---
+
+<Base title="MFA Admin — umpomenfess room" noindex>
+  <section class="narrow auth">
+    <p class="eyebrow">admin platform</p>
+    <h1>Keamanan akun</h1>
+    <p class="auth__sub">
+      Admin platform wajib mencapai AAL2 dengan TOTP sebelum membuka data pengguna atau laporan.
+    </p>
+
+    {access.kind === 'ok' ? (
+      <MfaEnrollPanel client:load next={next} />
+    ) : access.kind === 'forbidden' ? (
+      <div class="glass-card auth__card">
+        <span class="badge badge--danger">DITOLAK</span>
+        <h2>Bukan akun Admin</h2>
+        <p class="auth__sub">Halaman ini hanya untuk Admin platform.</p>
+        <a class="btn btn--ghost btn--block" href="/">
+          Kembali ke beranda
+        </a>
+      </div>
+    ) : (
+      <div class="glass-card auth__card">
+        <span class="badge badge--danger">BELUM SIAP</span>
+        <h2>Skema Admin belum tersedia</h2>
+        <p class="auth__sub">
+          Kolom role Admin baru dibuat pada migration T-16. Hubungi pengelola.
+        </p>
+        <a class="btn btn--ghost btn--block" href="/">
+          Kembali ke beranda
+        </a>
+      </div>
+    )}
+  </section>
+</Base>

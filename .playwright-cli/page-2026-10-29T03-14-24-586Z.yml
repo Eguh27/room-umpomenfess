@@ -1,0 +1,93 @@
+- generic [active] [ref=f36e1]:
+  - link "Lompat ke konten" [ref=f36e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f36e3]:
+    - generic [ref=f36e4]:
+      - link "umpomenfess room — beranda" [ref=f36e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f36e10]: umpomenfess
+        - generic [ref=f36e12]: room
+      - link "Masuk" [ref=f36e13] [cursor=pointer]:
+        - /url: /login
+  - main [ref=f36e14]:
+    - article [ref=f36e15]:
+      - paragraph [ref=f36e16]: kebijakan
+      - heading "Privasi" [level=1] [ref=f36e17]
+      - paragraph [ref=f36e18]:
+        - text: Ringkasan jujur tentang data yang lalui room ini. Baca bersama
+        - link "batas anonimitas" [ref=f36e19] [cursor=pointer]:
+          - /url: /batas-anonimitas
+        - text: .
+      - heading "Yang disimpan" [level=2] [ref=f36e20]
+      - list [ref=f36e21]:
+        - listitem [ref=f36e22]:
+          - strong [ref=f36e23]: Isi pesan dan nomor Guest
+          - text: di database Supabase selama room aktif (7 hari) plus 15 hari arsip, lalu dihapus permanen beserta subjek room.
+        - listitem [ref=f36e24]:
+          - strong [ref=f36e25]: Password room
+          - text: disimpan berupa hash, bukan teks asli. Password tampil sekali saat dibuat atau diganti.
+        - listitem [ref=f36e26]:
+          - strong [ref=f36e27]: Alamat jaringan (IP) dalam versi hash
+          - text: untuk melawan tebak-tebakan password — hash HMAC, alamat aslinya tidak pernah disimpan atau ditulis di log aplikasi. Untuk koneksi IPv6, satu subnet (/64) menghasilkan hash yang sama. Catatan gagal password ini digusur dari database setelah 24 jam.
+        - listitem [ref=f36e28]:
+          - strong [ref=f36e29]: Akun Host
+          - text: (email, password ter-hash, tier) selama akun masih ada. Menambahkan akun artinya menambah data.
+      - heading "Yang disimpan di browsermu" [level=2] [ref=f36e30]
+      - list [ref=f36e31]:
+        - listitem [ref=f36e32]:
+          - strong [ref=f36e33]: Sesi anonim
+          - text: untuk mengabstraksi tiap Guest — ini yang membuat nomormu (Guest-01, dst.) tetap sama saat balik ke room. Hilang bila storage situs dibersihkan.
+        - listitem [ref=f36e34]:
+          - strong [ref=f36e35]: Penanda room yang sudah dibaca
+          - text: di
+          - code [ref=f36e36]: localStorage
+          - text: supaya daftar "Ruang saya" menandai pesan baru.
+      - heading "Yang tidak pernah diberikan ke Host" [level=2] [ref=f36e37]
+      - paragraph [ref=f36e38]: Identitas Guest (akun internal per browser) disimpan di tabel terpisah yang tidak pernah terbaca Host — termasuk lewat daftar member maupun pesan. Host hanya menampung Guest-01, Guest-02, dst.
+      - heading "Tulis lewat fungsi, bukan pintu terbuka" [level=2] [ref=f36e39]
+      - paragraph [ref=f36e40]: "Semua penulisan data lewat satu pintu: fungsi tertutup di database. Tabel inti tidak mengizinkan client menambah, mengubah, atau menghapus langsung — Guest hanya bisa menyentuh room yang diikutinya."
+      - heading "Pihak ketiga yang bekerja di halaman ini" [level=2] [ref=f36e41]
+      - list [ref=f36e42]:
+        - listitem [ref=f36e43]:
+          - strong [ref=f36e44]: Supabase
+          - text: (database, otentikasi anonim, Realtime) dan
+          - strong [ref=f36e45]: Vercel
+          - text: (hosting) menjalankan layanan ini.
+        - listitem [ref=f36e46]:
+          - strong [ref=f36e47]: Cloudflare Turnstile
+          - text: dicek sekali saat masuk room untuk memastikan manusia, bukan bot. Widget ini tidak membaca isi percakapan — hanya halaman masuk yang menyentuhnya.
+        - listitem [ref=f36e48]:
+          - strong [ref=f36e49]: Google Fonts
+          - text: menyuguhi huruf-huruf situs (font ke browsermu, bukan sebaliknya).
+      - heading "Yang berada di luar kendali aplikasi" [level=2] [ref=f36e50]
+      - paragraph [ref=f36e51]: Layanan infrastruktur di atas menyimpan log teknis sesuai kebijakan mereka masing-masing, seperti catatan alamat jaringan di level jaringan. Log itu tidak murni milik aplikasi ini; sifatnya samar dan tidak berisi isi percakapan.
+      - paragraph [ref=f36e52]:
+        - text: Situs
+        - link "Menfess, situs utama" [ref=f36e53] [cursor=pointer]:
+          - /url: https://umpomenfess.my.id
+          - text: umpomenfess.my.id ↗
+        - text: beroperasi terpisah; kebijakan masing-masing subsite tidak saling menetapkan.
+  - contentinfo [ref=f36e54]:
+    - generic [ref=f36e55]:
+      - generic [ref=f36e56]:
+        - generic [ref=f36e57]:
+          - paragraph [ref=f36e58]: umpomenfess room
+          - paragraph [ref=f36e59]: "Room chat anonim untuk obrolan berbatas waktu: aktif 7 hari, arsip 15 hari, lalu dihapus permanen. Bagian ekosistem UMPOMENFESS."
+        - navigation "Navigasi footer" [ref=f36e60]:
+          - link "Dasbor Host" [ref=f36e61] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Ruang saya" [ref=f36e62] [cursor=pointer]:
+            - /url: /rooms
+          - link "Privasi" [ref=f36e63] [cursor=pointer]:
+            - /url: /privasi
+          - link "Batas anonimitas" [ref=f36e64] [cursor=pointer]:
+            - /url: /batas-anonimitas
+          - link "Menfess, situs utama" [ref=f36e65] [cursor=pointer]:
+            - /url: https://umpomenfess.my.id
+            - text: Menfess utama ↗
+      - generic [ref=f36e66]: © 2026 umpomenfess — room.umpomenfess.my.id
+  - generic [ref=f36e69]:
+    - button [ref=f36e70]
+    - button [ref=f36e76]
+    - button [ref=f36e80]
+    - button [ref=f36e85]

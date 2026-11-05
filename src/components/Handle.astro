@@ -1,0 +1,19 @@
+---
+/** Handle anonim + lencana untuk halaman statis (pasangan Handle.tsx di island).
+    Semua dirender sebagai teks biasa; lencana (HOST/VERIFIED) berasal dari server (D-14b). */
+interface Props {
+  /** Handle dari server/mockData — sistem [a-z0-9]{9}, buatan Admin [a-z0-9._-]{3,24}. */
+  handle: string;
+  badge?: 'HOST' | 'VERIFIED' | null;
+  class?: string;
+}
+
+const { handle, badge = null, class: className } = Astro.props;
+---
+
+<span class:list={['handle', className]}>
+  <span class="handle__name">{handle}</span>
+  {badge !== null && (
+    <span class={`handle__badge handle__badge--${badge.toLowerCase()}`}>{badge}</span>
+  )}
+</span>

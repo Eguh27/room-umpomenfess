@@ -1,0 +1,167 @@
+- generic [active] [ref=f11e1]:
+  - link "Lompat ke konten" [ref=f11e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f11e3]:
+    - generic [ref=f11e4]:
+      - link "umpomenfess room — beranda" [ref=f11e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f11e10]: umpomenfess
+        - generic [ref=f11e12]: room
+      - navigation "Navigasi utama" [ref=f11e13]:
+        - link "Jelajahi" [ref=f11e14] [cursor=pointer]:
+          - /url: /jelajahi
+        - link "Dasbor Host" [ref=f11e15] [cursor=pointer]:
+          - /url: /dashboard
+        - link "Ruang saya" [ref=f11e16] [cursor=pointer]:
+          - /url: /rooms
+        - link "Privasi" [ref=f11e17] [cursor=pointer]:
+          - /url: /privasi
+  - main [ref=f11e21]:
+    - generic [ref=f11e22]:
+      - paragraph [ref=f11e23]: admin platform · AAL2 · pratinjau T-32
+      - heading "Room" [level=1] [ref=f11e24]
+      - paragraph [ref=f11e26]:
+        - text: Pratinjau kerangka (dev saja) memakai data tiruan
+        - code [ref=f11e27]: mockAdmin
+        - text: . Data nyata menyusul lewat RPC Admin saat T-57.
+      - navigation "Menu konsol admin" [ref=f11e28]:
+        - link "Ringkasan" [ref=f11e29] [cursor=pointer]:
+          - /url: /admin?state=preview
+        - link "Pengguna" [ref=f11e30] [cursor=pointer]:
+          - /url: /admin/users?state=preview
+        - link "Laporan" [ref=f11e31] [cursor=pointer]:
+          - /url: /admin/reports?state=preview
+        - link "Room" [ref=f11e32] [cursor=pointer]:
+          - /url: /admin/rooms?state=preview
+        - link "Audit" [ref=f11e33] [cursor=pointer]:
+          - /url: /admin/audit?state=preview
+      - paragraph [ref=f11e34]:
+        - text: Semua room dengan status katalognya — privat maupun publik. Room privat tampil di konsol tetapi tidak pernah bisa dikembalikan ke FYP (
+        - code [ref=f11e35]: VISIBILITY_LOCKED
+        - text: ).
+      - table [ref=f11e37]:
+        - rowgroup [ref=f11e38]:
+          - row [ref=f11e39]:
+            - columnheader "Room" [ref=f11e40]
+            - columnheader "Visibilitas" [ref=f11e41]
+            - columnheader "Status katalog" [ref=f11e42]
+            - columnheader "Anggota" [ref=f11e43]
+            - columnheader "Umur" [ref=f11e44]
+            - columnheader "Laporan" [ref=f11e45]
+            - columnheader "Aksi" [ref=f11e46]
+        - rowgroup [ref=f11e47]:
+          - row [ref=f11e48]:
+            - cell [ref=f11e49]:
+              - paragraph [ref=f11e50]: Curhat Akhir Semester
+              - paragraph [ref=f11e51]: j9qXc2Lm7BvHt4kd
+            - cell "publik" [ref=f11e52]
+            - cell "Tampak di FYP" [ref=f11e54]
+            - cell "23/40" [ref=f11e56]
+            - cell "berakhir 6 hari" [ref=f11e57]
+            - cell "1" [ref=f11e58]
+            - cell [ref=f11e59]:
+              - generic [ref=f11e60]:
+                - button "Blokir" [disabled] [ref=f11e61]
+                - button "Tutup room" [disabled] [ref=f11e62]
+          - row [ref=f11e63]:
+            - cell [ref=f11e64]:
+              - paragraph [ref=f11e65]: Kuis Malam Bonus
+              - paragraph [ref=f11e66]: m4kP2rVt9wQsJz1x
+            - cell "publik" [ref=f11e67]
+            - cell "Tersembunyi" [ref=f11e69]
+            - cell "40/40" [ref=f11e71]
+            - cell "berakhir 2 hari" [ref=f11e72]
+            - cell "3" [ref=f11e73]
+            - cell [ref=f11e74]:
+              - generic [ref=f11e75]:
+                - button "Blokir" [disabled] [ref=f11e76]
+                - button "Tutup room" [disabled] [ref=f11e77]
+          - row [ref=f11e78]:
+            - cell [ref=f11e79]:
+              - paragraph [ref=f11e80]: Tim Esports Kampus
+              - paragraph [ref=f11e81]: n8sWb6Kp3TdmYz9h
+            - cell "publik" [ref=f11e82]
+            - cell "Tampak di FYP" [ref=f11e84]
+            - cell "40/40" [ref=f11e86]
+            - cell "berakhir 5 hari" [ref=f11e87]
+            - cell "0" [ref=f11e88]
+            - cell [ref=f11e89]:
+              - generic [ref=f11e90]:
+                - button "Blokir" [disabled] [ref=f11e91]
+                - button "Tutup room" [disabled] [ref=f11e92]
+          - row [ref=f11e93]:
+            - cell [ref=f11e94]:
+              - paragraph [ref=f11e95]: Kilat Balapan Liar
+              - paragraph [ref=f11e96]: q6tNv3mZ8KxRpd2w
+            - cell "publik" [ref=f11e97]
+            - cell "Diblokir" [ref=f11e99]
+            - cell "14/40" [ref=f11e101]
+            - cell "berakhir 4 hari" [ref=f11e102]
+            - cell "7" [ref=f11e103]
+            - cell [ref=f11e104]:
+              - generic [ref=f11e105]:
+                - button "Blokir" [disabled] [ref=f11e106]
+                - button "Tutup room" [disabled] [ref=f11e107]
+          - row [ref=f11e108]:
+            - cell [ref=f11e109]:
+              - paragraph [ref=f11e110]: Rapat & Koordinasi KKN
+              - paragraph [ref=f11e111]: k3tK9mQp2weR7uds
+            - cell "privat" [ref=f11e112]
+            - cell "Tidak di FYP" [ref=f11e114]
+            - cell "12/40" [ref=f11e116]
+            - cell "berakhir 6 hari" [ref=f11e117]
+            - cell "0" [ref=f11e118]
+            - cell [ref=f11e119]:
+              - generic [ref=f11e120]:
+                - button "Blokir" [disabled] [ref=f11e121]
+                - button "Tutup room" [disabled] [ref=f11e122]
+          - row [ref=f11e123]:
+            - cell [ref=f11e124]:
+              - paragraph [ref=f11e125]: Musyawarah Persewaan
+              - paragraph [ref=f11e126]: pN4rFzK7bWqM8jcD
+            - cell "privat" [ref=f11e127]
+            - cell "Tidak di FYP" [ref=f11e129]
+            - cell "18/25" [ref=f11e131]
+            - cell "arsip 14 hari lagi" [ref=f11e132]
+            - cell "0" [ref=f11e133]
+            - cell [ref=f11e134]:
+              - generic [ref=f11e135]:
+                - button "Blokir" [disabled] [ref=f11e136]
+                - button "Tutup room" [disabled] [ref=f11e137]
+      - generic [ref=f11e138]:
+        - heading "Niat aksi" [level=2] [ref=f11e139]
+        - paragraph [ref=f11e140]:
+          - text: "\"Tutup room\" memakai"
+          - code [ref=f11e141]: admin_close_room
+          - text: ": Guest kehilangan akses, arsip tetap separuh umur room. Blokir dan turun dari FYP memakai"
+          - code [ref=f11e142]: admin_set_listing
+          - text: ; perubahan status katalog tercatat di audit log.
+        - paragraph [ref=f11e143]: Aksi dalam tabel belum berfungsi — disambungkan saat T-57.
+  - contentinfo [ref=f11e144]:
+    - generic [ref=f11e145]:
+      - generic [ref=f11e146]:
+        - generic [ref=f11e147]:
+          - paragraph [ref=f11e148]: umpomenfess room
+          - paragraph [ref=f11e149]: "Room chat anonim untuk obrolan berbatas waktu: aktif 7 hari, arsip 15 hari, lalu dihapus permanen. Bagian ekosistem UMPOMENFESS."
+        - navigation "Navigasi footer" [ref=f11e150]:
+          - link "Jelajahi room publik" [ref=f11e151] [cursor=pointer]:
+            - /url: /jelajahi
+          - link "Dasbor Host" [ref=f11e152] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Ruang saya" [ref=f11e153] [cursor=pointer]:
+            - /url: /rooms
+          - link "Aturan konten" [ref=f11e154] [cursor=pointer]:
+            - /url: /aturan-konten
+          - link "Privasi" [ref=f11e155] [cursor=pointer]:
+            - /url: /privasi
+          - link "Batas anonimitas" [ref=f11e156] [cursor=pointer]:
+            - /url: /batas-anonimitas
+          - link "Menfess, situs utama" [ref=f11e157] [cursor=pointer]:
+            - /url: https://umpomenfess.my.id
+            - text: Menfess utama ↗
+      - generic [ref=f11e158]: © 2026 umpomenfess — room.umpomenfess.my.id
+  - generic [ref=f11e161]:
+    - button [ref=f11e162]
+    - button [ref=f11e168]
+    - button [ref=f11e172]
+    - button [ref=f11e177]

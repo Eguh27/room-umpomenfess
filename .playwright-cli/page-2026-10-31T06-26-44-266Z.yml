@@ -1,0 +1,161 @@
+- generic [active] [ref=f18e1]:
+  - link "Lompat ke konten" [ref=f18e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f18e3]:
+    - link "umpomenfess room — beranda" [ref=f18e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f18e10]: umpomenfess
+      - generic [ref=f18e12]: room
+  - main [ref=f18e16]:
+    - generic [ref=f18e17]:
+      - paragraph [ref=f18e18]: FYP · room publik · pratinjau T-32
+      - heading "Jelajah" [level=1] [ref=f18e19]
+      - paragraph [ref=f18e20]: Daftar room publik yang terbuka untuk siapa pun. Yang tampil hanya metadata — nama, deskripsi singkat, kategori, jumlah anggota, dan aktivitas terakhir. Isi chat baru terbaca setelah kamu join, dan join memakai satu kursi.
+      - generic [ref=f18e22]:
+        - generic [ref=f18e23]:
+          - generic [ref=f18e24]:
+            - generic [ref=f18e25]: Cari nama room
+            - searchbox "Cari nama room" [ref=f18e26]
+          - generic [ref=f18e27]:
+            - generic [ref=f18e28]: Urutan
+            - combobox "Urutan" [ref=f18e29]:
+              - option "Ramai" [selected]
+              - option "Terbaru"
+        - group "Filter kategori" [ref=f18e30]:
+          - button "Semua" [pressed] [ref=f18e31] [cursor=pointer]
+          - button "umum" [ref=f18e32] [cursor=pointer]
+          - button "kampus" [ref=f18e33] [cursor=pointer]
+          - button "hobi" [ref=f18e34] [cursor=pointer]
+          - button "curhat" [ref=f18e35] [cursor=pointer]
+          - button "game" [ref=f18e36] [cursor=pointer]
+          - button "belajar" [ref=f18e37] [cursor=pointer]
+          - button "lainnya" [ref=f18e38] [cursor=pointer]
+        - list [ref=f18e39]:
+          - listitem [ref=f18e40]:
+            - generic [ref=f18e41]:
+              - heading "Final Putaran Kuis malam ini" [level=3] [ref=f18e42]
+              - generic [ref=f18e43]: Penuh
+            - paragraph [ref=f18e44]: Kuis ringan tiap malam, pemenang diumumkan di chat. Salam sapa dulu, jangan tunggu lama.
+            - img "40 dari 40 kursi terpakai" [ref=f18e45]
+            - paragraph [ref=f18e47]:
+              - generic [ref=f18e48]: lainnya
+              - generic [ref=f18e49]: 40/40 anggota
+              - generic [ref=f18e50]: aktif 1 menit lalu
+            - generic [ref=f18e51]:
+              - button "Kursi penuh" [disabled] [ref=f18e52]
+              - button "Laporkan" [ref=f18e53] [cursor=pointer]
+          - listitem [ref=f18e54]:
+            - generic [ref=f18e55]:
+              - heading "Diskusi Etika AI" [level=3] [ref=f18e56]
+              - generic [ref=f18e57]: Bisa gabung
+            - paragraph [ref=f18e58]: Kumpul sore membahas etika pemakaian AI untuk tugas dan pekerjaan kantoran.
+            - img "30 dari 40 kursi terpakai" [ref=f18e59]
+            - paragraph [ref=f18e61]:
+              - generic [ref=f18e62]: belajar
+              - generic [ref=f18e63]: 30/40 anggota
+              - generic [ref=f18e64]: aktif 2 menit lalu
+            - generic [ref=f18e65]:
+              - link "Gabung" [ref=f18e66] [cursor=pointer]:
+                - /url: /r/f7RwK3tQ9bNmZ5c2
+              - button "Laporkan" [ref=f18e67] [cursor=pointer]
+          - listitem [ref=f18e68]:
+            - generic [ref=f18e69]:
+              - heading "Curhat Akhir Semester" [level=3] [ref=f18e70]
+              - generic [ref=f18e71]: Bisa gabung
+            - paragraph [ref=f18e72]: Tempat kumpul curhat dosen, tugas menumpuk, dan rencana liburan. Tetap sopan walau lelah.
+            - img "23 dari 40 kursi terpakai" [ref=f18e73]
+            - paragraph [ref=f18e75]:
+              - generic [ref=f18e76]: curhat
+              - generic [ref=f18e77]: 23/40 anggota
+              - generic [ref=f18e78]: aktif 3 menit lalu
+            - generic [ref=f18e79]:
+              - link "Gabung" [ref=f18e80] [cursor=pointer]:
+                - /url: /r/j9qXc2Lm7BvHt4kd
+              - button "Laporkan" [ref=f18e81] [cursor=pointer]
+          - listitem [ref=f18e82]:
+            - generic [ref=f18e83]:
+              - heading "Tim Esports Kampus" [level=3] [ref=f18e84]
+              - generic [ref=f18e85]: Penuh
+            - paragraph [ref=f18e86]: Papan koordinasi latihan dan pencarian pemain cadangan untuk turnamen M2.
+            - img "40 dari 40 kursi terpakai" [ref=f18e87]
+            - paragraph [ref=f18e89]:
+              - generic [ref=f18e90]: game
+              - generic [ref=f18e91]: 40/40 anggota
+              - generic [ref=f18e92]: aktif 4 menit lalu
+            - generic [ref=f18e93]:
+              - button "Kursi penuh" [disabled] [ref=f18e94]
+              - button "Laporkan" [ref=f18e95] [cursor=pointer]
+          - listitem [ref=f18e96]:
+            - generic [ref=f18e97]:
+              - heading "Latihan Korps Drum Band" [level=3] [ref=f18e98]
+              - generic [ref=f18e99]: Bisa gabung
+            - paragraph [ref=f18e100]: Pengumuman jadwal latihan dan pembagian permainan musik untuk lomba provinsi.
+            - img "12 dari 40 kursi terpakai" [ref=f18e101]
+            - paragraph [ref=f18e103]:
+              - generic [ref=f18e104]: kampus
+              - generic [ref=f18e105]: 12/40 anggota
+              - generic [ref=f18e106]: aktif 35 menit lalu
+            - generic [ref=f18e107]:
+              - link "Gabung" [ref=f18e108] [cursor=pointer]:
+                - /url: /r/g5Tz8wMq2BfxLr4y
+              - button "Laporkan" [ref=f18e109] [cursor=pointer]
+          - listitem [ref=f18e110]:
+            - generic [ref=f18e111]:
+              - heading "Sewa Kontrakan Bareng" [level=3] [ref=f18e112]
+              - generic [ref=f18e113]: Bisa gabung
+            - paragraph [ref=f18e114]: Mencari teman kontrakan dekat kampus. Diskusi harga, jaminan, dan bersama.
+            - img "5 dari 40 kursi terpakai" [ref=f18e115]
+            - paragraph [ref=f18e117]:
+              - generic [ref=f18e118]: umum
+              - generic [ref=f18e119]: 5/40 anggota
+              - generic [ref=f18e120]: aktif 1 hari lalu
+            - generic [ref=f18e121]:
+              - link "Gabung" [ref=f18e122] [cursor=pointer]:
+                - /url: /r/v2QmRn7tXpKdIc6u
+              - button "Laporkan" [ref=f18e123] [cursor=pointer]
+          - listitem [ref=f18e124]:
+            - generic [ref=f18e125]:
+              - heading "Komunitas Rakit PC" [level=3] [ref=f18e126]
+              - generic [ref=f18e127]: Bisa gabung
+            - paragraph [ref=f18e128]: Sharing kebutuhan komponen dan pengalaman merakit. Bawa spesifikasi kamu.
+            - img "9 dari 40 kursi terpakai" [ref=f18e129]
+            - paragraph [ref=f18e131]:
+              - generic [ref=f18e132]: hobi
+              - generic [ref=f18e133]: 9/40 anggota
+              - generic [ref=f18e134]: aktif 2 hari lalu
+            - generic [ref=f18e135]:
+              - link "Gabung" [ref=f18e136] [cursor=pointer]:
+                - /url: /r/h4DyL9mW3TqvNr1s
+              - button "Laporkan" [ref=f18e137] [cursor=pointer]
+        - paragraph [ref=f18e138]: Laporan dihitung dari pelapor unik — 3 pelapor berbeda membuat room turun dari daftar ini sampai Admin meninjau. Di pratinjau ini laporan hanya dicatat di sesi browser.
+      - generic [ref=f18e139]:
+        - heading "Tentang laporan" [level=2] [ref=f18e140]
+        - paragraph [ref=f18e141]: Identitas pelapor tidak ditampilkan ke Host atau Admin; server memakai penanda unik agar satu pelapor dihitung sekali per room. 3 laporan unik menandai room sebagai tersembunyi dari FYP sampai Admin meninjau.
+        - paragraph [ref=f18e142]:
+          - text: Laporan lengkap di
+          - link "aturan konten" [ref=f18e143] [cursor=pointer]:
+            - /url: /aturan-konten
+          - text: . Lapor bisa dari member room; akun login bisa melapor room publik; Host tidak bisa melaporkan room miliknya.
+  - contentinfo [ref=f18e144]:
+    - generic [ref=f18e145]:
+      - generic [ref=f18e146]:
+        - generic [ref=f18e147]:
+          - paragraph [ref=f18e148]: umpomenfess room
+          - paragraph [ref=f18e149]: "Room chat anonim untuk obrolan berbatas waktu: aktif 7 hari, arsip 15 hari, lalu dihapus permanen. Bagian ekosistem UMPOMENFESS."
+        - navigation "Navigasi footer" [ref=f18e150]:
+          - link "Jelajahi room publik" [ref=f18e151] [cursor=pointer]:
+            - /url: /jelajahi
+          - link "Dasbor Host" [ref=f18e152] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Ruang saya" [ref=f18e153] [cursor=pointer]:
+            - /url: /rooms
+          - link "Aturan konten" [ref=f18e154] [cursor=pointer]:
+            - /url: /aturan-konten
+          - link "Privasi" [ref=f18e155] [cursor=pointer]:
+            - /url: /privasi
+          - link "Batas anonimitas" [ref=f18e156] [cursor=pointer]:
+            - /url: /batas-anonimitas
+          - link "Menfess, situs utama" [ref=f18e157] [cursor=pointer]:
+            - /url: https://umpomenfess.my.id
+            - text: Menfess utama ↗
+      - generic [ref=f18e158]: © 2026 umpomenfess — room.umpomenfess.my.id

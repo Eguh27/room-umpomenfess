@@ -1,0 +1,49 @@
+- generic [active] [ref=f19e1]:
+  - link "Lompat ke konten" [ref=f19e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f19e3]:
+    - link "umpomenfess room — beranda" [ref=f19e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f19e10]: umpomenfess
+      - generic [ref=f19e12]: room
+  - main [ref=f19e16]:
+    - generic [ref=f19e17]:
+      - paragraph [ref=f19e18]: FYP · room publik
+      - heading "Jelajah" [level=1] [ref=f19e19]
+      - paragraph [ref=f19e20]: Daftar room publik yang terbuka untuk siapa pun. Yang tampil hanya metadata — nama, deskripsi singkat, kategori, jumlah anggota, dan aktivitas terakhir. Isi chat baru terbaca setelah kamu join, dan join memakai satu kursi.
+      - generic [ref=f19e21]:
+        - heading "Ruang terbuka sedang ditutup" [level=2] [ref=f19e22]
+        - paragraph [ref=f19e23]: Pengelola belum menyalakan daftar room publik. Room privat tetap bisa dibuka lewat link yang dibagikan Host — daftar terbuka tidak mengubah itu.
+      - group [ref=f19e24]:
+        - generic "Pratinjau kerangka daftar (T-32)" [ref=f19e25]
+      - generic [ref=f19e26]:
+        - heading "Tentang laporan" [level=2] [ref=f19e27]
+        - paragraph [ref=f19e28]: Identitas pelapor tidak ditampilkan ke Host atau Admin; server memakai penanda unik agar satu pelapor dihitung sekali per room. 3 laporan unik menandai room sebagai tersembunyi dari FYP sampai Admin meninjau.
+        - paragraph [ref=f19e29]:
+          - text: Laporan lengkap di
+          - link "aturan konten" [ref=f19e30] [cursor=pointer]:
+            - /url: /aturan-konten
+          - text: . Lapor bisa dari member room; akun login bisa melapor room publik; Host tidak bisa melaporkan room miliknya.
+  - contentinfo [ref=f19e31]:
+    - generic [ref=f19e32]:
+      - generic [ref=f19e33]:
+        - generic [ref=f19e34]:
+          - paragraph [ref=f19e35]: umpomenfess room
+          - paragraph [ref=f19e36]: "Room chat anonim untuk obrolan berbatas waktu: aktif 7 hari, arsip 15 hari, lalu dihapus permanen. Bagian ekosistem UMPOMENFESS."
+        - navigation "Navigasi footer" [ref=f19e37]:
+          - link "Jelajahi room publik" [ref=f19e38] [cursor=pointer]:
+            - /url: /jelajahi
+          - link "Dasbor Host" [ref=f19e39] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Ruang saya" [ref=f19e40] [cursor=pointer]:
+            - /url: /rooms
+          - link "Aturan konten" [ref=f19e41] [cursor=pointer]:
+            - /url: /aturan-konten
+          - link "Privasi" [ref=f19e42] [cursor=pointer]:
+            - /url: /privasi
+          - link "Batas anonimitas" [ref=f19e43] [cursor=pointer]:
+            - /url: /batas-anonimitas
+          - link "Menfess, situs utama" [ref=f19e44] [cursor=pointer]:
+            - /url: https://umpomenfess.my.id
+            - text: Menfess utama ↗
+      - generic [ref=f19e45]: © 2026 umpomenfess — room.umpomenfess.my.id

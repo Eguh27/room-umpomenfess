@@ -1,0 +1,62 @@
+- generic [active] [ref=f8e1]:
+  - link "Lompat ke konten" [ref=f8e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f8e3]:
+    - generic [ref=f8e4]:
+      - link "umpomenfess room — beranda" [ref=f8e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f8e10]: umpomenfess
+        - generic [ref=f8e12]: room
+      - navigation "Navigasi utama" [ref=f8e13]:
+        - link "Jelajahi" [ref=f8e14] [cursor=pointer]:
+          - /url: /jelajahi
+        - link "Dasbor Host" [ref=f8e15] [cursor=pointer]:
+          - /url: /dashboard
+        - link "Ruang saya" [ref=f8e16] [cursor=pointer]:
+          - /url: /rooms
+        - link "Privasi" [ref=f8e17] [cursor=pointer]:
+          - /url: /privasi
+  - main [ref=f8e21]:
+    - generic [ref=f8e22]:
+      - generic [ref=f8e23]:
+        - generic [ref=f8e24]:
+          - paragraph [ref=f8e25]: Host
+          - heading "Dasbor" [level=1] [ref=f8e26]
+        - link "Ruang saya (Guest)" [ref=f8e27] [cursor=pointer]:
+          - /url: /rooms
+      - generic [ref=f8e29]:
+        - generic [ref=f8e30]:
+          - generic [ref=f8e31]: Room aktif
+          - img "Memuat kuota…" [ref=f8e32]
+          - generic [ref=f8e33]: …
+          - generic [ref=f8e34]: (sesi browser)
+        - heading "Room kamu" [level=2] [ref=f8e35]
+        - paragraph [ref=f8e36]: Memuat room…
+  - contentinfo [ref=f8e37]:
+    - generic [ref=f8e38]:
+      - generic [ref=f8e39]:
+        - generic [ref=f8e40]:
+          - paragraph [ref=f8e41]: umpomenfess room
+          - paragraph [ref=f8e42]: "Room chat anonim untuk obrolan berbatas waktu: aktif 7 hari, arsip 15 hari, lalu dihapus permanen. Bagian ekosistem UMPOMENFESS."
+        - navigation "Navigasi footer" [ref=f8e43]:
+          - link "Jelajahi room publik" [ref=f8e44] [cursor=pointer]:
+            - /url: /jelajahi
+          - link "Dasbor Host" [ref=f8e45] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Ruang saya" [ref=f8e46] [cursor=pointer]:
+            - /url: /rooms
+          - link "Aturan konten" [ref=f8e47] [cursor=pointer]:
+            - /url: /aturan-konten
+          - link "Privasi" [ref=f8e48] [cursor=pointer]:
+            - /url: /privasi
+          - link "Batas anonimitas" [ref=f8e49] [cursor=pointer]:
+            - /url: /batas-anonimitas
+          - link "Menfess, situs utama" [ref=f8e50] [cursor=pointer]:
+            - /url: https://umpomenfess.my.id
+            - text: Menfess utama ↗
+      - generic [ref=f8e51]: © 2026 umpomenfess — room.umpomenfess.my.id
+  - generic [ref=f8e54]:
+    - button [ref=f8e55]
+    - button [ref=f8e61]
+    - button [ref=f8e65]
+    - button [ref=f8e70]

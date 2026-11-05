@@ -1,0 +1,68 @@
+- generic [active] [ref=f6e1]:
+  - link "Lompat ke konten" [ref=f6e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f6e3]:
+    - link "umpomenfess room — beranda" [ref=f6e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f6e10]: umpomenfess
+      - generic [ref=f6e12]: room
+  - main [ref=f6e13]:
+    - generic [ref=f6e14]:
+      - generic [ref=f6e15]:
+        - link "← Ruang saya" [ref=f6e16] [cursor=pointer]:
+          - /url: /rooms
+        - generic "Status keanggotaan" [ref=f6e17]:
+          - generic [ref=f6e18]: AKTIF
+          - generic [ref=f6e19]: PUBLIK
+          - generic [ref=f6e20]:
+            - text: "kamu:"
+            - generic [ref=f6e21]: k7v9m2qx1
+          - generic [ref=f6e23]: sisa 6 hari
+      - region "Percakapan di Ngobrol Santai (demo)" [ref=f6e24]:
+        - generic [ref=f6e25]:
+          - heading "Ngobrol Santai (demo)" [level=1] [ref=f6e26]
+          - generic [ref=f6e27]: demo /r/demo
+        - generic [ref=f6e28]:
+          - paragraph [ref=f6e29]: Hari ini · 14:00 WIB
+          - article [ref=f6e30]:
+            - generic [ref=f6e31]:
+              - generic [ref=f6e32]:
+                - generic [ref=f6e33]: a5d8k2r7t
+                - generic [ref=f6e34]: HOST
+              - text: · 14:00
+            - paragraph [ref=f6e35]: Selamat datang semua. Jadi geladi besok jam 07.00 di gerbang kampus ya.
+          - article [ref=f6e36]:
+            - generic [ref=f6e37]:
+              - generic [ref=f6e38]: wu32t76e3
+              - text: · 14:01
+            - paragraph [ref=f6e40]: Siap. Yang bawa alat ramping-an, inget bareng-bareng ya.
+          - article [ref=f6e41]:
+            - generic [ref=f6e42]:
+              - generic [ref=f6e43]:
+                - generic [ref=f6e44]: bem.kampus
+                - generic [ref=f6e45]: VERIFIED
+              - text: · 14:03
+            - paragraph [ref=f6e46]: Aku bawa satu alat, nanti bisa dipinjem kalau ada yang lupa.
+          - article [ref=f6e47]:
+            - generic [ref=f6e48]:
+              - generic [ref=f6e49]: k7v9m2qx1
+              - text: · 14:04
+            - paragraph [ref=f6e51]: Kalau gerbang ternyata ditutup, titik kumpul lanjutannya di mana?
+          - article [ref=f6e52]:
+            - generic [ref=f6e53]:
+              - generic [ref=f6e54]:
+                - generic [ref=f6e55]: a5d8k2r7t
+                - generic [ref=f6e56]: HOST
+              - text: · 14:05
+            - paragraph [ref=f6e57]: Masjid kampus. Info lanjut menyusul di sini juga.
+          - paragraph [ref=f6e58]: Ada yang sedang mengetik…
+        - generic [ref=f6e63]:
+          - textbox "Tulis pesan" [ref=f6e64]:
+            - /placeholder: Kirim sebagai k7v9m2qx1…
+          - button "Kirim pesan" [ref=f6e65] [cursor=pointer]: Kirim
+        - paragraph [ref=f6e66]: Teks saja — tidak ada gambar, file, atau tautan. Host melihatmu sebagai handle acak, bukan nama atau akunmu. Di room publik, siapa pun yang join bisa membaca dan menyalin isi chat.
+  - generic [ref=f6e69]:
+    - button [ref=f6e70]
+    - button [ref=f6e76]
+    - button [ref=f6e80]
+    - button [ref=f6e85]

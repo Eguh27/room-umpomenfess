@@ -15,3 +15,5 @@ Jalankan **satu agent per peran**, urut per Wave di `TODO.md`. Agent yang sama b
 | Wave 5 | `agent-L.md` | Lead/ops | Build | ringan-menengah |
 
 Aturan umum untuk SEMUA prompt: baca `AGENTS.md` dahulu. Jika spesifikasi bertentangan atau kurang, tulis `REQUEST` di `docs/progress.md` lalu berhenti pada bagian itu. Jangan menebak kontrak.
+
+**ADDENDUM-01 sudah diterapkan.** Setiap prompt punya bagian **"Tambahan ADDENDUM-01"**. Baca `docs/progress.md` (HANDOFF/NOTE T-02) dan cek keadaan migration/kode sebelum mulai: pekerjaan yang sudah selesai tidak diulang, dan selisih dikerjakan lewat tugas susulan `<ID>a`. Migration lama tidak diedit; migration baru hanya memuat selisih.

@@ -1,0 +1,80 @@
+- generic [active] [ref=f14e1]:
+  - link "Lompat ke konten" [ref=f14e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f14e3]:
+    - link "umpomenfess room — beranda" [ref=f14e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f14e10]: umpomenfess
+      - generic [ref=f14e12]: room
+  - main [ref=f14e16]:
+    - article [ref=f14e17]:
+      - paragraph [ref=f14e18]: kebijakan
+      - heading "Aturan konten" [level=1] [ref=f14e19]
+      - paragraph [ref=f14e20]:
+        - text: Patokan penegakan pada room (privat maupun publik). Baca bersama
+        - link "privasi" [ref=f14e21] [cursor=pointer]:
+          - /url: /privasi
+        - text: dan
+        - link "batas anonimitas" [ref=f14e22] [cursor=pointer]:
+          - /url: /batas-anonimitas
+        - text: .
+      - paragraph [ref=f14e24]:
+        - strong [ref=f14e25]: Status moderasi.
+        - text: Tombol Laporkan dan antrean Admin masih dalam pengembangan. Aturan di halaman ini menjadi patokan saat fitur moderasi aktif.
+      - heading "Prinsipnya" [level=2] [ref=f14e26]
+      - paragraph [ref=f14e27]: Room dibuat untuk obrolan berbatas waktu yang tetap dalam batas sopan. Host bertanggung jawab pada room-nya (bisa menolak dan mengeluarkan pengganggu), Guest bisa melaporkan isi yang menyimpang, dan Admin platform menindaklanjuti pada room maupun akun.
+      - heading "Yang tidak diterima" [level=2] [ref=f14e28]
+      - list [ref=f14e29]:
+        - listitem [ref=f14e30]: "Konten ilegal: penipuan, SARA, kekerasan, atau konten anak."
+        - listitem [ref=f14e31]: "Perundungan: serangan pribadi, menghina, atau menekan orang lain."
+        - listitem [ref=f14e32]: "Doxxing: menyebar identitas, alamat, atau data pribadi orang."
+        - listitem [ref=f14e33]: "Spam: iklan, promosi, atau pengulangan yang mengganggu percakapan."
+        - listitem [ref=f14e34]: Penyamaran identitas orang atau organisasi lain.
+      - heading "Jalan penegakan" [level=2] [ref=f14e35]
+      - list [ref=f14e36]:
+        - listitem [ref=f14e37]:
+          - strong [ref=f14e38]: Host
+          - text: menolak, mengeluarkan, atau menutup room-nya sendiri — tanpa menunggu laporan.
+        - listitem [ref=f14e39]:
+          - strong [ref=f14e40]: Guest
+          - text: menekan tombol Laporkan dan memilih alasan (spam, perundungan, melanggar hukum, lainnya). Identitas pelapor tidak ditampilkan ke Host maupun Admin; server memakai penanda unik untuk mencegah laporan ganda.
+        - listitem [ref=f14e41]: 3 laporan unik — pelapor berbeda, satu pelapor dihitung sekali — membuat room publik otomatis turun dari daftar FYP (status tersembunyi) sampai selesai ditinjau.
+        - listitem [ref=f14e42]:
+          - strong [ref=f14e43]: Admin
+          - text: "meninjau laporan dengan metadata room: membiarkan, menurunkan dari FYP, memblokir dari FYP selamanya, menutup room, atau menangguhkan akun."
+      - heading "Tindakan pada konten melanggar hukum" [level=2] [ref=f14e44]
+      - paragraph [ref=f14e45]: Penghapusan konten berlangsung pada level room dan akun — pesan tidak disunting satu-satu, jadi room yang tidak layak ditutup atau diblokir daripada disortir per baris. Isi chat tetap tersimpan pada umurnya (aktif 7 hari, arsip 15 hari) lalu terhapus permanen. Permintaan takedown dari pihak terkait diteruskan ke kanal kontak pengelola untuk ditindak admin.
+      - heading "Soal pelaporan" [level=2] [ref=f14e46]
+      - list [ref=f14e47]:
+        - listitem [ref=f14e48]: Identitas pelapor tidak pernah tampil di UI mana pun; server hanya memakai penanda unik.
+        - listitem [ref=f14e49]: Room privat hanya bisa dilaporkan oleh membernya; Host tidak bisa melaporkan room sendiri.
+        - listitem [ref=f14e50]: Laporan ganda dari pelapor yang sama tidak mengubah hitungan — hitungan bergerak karena jumlah pelapor unik, bukan jumlah laporan.
+        - listitem [ref=f14e51]: Keputusan Admin selalu tercermin di audit log konsol.
+  - contentinfo [ref=f14e52]:
+    - generic [ref=f14e53]:
+      - generic [ref=f14e54]:
+        - generic [ref=f14e55]:
+          - paragraph [ref=f14e56]: umpomenfess room
+          - paragraph [ref=f14e57]: "Room chat anonim untuk obrolan berbatas waktu: aktif 7 hari, arsip 15 hari, lalu dihapus permanen. Bagian ekosistem UMPOMENFESS."
+        - navigation "Navigasi footer" [ref=f14e58]:
+          - link "Jelajahi room publik" [ref=f14e59] [cursor=pointer]:
+            - /url: /jelajahi
+          - link "Dasbor Host" [ref=f14e60] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Ruang saya" [ref=f14e61] [cursor=pointer]:
+            - /url: /rooms
+          - link "Aturan konten" [ref=f14e62] [cursor=pointer]:
+            - /url: /aturan-konten
+          - link "Privasi" [ref=f14e63] [cursor=pointer]:
+            - /url: /privasi
+          - link "Batas anonimitas" [ref=f14e64] [cursor=pointer]:
+            - /url: /batas-anonimitas
+          - link "Menfess, situs utama" [ref=f14e65] [cursor=pointer]:
+            - /url: https://umpomenfess.my.id
+            - text: Menfess utama ↗
+      - generic [ref=f14e66]: © 2026 umpomenfess — room.umpomenfess.my.id
+  - generic [ref=f14e69]:
+    - button [ref=f14e70]
+    - button [ref=f14e76]
+    - button [ref=f14e80]
+    - button [ref=f14e85]

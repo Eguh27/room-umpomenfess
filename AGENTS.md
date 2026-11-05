@@ -9,11 +9,15 @@ Spesifikasi lengkap ada di `TASK.md`. Papan tugas ada di `TODO.md`. Log serah-te
 - Astro SSR + adapter Vercel + React island. Backend = Supabase (Postgres, Auth, Realtime, RLS).
 - **Tidak ada Socket.io / server WebSocket sendiri.** Vercel itu serverless.
 - Cloudflare hanya **DNS-only** (tanpa proxy). Turnstile tetap dipakai.
-- Guest = Supabase **Anonymous Sign-in**. Host = email/password (Supabase Auth).
+- Guest = Supabase **Anonymous Sign-in**. Host = email/password (Supabase Auth). Guest anonim hanya boleh **1 keanggotaan aktif**; Guest login maksimal **5**.
 - **Semua tulis ke database lewat RPC.** Tidak ada policy INSERT/UPDATE/DELETE untuk `anon`/`authenticated` di tabel inti.
 - **Host tidak pernah bisa melihat `user_id` Guest** (tabel identitas dipisah, lihat TASK.md bagian 4).
+- **Handle** untuk semua aktor: sistem membuat `[a-z0-9]{9}`; Admin boleh memberi handle terverifikasi `[a-z0-9._-]{3,24}` yang bukan pola 9-acak. User tidak bisa mengganti handle sendiri; hanya Admin. Akun login punya handle permanen; anonim mendapat handle per room.
 - Konten pesan dirender sebagai **teks biasa**. Tidak ada `set:html` / `dangerouslySetInnerHTML` untuk data user.
 - Pembayaran belum ada. `tier` diubah manual (SQL / service_role).
+- **Admin platform wajib MFA (AAL2).** Semua RPC Admin memakai `app_private.is_admin_aal2()` dan menulis `admin_audit_log`; role hanya diset lewat SQL/service_role.
+- **Visibilitas room:** `PRIVATE` (default, link + password) atau `PUBLIC` (tanpa password, tampil di FYP). Perubahan **privat → publik dilarang**; hanya publik → privat.
+- **FYP hanya menampilkan metadata room publik, bukan isi chat.** Membaca chat wajib join dulu. Flag `app_config.public_rooms_enabled` default `false`; M1/M2 boleh rilis tanpa FYP.
 - Indikator mengetik = Realtime Broadcast **agregat tanpa identitas** (TASK.md bagian 8).
 
 ## 2. Peran dan zona tulis
@@ -26,7 +30,7 @@ Satu agent = satu peran. Hanya menulis di zonanya. Perlu mengubah file di luar z
 | **D** | Database | `supabase/**` (kecuali `supabase/tests/security/`) |
 | **B** | Backend / API server | `src/pages/api/**`, `src/lib/server/**`, `src/lib/supabase/server.ts`, `src/lib/ip.ts`, `src/lib/schemas.ts` |
 | **R** | Realtime client | `src/lib/realtime/**`, `src/lib/supabase/browser.ts`, `src/lib/config.ts` |
-| **F** | Frontend / UI | `src/pages/*.astro`, `src/pages/r/**`, `src/layouts/**`, `src/components/**`, `design/**`, `public/*` (kecuali `robots.txt`) |
+| **F** | Frontend / UI | `src/pages/*.astro`, `src/pages/r/**`, `src/pages/admin/**`, `src/pages/jelajahi.astro`, `src/pages/aturan-konten.astro`, `src/layouts/**`, `src/components/**`, `design/**`, `public/*` (kecuali `robots.txt`) |
 | **S** | Security / QA | `scripts/security/**`, `supabase/tests/security/**`, `docs/audit/**` (read-only di tempat lain) |
 
 Bersama: `TASK.md` dan `AGENTS.md` hanya diubah manusia (atau L dengan persetujuan manusia). `TODO.md`: ubah hanya baris tugasmu. `docs/progress.md`: **append-only**.
@@ -50,6 +54,9 @@ Bersama: `TASK.md` dan `AGENTS.md` hanya diubah manusia (atau L dengan persetuju
 - Setiap fungsi SQL: `SECURITY DEFINER` hanya bila perlu, selalu `SET search_path = ''` dengan nama tabel ber-schema, lalu `REVOKE EXECUTE ... FROM PUBLIC, anon, authenticated` dan `GRANT` eksplisit ke role yang berhak. (Postgres memberi EXECUTE ke PUBLIC secara default.)
 - Identitas selalu dari `auth.uid()` di dalam fungsi. Jangan percaya parameter `user_id`, `sender_name`, atau `sender_type` dari client.
 - Pengguna anonim juga berperan `authenticated`. RPC khusus Host **wajib** menolak JWT anonim (`is_anonymous`).
+- **RPC Admin wajib `is_admin_aal2()`** (role admin **dan** `aal2`). Role, tier, dan handle **tidak boleh** bisa di-UPDATE client; hanya SQL/service_role (role/tier) dan RPC Admin (handle).
+- **`list_public_rooms` hanya mengembalikan kolom whitelist** dan hanya room `PUBLIC` + `LISTED` + `ACTIVE` saat flag FYP aktif. Room privat tidak pernah muncul.
+- Laporan penyalahgunaan tidak boleh dipakai untuk menyembunyikan room tanpa ambang **laporan unik** (`report_hide_threshold`); satu pelapor hanya dihitung sekali.
 - RLS aktif di semua tabel `public`, termasuk tabel yang "tidak diakses client".
 - Jangan menambah dependency tanpa catatan di `docs/progress.md`. Jangan `npm audit fix --force`.
 - Jangan commit `.env`.
@@ -84,3 +91,5 @@ supabase test db     # jalankan tes SQL (pgTAP)
 ## 8. Panduan model (opencode)
 
 Model gratis sering berganti, cek `/models`. Model terkuat untuk **D** dan **S** (RLS, RPC, review keamanan). Model menengah-kuat untuk **B** dan **R**. Model ringan cukup untuk **F** dan **L**.
+
+Tugas **T-17** (RPC Admin) dan **T-18** (FYP) adalah tugas sensitif: gunakan model terkuat dan minta review **S** sebelum dianggap selesai.

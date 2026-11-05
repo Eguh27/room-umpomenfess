@@ -1,0 +1,26 @@
+- generic [active] [ref=e1]:
+  - link "Lompat ke konten" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=e3]:
+    - link "umpomenfess room — beranda" [ref=e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e10]: umpomenfess
+      - generic [ref=e12]: room
+  - main [ref=e13]:
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - generic [ref=e17]: ↖ masuk room
+        - generic [ref=e18]: /r/devroom000000001
+      - generic [ref=e19]:
+        - heading "Sebelum masuk room" [level=1] [ref=e24]
+        - list [ref=e25]:
+          - listitem [ref=e26]: Percakapan ini berbentuk teks saja — Host yang membuat room bisa membacanya dan mengeluarkan pengganggu.
+          - listitem [ref=e27]: Host hanya melihat nomormu (Guest-01, Guest-02, dst), bukan nama maupun akun.
+          - listitem [ref=e28]: Berlaku 7 hari aktif lalu 15 hari arsip — setiap kata bisa dibaca sampai dihapus permanen, jadi tulis seolah dibaca publik.
+        - button "Verifikasi & lanjut" [ref=e29] [cursor=pointer]
+        - generic [ref=e30]: devroom000000001
+  - generic [ref=e33]:
+    - button [ref=e34]
+    - button [ref=e40]
+    - button [ref=e44]
+    - button [ref=e49]

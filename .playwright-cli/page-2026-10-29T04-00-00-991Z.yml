@@ -1,0 +1,152 @@
+- generic [active] [ref=f3e1]:
+  - link "Lompat ke konten" [ref=f3e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f3e3]:
+    - link "umpomenfess room — beranda" [ref=f3e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f3e10]: umpomenfess
+      - generic [ref=f3e12]: room
+  - main [ref=f3e13]:
+    - generic [ref=f3e14]:
+      - link "← Dasbor" [ref=f3e15] [cursor=pointer]:
+        - /url: /dashboard
+      - generic "Status room" [ref=f3e16]:
+        - generic [ref=f3e17]: AKTIF
+        - generic [ref=f3e18]: PUBLIK
+        - generic [ref=f3e19]: berakhir 2 hari
+        - generic [ref=f3e20]: 23/40 Guest
+        - generic [ref=f3e21]: mengetik aktif
+    - generic [ref=f3e22]:
+      - region "Percakapan di Curhat Sesama Mahasiswa" [ref=f3e23]:
+        - generic [ref=f3e24]:
+          - heading "Curhat Sesama Mahasiswa" [level=1] [ref=f3e25]
+          - generic [ref=f3e26]: "demo #demo-room-2"
+        - generic [ref=f3e27]:
+          - paragraph [ref=f3e28]: Hari ini · 14:00 WIB
+          - article [ref=f3e29]:
+            - generic [ref=f3e30]:
+              - generic [ref=f3e31]:
+                - generic [ref=f3e32]: a5d8k2r7t
+                - generic [ref=f3e33]: HOST
+              - text: · 14:00
+            - paragraph [ref=f3e34]: Selamat datang semua. Jadi geladi besok jam 07.00 di gerbang kampus ya.
+          - article [ref=f3e35]:
+            - generic [ref=f3e36]:
+              - generic [ref=f3e37]: wu32t76e3
+              - text: · 14:01
+            - paragraph [ref=f3e39]: Siap. Yang bawa alat ramping-an, inget bareng-bareng ya.
+          - article [ref=f3e40]:
+            - generic [ref=f3e41]:
+              - generic [ref=f3e42]:
+                - generic [ref=f3e43]: bem.kampus
+                - generic [ref=f3e44]: VERIFIED
+              - text: · 14:03
+            - paragraph [ref=f3e45]: Aku bawa satu alat, nanti bisa dipinjem kalau ada yang lupa.
+          - article [ref=f3e46]:
+            - generic [ref=f3e47]:
+              - generic [ref=f3e48]: k7v9m2qx1
+              - text: · 14:04
+            - paragraph [ref=f3e50]: Kalau gerbang ternyata ditutup, titik kumpul lanjutannya di mana?
+          - article [ref=f3e51]:
+            - generic [ref=f3e52]:
+              - generic [ref=f3e53]:
+                - generic [ref=f3e54]: a5d8k2r7t
+                - generic [ref=f3e55]: HOST
+              - text: · 14:05
+            - paragraph [ref=f3e56]: Masjid kampus. Info lanjut menyusul di sini juga.
+          - paragraph [ref=f3e57]: Ada yang sedang mengetik…
+        - generic [ref=f3e62]:
+          - textbox "Tulis pesan" [ref=f3e63]:
+            - /placeholder: Kirim sebagai Host…
+          - button "Kirim" [ref=f3e64] [cursor=pointer]
+        - paragraph [ref=f3e65]: "Room publik: isi chat dapat dibaca dan disalin siapa pun yang join."
+      - complementary "Panel member" [ref=f3e66]:
+        - heading "Member 12 approve · 2 nunggu" [level=2] [ref=f3e67]:
+          - text: Member
+          - generic [ref=f3e68]: 12 approve · 2 nunggu
+        - paragraph [ref=f3e69]: Menunggu persetujuan
+        - generic [ref=f3e70]:
+          - generic [ref=f3e71]:
+            - generic [aria-hidden] [ref=f3e72]: "?"
+            - generic [ref=f3e73]:
+              - generic [ref=f3e74]: f2x6j9c4v
+              - generic [ref=f3e77]: 3 menit lalu
+          - generic [ref=f3e78]:
+            - button "Setujui" [ref=f3e79] [cursor=pointer]
+            - button "Tolak" [ref=f3e80] [cursor=pointer]
+        - generic [ref=f3e81]:
+          - generic [ref=f3e82]:
+            - generic [aria-hidden] [ref=f3e83]: "?"
+            - generic [ref=f3e84]:
+              - generic [ref=f3e86]:
+                - generic [ref=f3e87]: bem.kampus
+                - generic [ref=f3e88]: VERIFIED
+              - generic [ref=f3e89]: 11 menit lalu
+          - generic [ref=f3e90]:
+            - button "Setujui" [ref=f3e91] [cursor=pointer]
+            - button "Tolak" [ref=f3e92] [cursor=pointer]
+        - paragraph [ref=f3e93]: Di dalam room
+        - generic [ref=f3e94]:
+          - generic [aria-hidden] [ref=f3e95]: H
+          - generic [ref=f3e96]:
+            - generic [ref=f3e98]:
+              - generic [ref=f3e99]: a5d8k2r7t
+              - generic [ref=f3e100]: HOST
+            - generic [ref=f3e101]: kamu · tidak idle-kick
+        - generic [ref=f3e102]:
+          - generic [aria-hidden] [ref=f3e103]: wu
+          - generic [ref=f3e104]:
+            - generic [ref=f3e105]: wu32t76e3
+            - generic [ref=f3e108]: aktif baru saja
+          - button "Keluarkan" [ref=f3e109] [cursor=pointer]
+        - generic [ref=f3e110]:
+          - generic [aria-hidden] [ref=f3e111]: k7
+          - generic [ref=f3e112]:
+            - generic [ref=f3e113]: k7v9m2qx1
+            - generic [ref=f3e116]: aktif 2 menit lalu
+          - button "Keluarkan" [ref=f3e117] [cursor=pointer]
+        - generic [ref=f3e118]:
+          - generic [aria-hidden] [ref=f3e119]: be
+          - generic [ref=f3e120]:
+            - generic [ref=f3e122]:
+              - generic [ref=f3e123]: bem.kampus
+              - generic [ref=f3e124]: VERIFIED
+            - generic [ref=f3e125]: aktif 4 menit lalu
+          - button "Keluarkan" [ref=f3e126] [cursor=pointer]
+        - generic [ref=f3e127]:
+          - generic [aria-hidden] [ref=f3e128]: f2
+          - generic [ref=f3e129]:
+            - generic [ref=f3e130]: f2x6j9c4v
+            - generic [ref=f3e133]: aktif 5 menit lalu
+          - button "Keluarkan" [ref=f3e134] [cursor=pointer]
+        - generic [ref=f3e135]:
+          - generic [aria-hidden] [ref=f3e136]: m3
+          - generic [ref=f3e137]:
+            - generic [ref=f3e138]: m3r7t5p2d
+            - generic [ref=f3e141]: aktif 20 menit lalu
+          - button "Keluarkan" [ref=f3e142] [cursor=pointer]
+        - separator [ref=f3e143]
+        - paragraph [ref=f3e144]: Host hanya melihat handle acak. Identitas (akun internal Guest) disimpan terpisah dan tidak pernah ditampilkan di panel ini.
+    - region "Kendali room" [ref=f3e145]:
+      - heading "Kendali room" [level=2] [ref=f3e146]
+      - generic [ref=f3e147]:
+        - generic [ref=f3e148]:
+          - paragraph [ref=f3e149]: Visibilitas
+          - paragraph [ref=f3e150]: PUBLIK
+          - group [ref=f3e152]:
+            - generic "Jadikan privat" [ref=f3e153] [cursor=pointer]
+        - generic [ref=f3e154]:
+          - paragraph [ref=f3e155]: Arsip
+          - generic [ref=f3e156]:
+            - button "Ekspor .txt" [ref=f3e157] [cursor=pointer]
+            - paragraph [ref=f3e158]: "Baris berformat [DD-MM-YYYY HH:MM] handle: isi (WIB), terbagi halaman."
+        - generic [ref=f3e159]:
+          - paragraph [ref=f3e160]: Tutup
+          - generic [ref=f3e161]:
+            - button "Tutup room" [ref=f3e162] [cursor=pointer]
+            - paragraph [ref=f3e163]: Setelah ditutup Guest kehilangan akses; arsip tetap 15 hari.
+  - generic [ref=f3e166]:
+    - button [ref=f3e167]
+    - button [ref=f3e173]
+    - button [ref=f3e177]
+    - button [ref=f3e182]

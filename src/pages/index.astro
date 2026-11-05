@@ -1,17 +1,20 @@
 ---
 import Base from '../layouts/Base.astro';
 import StickerDecor from '../components/StickerDecor.astro';
+import Handle from '../components/Handle.astro';
+import { guestSelfHandle, chat } from '../components/mockData';
 import '../../design/chat.css';
 
 const main = 'https://umpomenfess.my.id';
+const hostHandle = chat.find((message) => message.badge === 'HOST')?.handle ?? 'a5d8k2r7t';
 const steps = [
   {
     title: 'Host bikin room',
-    body: 'Pilih kapasitas 2–40 Guest, perlu persetujuan atau langsung masuk, jeda idle, dan izinkan indikator mengetik.',
+    body: 'Pilih privat atau publik, atur kapasitas 2–75 Guest, persetujuan, jeda idle, dan indikator mengetik. Room publik punya disclaimer sebelum masuk.',
   },
   {
     title: 'Bagikan link + password',
-    body: 'Password enam karakter tampil sekali berupa huruf dan angka yang tidak mirip (tanpa 0/O, 1/I). Guest masuk tanpa membuat akun, tampil sebagai Guest-01, Guest-02, dst.',
+    body: 'Room privat memakai password enam karakter yang tampil sekali. Guest masuk tanpa membuat akun dan tampil dengan handle acak sembilan karakter — bukan nomor urut.',
   },
   {
     title: 'Room menutup sendiri',
@@ -19,51 +22,73 @@ const steps = [
   },
 ];
 ---
+
 <Base
   title="umpomenfess room — ruang obrolan anonim berbatas waktu"
   description="Buat room chat anonim untuk civitas UMPO: satu link, satu password enam karakter. Guest tanpa akun, room hidup 7 hari, lalu dihapus permanen."
 >
-
   <section class="hero">
     <div class="hero__copy">
       <p class="eyebrow">room.umpomenfess.my.id</p>
       <h1>Room chat anonim dalam enam karakter.</h1>
       <p class="hero__lead">
-        Host membuat room, membagikan link plus password enam karakter.
-        Guest masuk tanpa akun sebagai Guest-01, Guest-02, dst. Obrolan tampil
-        sebagai teks — tidak bisa mengirim gambar, file, atau tautan pelacakan.
+        Host membuat room privat atau publik, lalu membagikan link plus password bila privat. Guest
+        masuk tanpa akun dan tampil dengan handle acak sembilan karakter. Obrolan tampil sebagai
+        teks — tidak bisa mengirim gambar, file, atau tautan pelacakan.
       </p>
       <div class="row">
-        <a class="btn btn--primary" href="/login">Masuk sebagai Host</a>
-        <a class="btn btn--ghost" href="/r/demo">Pratinjau room Guest</a>
+        <a class="btn btn--primary" href="/login">
+          Masuk sebagai Host
+        </a>
+        <a class="btn btn--ghost" href="/r/demo">
+          Pratinjau room Guest
+        </a>
       </div>
       <ul class="hero__meta" aria-label="Ringkasan aturan">
         <li>7 hari aktif, 15 hari arsip</li>
         <li>Guest tanpa akun</li>
-        <li>Password tampil sekali</li>
+        <li>Handle acak, bukan nomor</li>
+        <li>Room publik punya disclaimer</li>
       </ul>
     </div>
 
     <div class="hero__stage" aria-hidden="true">
       <div class="st-scene">
         <StickerDecor variant="spark" style="position:absolute; top:-2%; left:4%; width:38px;" />
-        <StickerDecor variant="chat" style="position:absolute; top:2%; right:2%; width:46px; transform:rotate(7deg);" />
-        <StickerDecor variant="photo" style="position:absolute; bottom:0; left:-2%; width:56px; transform:rotate(-8deg);" />
-        <StickerDecor variant="envelope" style="position:absolute; bottom:-4%; right:4%; width:50px; transform:rotate(-6deg);" />
+        <StickerDecor
+          variant="chat"
+          style="position:absolute; top:2%; right:2%; width:46px; transform:rotate(7deg);"
+        />
+        <StickerDecor
+          variant="photo"
+          style="position:absolute; bottom:0; left:-2%; width:56px; transform:rotate(-8deg);"
+        />
+        <StickerDecor
+          variant="envelope"
+          style="position:absolute; bottom:-4%; right:4%; width:50px; transform:rotate(-6deg);"
+        />
 
         <div class="st-glass hero__panel">
           <span class="st-tag">✧ pesan masuk</span>
           <div class="chat-preview">
             <div class="msg">
-              <span class="msg__meta">Guest-01</span>
+              <span class="msg__meta">
+                <Handle handle={guestSelfHandle} />
+              </span>
               <p class="msg__bubble">Terima kasih roomnya, koordinasi jadi jauh lebih gampang.</p>
             </div>
             <div class="msg msg--host">
-              <span class="msg__meta">Host</span>
+              <span class="msg__meta">
+                <Handle handle={hostHandle} badge="HOST" />
+              </span>
               <p class="msg__bubble">Dengan senang hati. Link ini aktif seminggu ya.</p>
             </div>
             <div class="typing">
-              <span class="typing__dots"><i></i><i></i><i></i></span>
+              <span class="typing__dots">
+                <i></i>
+                <i></i>
+                <i></i>
+              </span>
               Ada yang sedang mengetik…
             </div>
           </div>
@@ -81,7 +106,9 @@ const steps = [
     <ol class="how__list">
       {steps.map((s) => (
         <li class="how__item">
-          <span class="how__num" aria-hidden="true">{steps.indexOf(s) + 1}</span>
+          <span class="how__num" aria-hidden="true">
+            {steps.indexOf(s) + 1}
+          </span>
           <div>
             <h3>{s.title}</h3>
             <p>{s.body}</p>
@@ -98,28 +125,36 @@ const steps = [
         <span class="st-tag">✧ Host</span>
         <h3>Moderator room</h3>
         <p>
-          Verifikasi Guest yang menunggu, keluarkan pelanggar, tutup room lebih
-          awal. Melihat anggota hanya sebagai nomor — sistem tidak pernah
-          menyerahkan identitas Guest kepada Host.
+          Verifikasi Guest yang menunggu, keluarkan pelanggar, tutup room lebih awal. Melihat
+          anggota hanya sebagai handle acak — sistem tidak pernah menyerahkan identitas Guest kepada
+          Host.
         </p>
         <p class="help">Batas tier Free: 3 room aktif, maksimum 40 Guest per room.</p>
-        <a class="btn btn--primary" href="/register">Buat akun Host</a>
+        <a class="btn btn--primary" href="/register">
+          Buat akun Host
+        </a>
       </article>
       <article class="glass-card role-card">
         <span class="st-tag">✧ Guest</span>
         <h3>Tanpa akun, tanpa nama</h3>
         <p>
-          Masuk lewat link room dengan password, tampil sebagai nomor.
-          Kalau tidak ikut aktif, kamu keluar otomatis biar kursi tidak
-          monopoli — cukup tekan <strong>Masuk lagi</strong>.
+          Masuk lewat link room dengan password bila privat, lalu tampil dengan handle acak. Kalau
+          tidak ikut aktif, kamu keluar otomatis biar kursi tidak monopoli — cukup tekan{' '}
+          <strong>Masuk lagi</strong>.
         </p>
-        <p class="help">Satu browser bisa mengikuti sampai 5 room sekaligus.</p>
-        <a class="btn btn--brand" href="/r/demo">Coba pratinjau</a>
+        <p class="help">Sesi anonim hanya boleh di 1 room aktif; akun login maksimum 5 room.</p>
+        <a class="btn btn--brand" href="/r/demo">
+          Coba pratinjau
+        </a>
       </article>
     </div>
     <p class="roles__note">
-      Bagian dari ekosistem <a href={main} aria-label="Menfess, situs utama">umpomenfess.my.id ↗</a>.
-      Baca <a href="/privasi">privasi</a> dan <a href="/batas-anonimitas">batas anonimitas</a> sebelum membagi room.
+      Bagian dari ekosistem{' '}
+      <a href={main} aria-label="Menfess, situs utama">
+        umpomenfess.my.id ↗
+      </a>
+      . Baca <a href="/privasi">privasi</a> dan <a href="/batas-anonimitas">batas anonimitas</a>{' '}
+      sebelum membagi room.
     </p>
   </section>
 </Base>
@@ -132,7 +167,9 @@ const steps = [
     padding-top: var(--space-4);
   }
   @media (min-width: 960px) {
-    .hero { grid-template-columns: 1.05fr 0.95fr; }
+    .hero {
+      grid-template-columns: 1.05fr 0.95fr;
+    }
   }
   .hero h1 {
     font-size: clamp(var(--step-3), 5.2vw, var(--step-4) + 0.35rem);
@@ -161,7 +198,9 @@ const steps = [
     padding: 6px 12px;
   }
 
-  .hero__stage { position: relative; }
+  .hero__stage {
+    position: relative;
+  }
   .st-scene {
     position: relative;
     max-width: 400px;
@@ -180,7 +219,9 @@ const steps = [
     flex-direction: column;
     gap: var(--space-3);
   }
-  .msg__bubble { margin: 0; }
+  .msg__bubble {
+    margin: 0;
+  }
   .hero__panel-foot {
     display: flex;
     justify-content: space-between;
@@ -199,16 +240,26 @@ const steps = [
     color: var(--text-muted);
   }
 
-  .how { margin-top: var(--space-8); }
-  .how h2 { font-size: var(--step-2); }
-  .how__list { list-style: none; margin: 0; padding: 0; }
+  .how {
+    margin-top: var(--space-8);
+  }
+  .how h2 {
+    font-size: var(--step-2);
+  }
+  .how__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
   .how__item {
     display: flex;
     gap: var(--space-4);
     padding: var(--space-4) 0;
     border-bottom: 1.5px dashed var(--border-dash);
   }
-  .how__item:last-child { border-bottom: 0; }
+  .how__item:last-child {
+    border-bottom: 0;
+  }
   .how__num {
     flex: none;
     width: 40px;
@@ -232,12 +283,29 @@ const steps = [
     max-width: 44em;
   }
 
-  .roles { margin-top: var(--space-8); }
-  .roles h2 { font-size: var(--step-2); }
-  .role-card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
-  .role-card h3 { margin: 0; font-size: var(--step-1); }
-  .role-card p { margin: 0; color: var(--ink-soft); }
-  .role-card .btn { margin-top: var(--space-2); }
+  .roles {
+    margin-top: var(--space-8);
+  }
+  .roles h2 {
+    font-size: var(--step-2);
+  }
+  .role-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+  .role-card h3 {
+    margin: 0;
+    font-size: var(--step-1);
+  }
+  .role-card p {
+    margin: 0;
+    color: var(--ink-soft);
+  }
+  .role-card .btn {
+    margin-top: var(--space-2);
+  }
   .roles__note {
     margin: var(--space-5) 0 0;
     font-size: 0.875rem;

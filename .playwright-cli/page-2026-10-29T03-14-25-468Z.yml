@@ -1,0 +1,68 @@
+- generic [active] [ref=f37e1]:
+  - link "Lompat ke konten" [ref=f37e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f37e3]:
+    - generic [ref=f37e4]:
+      - link "umpomenfess room — beranda" [ref=f37e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f37e10]: umpomenfess
+        - generic [ref=f37e12]: room
+      - link "Masuk" [ref=f37e13] [cursor=pointer]:
+        - /url: /login
+  - main [ref=f37e14]:
+    - article [ref=f37e15]:
+      - paragraph [ref=f37e16]: kebijakan
+      - heading "Batas anonimitas" [level=1] [ref=f37e17]
+      - paragraph [ref=f37e18]: Anonim di sini berarti "tanpa nama", bukan "tanpa jejak". Ini daftarnya, tanpa dibungkus rapi-rapi.
+      - heading "Kamu anonim dari siapa?" [level=2] [ref=f37e19]
+      - list [ref=f37e20]:
+        - listitem [ref=f37e21]:
+          - strong [ref=f37e22]: "Dari Guest lain:"
+          - text: tampil sebagai Guest-01 dan seterusnya. Keanggotaan antar-room tidak disebar ke siapa pun.
+        - listitem [ref=f37e23]:
+          - strong [ref=f37e24]: "Dari Host:"
+          - text: identitas akun Guest disimpan di tabel terpisah yang tidak pernah muncul di panel Host atau daftar member.
+        - listitem [ref=f37e25]:
+          - strong [ref=f37e26]: "Yang tetap melihat semuanya:"
+          - text: admin database — layaknya semua layanan tanpa enkripsi ujung-ke-ujung. Percakapan sensitif tidak seharusnya lalui sini.
+      - heading "Jejak yang tetap ada" [level=2] [ref=f37e27]
+      - list [ref=f37e28]:
+        - listitem [ref=f37e29]: Alamat jaringan (IP) disimpan berupa hash (HMAC; koneksi IPv6 disamakan per subnet) untuk menghentikan tebak password bertubi-tubi; catatannya digusur dari database setelah 24 jam dan alamat aslinya tidak tersimpan.
+        - listitem [ref=f37e30]: Saat masuk room, Cloudflare Turnstile dicek untuk memastikan kamu manusia — widget ini sedap melihat halaman masuk saja, bukan isi percakapan.
+        - listitem [ref=f37e31]: Log infrastruktur (host, CDN, penyedia database) di luar aplikasi.
+        - listitem [ref=f37e32]: Isi percakapan bisa dibaca Host dan admin database sampai room dihapus.
+      - heading "Batas teknis yang perlu kamu tahu" [level=2] [ref=f37e33]
+      - list [ref=f37e34]:
+        - listitem [ref=f37e35]:
+          - text: Pesan berupa teks.
+          - strong [ref=f37e36]: Screenshot bisa membuka identitasmu
+          - text: — teks anonim tetap bisa berakhir di luar room.
+        - listitem [ref=f37e37]: Tidak ada enkripsi ujung-ke-ujung. Bila butuh kerahasiaan penuh, pakai alat yang diperuntukkan itu.
+        - listitem [ref=f37e38]: "Keanggotaan hidup di perangkat: penanda belum-dibaca bisa hilang saat data situs dibersihkan. Ini bukan pelacakan — justru sebaliknya."
+        - listitem [ref=f37e39]: Tidak ada penautan identitas antar-perangkat; akun Guest di satu browser tidak menyatu dengan browser lain.
+      - heading "Penyalahgunaan" [level=2] [ref=f37e40]
+      - paragraph [ref=f37e41]: Moderasi dilakukan Host lewat persetujuan dan pencegahan. Proses pelaporan pelanggaran kepada pengelola platform belum tersedia di versi ini — mulai saja dari menutup room dan mengeluarkan pelanggar.
+  - contentinfo [ref=f37e42]:
+    - generic [ref=f37e43]:
+      - generic [ref=f37e44]:
+        - generic [ref=f37e45]:
+          - paragraph [ref=f37e46]: umpomenfess room
+          - paragraph [ref=f37e47]: "Room chat anonim untuk obrolan berbatas waktu: aktif 7 hari, arsip 15 hari, lalu dihapus permanen. Bagian ekosistem UMPOMENFESS."
+        - navigation "Navigasi footer" [ref=f37e48]:
+          - link "Dasbor Host" [ref=f37e49] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Ruang saya" [ref=f37e50] [cursor=pointer]:
+            - /url: /rooms
+          - link "Privasi" [ref=f37e51] [cursor=pointer]:
+            - /url: /privasi
+          - link "Batas anonimitas" [ref=f37e52] [cursor=pointer]:
+            - /url: /batas-anonimitas
+          - link "Menfess, situs utama" [ref=f37e53] [cursor=pointer]:
+            - /url: https://umpomenfess.my.id
+            - text: Menfess utama ↗
+      - generic [ref=f37e54]: © 2026 umpomenfess — room.umpomenfess.my.id
+  - generic [ref=f37e57]:
+    - button [ref=f37e58]
+    - button [ref=f37e64]
+    - button [ref=f37e68]
+    - button [ref=f37e73]

@@ -1,0 +1,29 @@
+- generic [active] [ref=f16e1]:
+  - link "Lompat ke konten" [ref=f16e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f16e3]:
+    - link "umpomenfess room — beranda" [ref=f16e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f16e10]: umpomenfess
+      - generic [ref=f16e12]: room
+  - main [ref=f16e13]:
+    - generic [ref=f16e15]:
+      - generic [ref=f16e16]:
+        - generic [ref=f16e17]: ↖ masuk room
+        - generic [ref=f16e18]: /r/devroom000000001
+      - region [ref=f16e56]:
+        - heading "Masuk room" [level=1] [ref=f16e57]
+        - paragraph [ref=f16e58]: Tanyakan passwordnya ke orang yang membagikan link ini.
+        - generic [ref=f16e59]:
+          - generic [ref=f16e60]:
+            - generic [ref=f16e61]: Password room
+            - textbox "Password room" [ref=f16e62]
+            - paragraph [ref=f16e63]: Enam karakter — huruf dan angka yang tidak mirip (tanpa 0/O, 1/I).
+          - generic "Pengecekan manusia Cloudflare Turnstile" [ref=f16e65]
+          - button "Kirim & masuk" [disabled] [ref=f16e68]
+        - paragraph [ref=f16e69]: Lima password salah dari jaringan yang sama dalam 15 menit membuat percobaan masuk terkunci sementara.
+  - generic [ref=f16e35]:
+    - button [ref=f16e36]
+    - button [ref=f16e42]
+    - button [ref=f16e46]
+    - button [ref=f16e51]

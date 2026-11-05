@@ -1,0 +1,156 @@
+- generic [active] [ref=f2e1]:
+  - link "Lompat ke konten" [ref=f2e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f2e3]:
+    - generic [ref=f2e4]:
+      - link "umpomenfess room — beranda" [ref=f2e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f2e10]: umpomenfess
+        - generic [ref=f2e12]: room
+      - navigation "Navigasi utama" [ref=f2e13]:
+        - link "Dasbor Host" [ref=f2e14] [cursor=pointer]:
+          - /url: /dashboard
+        - link "Ruang saya" [ref=f2e15] [cursor=pointer]:
+          - /url: /rooms
+        - link "Privasi" [ref=f2e16] [cursor=pointer]:
+          - /url: /privasi
+      - link "Masuk" [ref=f2e17] [cursor=pointer]:
+        - /url: /login
+  - main [ref=f2e18]:
+    - generic [ref=f2e19]:
+      - generic [ref=f2e20]:
+        - generic [ref=f2e21]:
+          - paragraph [ref=f2e22]: Host · tier free
+          - heading "Dasbor" [level=1] [ref=f2e23]
+        - link "Ruang saya (Guest)" [ref=f2e24] [cursor=pointer]:
+          - /url: /rooms
+      - generic [ref=f2e25]:
+        - generic [ref=f2e26]: Room aktif
+        - img "2 dari 3 room aktif terpakai" [ref=f2e27]
+        - generic [ref=f2e29]: 2/3
+      - heading "Room kamu" [level=2] [ref=f2e30]
+      - list [ref=f2e31]:
+        - listitem [ref=f2e32]:
+          - generic [ref=f2e33]:
+            - heading "Rapat & Koordinasi KKN" [level=3] [ref=f2e34]
+            - paragraph [ref=f2e35]: 12/40 Guest · berakhir 6 hari · mengetik aktif
+          - generic [ref=f2e36]: AKTIF
+          - generic [ref=f2e37]: PRIVAT
+          - generic [ref=f2e38]: 2 nunggu
+          - link "Kelola" [ref=f2e40] [cursor=pointer]:
+            - /url: /dashboard/r/demo-room-1
+        - listitem [ref=f2e41]:
+          - generic [ref=f2e42]:
+            - heading "Curhat Sesama Mahasiswa" [level=3] [ref=f2e43]
+            - paragraph [ref=f2e44]: 23/40 Guest · berakhir 2 hari · mengetik aktif
+          - generic [ref=f2e45]: AKTIF
+          - generic [ref=f2e46]: PUBLIK
+          - link "Kelola" [ref=f2e48] [cursor=pointer]:
+            - /url: /dashboard/r/demo-room-2
+        - listitem [ref=f2e49]:
+          - generic [ref=f2e50]:
+            - heading "Musyawarah Persewaan" [level=3] [ref=f2e51]
+            - paragraph [ref=f2e52]: 18/25 Guest · arsip 14 hari lagi · mengetik mati
+          - generic [ref=f2e53]: TUTUP
+          - generic [ref=f2e54]: PRIVAT
+          - link "Lihat" [ref=f2e56] [cursor=pointer]:
+            - /url: /dashboard/r/demo-room-3
+      - heading "Buat room" [level=2] [ref=f2e57]
+      - generic [ref=f2e58]:
+        - generic [ref=f2e59]:
+          - generic [ref=f2e60]: Nama room
+          - textbox "Nama room" [ref=f2e61]:
+            - /placeholder: Rapat & Koordinasi KKN
+          - paragraph [ref=f2e62]: Tampak di bar room. Maksimum 80 karakter.
+        - group "Visibilitas room" [ref=f2e63]:
+          - generic [ref=f2e65]:
+            - generic [ref=f2e66] [cursor=pointer]:
+              - radio "Privat Link + password. Tidak tampil di FYP." [checked] [ref=f2e67]
+              - generic [ref=f2e68]:
+                - strong [ref=f2e69]: Privat
+                - generic [ref=f2e70]: Link + password. Tidak tampil di FYP.
+            - generic [ref=f2e71] [cursor=pointer]:
+              - radio "Publik Tanpa password. Metadata tampil di FYP." [ref=f2e72]
+              - generic [ref=f2e73]:
+                - strong [ref=f2e74]: Publik
+                - generic [ref=f2e75]: Tanpa password. Metadata tampil di FYP.
+          - paragraph [ref=f2e76]: Visibilitas dikunci setelah room dibuat. Hanya publik → privat; privat tidak bisa menjadi publik.
+        - note [ref=f2e77]:
+          - strong [ref=f2e78]: "Room publik:"
+          - text: isi chat dapat dibaca dan disalin siapa pun yang join. Jangan menulis data pribadi atau hal yang tidak ingin tersebar.
+        - generic [ref=f2e79]:
+          - generic [ref=f2e80]: Deskripsi
+          - textbox "Deskripsi" [ref=f2e81]:
+            - /placeholder: Ruang cerita ringan untuk mahasiswa. Jangan bagikan data pribadi.
+          - paragraph [ref=f2e82]: Tampil di FYP untuk room publik. Maksimum 200 karakter.
+        - generic [ref=f2e83]:
+          - generic [ref=f2e84]: Kategori
+          - combobox "Kategori" [ref=f2e85]:
+            - option "umum" [selected]
+            - option "kampus"
+            - option "hobi"
+            - option "curhat"
+            - option "game"
+            - option "belajar"
+            - option "lainnya"
+          - paragraph [ref=f2e86]: Dipakai filter FYP; room privat tetap menyimpan kategori untuk arsip.
+        - paragraph [ref=f2e87]:
+          - text: "Kuota publik:"
+          - strong [ref=f2e88]: 1/1
+          - text: room publik aktif terpakai. Room publik wajib memakai email terkonfirmasi.
+        - generic [ref=f2e89]:
+          - generic [ref=f2e90]: Kapasitas Guest
+          - slider "Kapasitas Guest" [ref=f2e91]: "16"
+          - status [ref=f2e92]: 16 Guest
+          - paragraph [ref=f2e93]:
+            - strong [ref=f2e94]: "Batasmu: 40 (tier Free)."
+            - text: Melebihi batas ini memerlukan tier lebih tinggi.
+        - generic [ref=f2e95]:
+          - generic [ref=f2e96] [cursor=pointer]:
+            - checkbox "Persetujuan masuk manual" [ref=f2e97]
+            - generic [ref=f2e99]: Persetujuan masuk manual
+          - paragraph [ref=f2e100]: Guest menunggu di lobi sampai kamu menyetujui.
+          - generic [ref=f2e101] [cursor=pointer]:
+            - checkbox "Indikator mengetik" [checked] [ref=f2e102]
+            - generic [ref=f2e104]: Indikator mengetik
+          - paragraph [ref=f2e105]: Otomatis mati bila kanal global dimatikan atau kapasitas > 20.
+        - generic [ref=f2e106]:
+          - generic [ref=f2e107]: Keluarkan Guest yang diam
+          - combobox "Keluarkan Guest yang diam" [ref=f2e108]:
+            - option "10 menit"
+            - option "15 menit (default publik)"
+            - option "30 menit (default privat)" [selected]
+            - option "60 menit"
+            - option "120 menit"
+            - option "240 menit"
+          - paragraph [ref=f2e109]: Guest yang keluar otomatis bisa masuk lagi tanpa password baru.
+        - button "Buat room" [disabled] [ref=f2e110]
+        - paragraph [ref=f2e111]: Tombol diaktifkan setelah form menerima fungsionalnya (T-51).
+        - group [ref=f2e112]:
+          - generic "Lihat panel password room (privat)" [ref=f2e113] [cursor=pointer]
+        - group [ref=f2e114]:
+          - generic "Lihat panel \"Jadikan privat\" (room publik)" [ref=f2e115] [cursor=pointer]
+  - contentinfo [ref=f2e116]:
+    - generic [ref=f2e117]:
+      - generic [ref=f2e118]:
+        - generic [ref=f2e119]:
+          - paragraph [ref=f2e120]: umpomenfess room
+          - paragraph [ref=f2e121]: "Room chat anonim untuk obrolan berbatas waktu: aktif 7 hari, arsip 15 hari, lalu dihapus permanen. Bagian ekosistem UMPOMENFESS."
+        - navigation "Navigasi footer" [ref=f2e122]:
+          - link "Dasbor Host" [ref=f2e123] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Ruang saya" [ref=f2e124] [cursor=pointer]:
+            - /url: /rooms
+          - link "Privasi" [ref=f2e125] [cursor=pointer]:
+            - /url: /privasi
+          - link "Batas anonimitas" [ref=f2e126] [cursor=pointer]:
+            - /url: /batas-anonimitas
+          - link "Menfess, situs utama" [ref=f2e127] [cursor=pointer]:
+            - /url: https://umpomenfess.my.id
+            - text: Menfess utama ↗
+      - generic [ref=f2e128]: © 2026 umpomenfess — room.umpomenfess.my.id
+  - generic [ref=f2e131]:
+    - button [ref=f2e132]
+    - button [ref=f2e138]
+    - button [ref=f2e142]
+    - button [ref=f2e147]

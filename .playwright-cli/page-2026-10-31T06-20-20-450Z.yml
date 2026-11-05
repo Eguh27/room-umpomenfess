@@ -1,0 +1,59 @@
+- generic [active] [ref=f3e1]:
+  - link "Lompat ke konten" [ref=f3e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f3e3]:
+    - generic [ref=f3e4]:
+      - link "umpomenfess room — beranda" [ref=f3e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f3e10]: umpomenfess
+        - generic [ref=f3e12]: room
+      - navigation "Navigasi utama" [ref=f3e13]:
+        - link "Jelajahi" [ref=f3e14] [cursor=pointer]:
+          - /url: /jelajahi
+        - link "Dasbor Host" [ref=f3e15] [cursor=pointer]:
+          - /url: /dashboard
+        - link "Ruang saya" [ref=f3e16] [cursor=pointer]:
+          - /url: /rooms
+        - link "Privasi" [ref=f3e17] [cursor=pointer]:
+          - /url: /privasi
+  - main [ref=f3e21]:
+    - generic [ref=f3e22]:
+      - paragraph [ref=f3e23]: FYP · room publik
+      - heading "Jelajah" [level=1] [ref=f3e24]
+      - paragraph [ref=f3e25]: Daftar room publik yang terbuka untuk siapa pun. Yang tampil hanya metadata — nama, deskripsi singkat, kategori, jumlah anggota, dan aktivitas terakhir. Isi chat baru terbaca setelah kamu join, dan join memakai satu kursi.
+      - generic [ref=f3e26]:
+        - heading "Ruang terbuka sedang ditutup" [level=2] [ref=f3e27]
+        - paragraph [ref=f3e28]: Pengelola belum menyalakan daftar room publik. Room privat tetap bisa dibuka lewat link yang dibagikan Host — daftar terbuka tidak mengubah itu.
+      - group [ref=f3e29]:
+        - generic "Pratinjau kerangka daftar (T-32)" [ref=f3e30]
+      - generic [ref=f3e31]:
+        - heading "Tentang laporan" [level=2] [ref=f3e32]
+        - paragraph [ref=f3e33]: Identitas pelapor tidak ditampilkan ke Host atau Admin; server memakai penanda unik agar satu pelapor dihitung sekali per room. 3 laporan unik menandai room sebagai tersembunyi dari FYP sampai Admin meninjau.
+        - paragraph [ref=f3e34]:
+          - text: Laporan lengkap di
+          - link "aturan konten" [ref=f3e35] [cursor=pointer]:
+            - /url: /aturan-konten
+          - text: . Lapor bisa dari member room; akun login bisa melapor room publik; Host tidak bisa melaporkan room miliknya.
+  - contentinfo [ref=f3e36]:
+    - generic [ref=f3e37]:
+      - generic [ref=f3e38]:
+        - generic [ref=f3e39]:
+          - paragraph [ref=f3e40]: umpomenfess room
+          - paragraph [ref=f3e41]: "Room chat anonim untuk obrolan berbatas waktu: aktif 7 hari, arsip 15 hari, lalu dihapus permanen. Bagian ekosistem UMPOMENFESS."
+        - navigation "Navigasi footer" [ref=f3e42]:
+          - link "Jelajahi room publik" [ref=f3e43] [cursor=pointer]:
+            - /url: /jelajahi
+          - link "Dasbor Host" [ref=f3e44] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Ruang saya" [ref=f3e45] [cursor=pointer]:
+            - /url: /rooms
+          - link "Aturan konten" [ref=f3e46] [cursor=pointer]:
+            - /url: /aturan-konten
+          - link "Privasi" [ref=f3e47] [cursor=pointer]:
+            - /url: /privasi
+          - link "Batas anonimitas" [ref=f3e48] [cursor=pointer]:
+            - /url: /batas-anonimitas
+          - link "Menfess, situs utama" [ref=f3e49] [cursor=pointer]:
+            - /url: https://umpomenfess.my.id
+            - text: Menfess utama ↗
+      - generic [ref=f3e50]: © 2026 umpomenfess — room.umpomenfess.my.id

@@ -1,0 +1,81 @@
+- generic [active] [ref=f4e1]:
+  - link "Lompat ke konten" [ref=f4e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f4e3]:
+    - generic [ref=f4e4]:
+      - link "umpomenfess room — beranda" [ref=f4e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f4e10]: umpomenfess
+        - generic [ref=f4e12]: room
+      - navigation "Navigasi utama" [ref=f4e13]:
+        - link "Dasbor Host" [ref=f4e14] [cursor=pointer]:
+          - /url: /dashboard
+        - link "Ruang saya" [ref=f4e15] [cursor=pointer]:
+          - /url: /rooms
+        - link "Privasi" [ref=f4e16] [cursor=pointer]:
+          - /url: /privasi
+      - link "Masuk" [ref=f4e17] [cursor=pointer]:
+        - /url: /login
+  - main [ref=f4e18]:
+    - generic [ref=f4e19]:
+      - paragraph [ref=f4e20]: Akun login · Guest
+      - heading "Ruang saya" [level=1] [ref=f4e21]
+      - paragraph [ref=f4e22]: Daftar room yang kamu ikuti dengan akun ini. Guest anonim tidak memakai halaman ini — mereka hanya melihat info "kamu sedang di room X" dari sesi di browser.
+      - list [ref=f4e23]:
+        - listitem [ref=f4e24]:
+          - generic [ref=f4e25]:
+            - heading "Rapat & Koordinasi KKN" [level=3] [ref=f4e26]
+            - paragraph [ref=f4e27]:
+              - text: berakhir 6 hari
+              - generic [ref=f4e28]:
+                - text: "· kamu:"
+                - generic [ref=f4e29]: k7v9m2qx1
+          - generic [ref=f4e31]: 3 belum dibaca
+          - link "Buka" [ref=f4e33] [cursor=pointer]:
+            - /url: /r/k3tK9mQp2weR7uds?state=chat
+        - listitem [ref=f4e34]:
+          - generic [ref=f4e35]:
+            - heading "Curhat Sesama Mahasiswa" [level=3] [ref=f4e36]
+            - paragraph [ref=f4e37]:
+              - text: berakhir 2 hari
+              - generic [ref=f4e38]:
+                - text: "· kamu:"
+                - generic [ref=f4e39]: f2x6j9c4v
+          - generic [ref=f4e41]: nunggu setuju
+          - button "Tunggu" [disabled] [ref=f4e43]
+      - generic [ref=f4e44]:
+        - heading "Tentang penanda \"belum dibaca\"" [level=2] [ref=f4e45]
+        - paragraph [ref=f4e46]: "Ditampung di penyimpanan lokal browser (localStorage). Penanda hilang kalau:"
+        - list [ref=f4e47]:
+          - listitem [ref=f4e48]: kamu membersihkan data situs (storage lokal ikut terhapus),
+          - listitem [ref=f4e49]: berganti perangkat atau browser,
+          - listitem [ref=f4e50]: atau browser menyingkirkan data situs yang lama tidak dibuka (Safari kira-kira tujuh hari).
+        - paragraph [ref=f4e51]: Keanggotaanmu tetap tersimpan di server — room bisa dibuka ulang lewat link yang sama; penanda belum dibaca mulai dari nol.
+        - paragraph [ref=f4e52]: Pratinjau statis (T-31). Daftar nyata memakai RPC my_rooms saat T-54.
+      - generic [ref=f4e53]:
+        - heading "Kalau kamu Guest anonim" [level=2] [ref=f4e54]
+        - paragraph [ref=f4e55]:
+          - text: Halaman ini khusus akun login. Sesi anonim hanya boleh punya satu room aktif — kalau kamu sedang di
+          - strong [ref=f4e56]: Ngobrol Santai (demo)
+          - text: ", keluar dulu dari room itu untuk gabung ke room lain."
+        - link "Kembali ke room" [ref=f4e57] [cursor=pointer]:
+          - /url: /r/demo?state=chat
+  - contentinfo [ref=f4e58]:
+    - generic [ref=f4e59]:
+      - generic [ref=f4e60]:
+        - generic [ref=f4e61]:
+          - paragraph [ref=f4e62]: umpomenfess room
+          - paragraph [ref=f4e63]: "Room chat anonim untuk obrolan berbatas waktu: aktif 7 hari, arsip 15 hari, lalu dihapus permanen. Bagian ekosistem UMPOMENFESS."
+        - navigation "Navigasi footer" [ref=f4e64]:
+          - link "Dasbor Host" [ref=f4e65] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Ruang saya" [ref=f4e66] [cursor=pointer]:
+            - /url: /rooms
+          - link "Privasi" [ref=f4e67] [cursor=pointer]:
+            - /url: /privasi
+          - link "Batas anonimitas" [ref=f4e68] [cursor=pointer]:
+            - /url: /batas-anonimitas
+          - link "Menfess, situs utama" [ref=f4e69] [cursor=pointer]:
+            - /url: https://umpomenfess.my.id
+            - text: Menfess utama ↗
+      - generic [ref=f4e70]: © 2026 umpomenfess — room.umpomenfess.my.id

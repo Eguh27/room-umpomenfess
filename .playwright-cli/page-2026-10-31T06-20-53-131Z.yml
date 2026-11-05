@@ -1,0 +1,180 @@
+- generic [active] [ref=f13e1]:
+  - link "Lompat ke konten" [ref=f13e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f13e3]:
+    - generic [ref=f13e4]:
+      - link "umpomenfess room — beranda" [ref=f13e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f13e10]: umpomenfess
+        - generic [ref=f13e12]: room
+      - navigation "Navigasi utama" [ref=f13e13]:
+        - link "Jelajahi" [ref=f13e14] [cursor=pointer]:
+          - /url: /jelajahi
+        - link "Dasbor Host" [ref=f13e15] [cursor=pointer]:
+          - /url: /dashboard
+        - link "Ruang saya" [ref=f13e16] [cursor=pointer]:
+          - /url: /rooms
+        - link "Privasi" [ref=f13e17] [cursor=pointer]:
+          - /url: /privasi
+  - main [ref=f13e21]:
+    - generic [ref=f13e22]:
+      - paragraph [ref=f13e23]: admin platform · AAL2 · pratinjau T-32
+      - heading "Pengguna" [level=1] [ref=f13e24]
+      - paragraph [ref=f13e26]:
+        - text: Pratinjau kerangka (dev saja) memakai data tiruan
+        - code [ref=f13e27]: mockAdmin
+        - text: . Data nyata menyusul lewat RPC Admin saat T-57.
+      - navigation "Menu konsol admin" [ref=f13e28]:
+        - link "Ringkasan" [ref=f13e29] [cursor=pointer]:
+          - /url: /admin?state=preview
+        - link "Pengguna" [ref=f13e30] [cursor=pointer]:
+          - /url: /admin/users?state=preview
+        - link "Laporan" [ref=f13e31] [cursor=pointer]:
+          - /url: /admin/reports?state=preview
+        - link "Room" [ref=f13e32] [cursor=pointer]:
+          - /url: /admin/rooms?state=preview
+        - link "Audit" [ref=f13e33] [cursor=pointer]:
+          - /url: /admin/audit?state=preview
+      - paragraph [ref=f13e34]:
+        - text: Daftar akun sesuai
+        - code [ref=f13e35]: admin_list_users
+        - text: — kolom handle, lencana, peran, tier, status, dan waktu dibuat. Identitas internal tidak ditampilkan di tabel.
+      - generic [ref=f13e36]:
+        - generic [ref=f13e37]: Cari handle
+        - searchbox "Cari handle" [disabled] [ref=f13e38]
+        - paragraph [ref=f13e39]: Pencarian live menyusul saat T-57 menyambungkan RPC.
+      - table [ref=f13e41]:
+        - rowgroup [ref=f13e42]:
+          - row [ref=f13e43]:
+            - columnheader "Handle" [ref=f13e44]
+            - columnheader "Peran" [ref=f13e45]
+            - columnheader "Tier" [ref=f13e46]
+            - columnheader "Status" [ref=f13e47]
+            - columnheader "Dibuat" [ref=f13e48]
+            - columnheader "Aksi" [ref=f13e49]
+        - rowgroup [ref=f13e50]:
+          - row [ref=f13e51]:
+            - cell "bem.kampus VERIFIED" [ref=f13e52]:
+              - generic [ref=f13e53]:
+                - generic [ref=f13e54]: bem.kampus
+                - generic [ref=f13e55]: VERIFIED
+            - cell "host" [ref=f13e56]
+            - cell "free" [ref=f13e58]
+            - cell "aktif" [ref=f13e60]
+            - cell "3 bulan lalu" [ref=f13e62]
+            - cell [ref=f13e63]:
+              - generic [ref=f13e64]:
+                - button "Ganti handle" [disabled] [ref=f13e65]
+                - button "Tangguhkan" [disabled] [ref=f13e66]
+          - row [ref=f13e67]:
+            - cell "d7k2pRm8x" [ref=f13e68]
+            - cell "host" [ref=f13e71]
+            - cell "premium" [ref=f13e73]
+            - cell "aktif" [ref=f13e75]
+            - cell "5 minggu lalu" [ref=f13e77]
+            - cell [ref=f13e78]:
+              - generic [ref=f13e79]:
+                - button "Ganti handle" [disabled] [ref=f13e80]
+                - button "Tangguhkan" [disabled] [ref=f13e81]
+          - row [ref=f13e82]:
+            - cell "w9tZq4jNn" [ref=f13e83]
+            - cell "admin" [ref=f13e86]
+            - cell "premium" [ref=f13e88]
+            - cell "aktif" [ref=f13e90]
+            - cell "2 bulan lalu" [ref=f13e92]
+            - cell [ref=f13e93]:
+              - generic [ref=f13e94]:
+                - button "Ganti handle" [disabled] [ref=f13e95]
+                - button "Tangguhkan" [disabled] [ref=f13e96]
+          - row [ref=f13e97]:
+            - cell "f2x6j9c4v" [ref=f13e98]
+            - cell "guest" [ref=f13e101]
+            - cell "free" [ref=f13e103]
+            - cell "aktif" [ref=f13e105]
+            - cell "12 hari lalu" [ref=f13e107]
+            - cell [ref=f13e108]:
+              - generic [ref=f13e109]:
+                - button "Ganti handle" [disabled] [ref=f13e110]
+                - button "Tangguhkan" [disabled] [ref=f13e111]
+          - row [ref=f13e112]:
+            - cell "wu32t76e3" [ref=f13e113]
+            - cell "guest" [ref=f13e116]
+            - cell "free" [ref=f13e118]
+            - cell "aktif" [ref=f13e120]
+            - cell "9 hari lalu" [ref=f13e122]
+            - cell [ref=f13e123]:
+              - generic [ref=f13e124]:
+                - button "Ganti handle" [disabled] [ref=f13e125]
+                - button "Tangguhkan" [disabled] [ref=f13e126]
+          - row [ref=f13e127]:
+            - cell "m3r7t5p2d" [ref=f13e128]
+            - cell "host" [ref=f13e131]
+            - cell "free" [ref=f13e133]
+            - cell "ditangguhkan" [ref=f13e135]
+            - cell "1 bulan lalu" [ref=f13e137]
+            - cell [ref=f13e138]:
+              - generic [ref=f13e139]:
+                - button "Ganti handle" [disabled] [ref=f13e140]
+                - button "Buka" [disabled] [ref=f13e141]
+          - row [ref=f13e142]:
+            - cell "k7v9m2qx1" [ref=f13e143]
+            - cell "guest" [ref=f13e146]
+            - cell "free" [ref=f13e148]
+            - cell "aktif" [ref=f13e150]
+            - cell "6 hari lalu" [ref=f13e152]
+            - cell [ref=f13e153]:
+              - generic [ref=f13e154]:
+                - button "Ganti handle" [disabled] [ref=f13e155]
+                - button "Tangguhkan" [disabled] [ref=f13e156]
+          - row [ref=f13e157]:
+            - cell "l4b8uVq3w VERIFIED" [ref=f13e158]:
+              - generic [ref=f13e159]:
+                - generic [ref=f13e160]: l4b8uVq3w
+                - generic [ref=f13e161]: VERIFIED
+            - cell "host" [ref=f13e162]
+            - cell "premium" [ref=f13e164]
+            - cell "aktif" [ref=f13e166]
+            - cell "4 bulan lalu" [ref=f13e168]
+            - cell [ref=f13e169]:
+              - generic [ref=f13e170]:
+                - button "Ganti handle" [disabled] [ref=f13e171]
+                - button "Tangguhkan" [disabled] [ref=f13e172]
+      - generic [ref=f13e173]:
+        - heading "Tata aksi" [level=2] [ref=f13e174]
+        - paragraph [ref=f13e175]:
+          - text: Ganti handle memakai
+          - code [ref=f13e176]: admin_rename_handle
+          - text: ": pola buatan Admin"
+          - code [ref=f13e177]: "[a-z0-9._-]{3,24}"
+          - text: dengan lencana VERIFIED; pola 9-acak sistem tidak bisa diberi lencana, handle tersimpan khidmat dan kata reserved ditolak. Semua aksi menulis
+          - emphasis [ref=f13e178]: audit log
+          - text: otomatis.
+        - paragraph [ref=f13e179]: Aksi dalam tabel belum berfungsi — disambungkan saat T-57.
+  - contentinfo [ref=f13e180]:
+    - generic [ref=f13e181]:
+      - generic [ref=f13e182]:
+        - generic [ref=f13e183]:
+          - paragraph [ref=f13e184]: umpomenfess room
+          - paragraph [ref=f13e185]: "Room chat anonim untuk obrolan berbatas waktu: aktif 7 hari, arsip 15 hari, lalu dihapus permanen. Bagian ekosistem UMPOMENFESS."
+        - navigation "Navigasi footer" [ref=f13e186]:
+          - link "Jelajahi room publik" [ref=f13e187] [cursor=pointer]:
+            - /url: /jelajahi
+          - link "Dasbor Host" [ref=f13e188] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Ruang saya" [ref=f13e189] [cursor=pointer]:
+            - /url: /rooms
+          - link "Aturan konten" [ref=f13e190] [cursor=pointer]:
+            - /url: /aturan-konten
+          - link "Privasi" [ref=f13e191] [cursor=pointer]:
+            - /url: /privasi
+          - link "Batas anonimitas" [ref=f13e192] [cursor=pointer]:
+            - /url: /batas-anonimitas
+          - link "Menfess, situs utama" [ref=f13e193] [cursor=pointer]:
+            - /url: https://umpomenfess.my.id
+            - text: Menfess utama ↗
+      - generic [ref=f13e194]: © 2026 umpomenfess — room.umpomenfess.my.id
+  - generic [ref=f13e197]:
+    - button [ref=f13e198]
+    - button [ref=f13e204]
+    - button [ref=f13e208]
+    - button [ref=f13e213]

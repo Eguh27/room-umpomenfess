@@ -111,6 +111,7 @@
   border-top: 1.5px dashed var(--border-dash);
 }
 .composer .input { flex: 1; min-height: 44px; }
+.chat-note { margin: 0; }
 
 /* ---------- panel member ---------- */
 .mp {

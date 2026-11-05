@@ -1,0 +1,164 @@
+- generic [active] [ref=f5e1]:
+  - link "Lompat ke konten" [ref=f5e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f5e3]:
+    - generic [ref=f5e4]:
+      - link "umpomenfess room — beranda" [ref=f5e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f5e10]: umpomenfess
+        - generic [ref=f5e12]: room
+      - navigation "Navigasi utama" [ref=f5e13]:
+        - link "Jelajahi" [ref=f5e14] [cursor=pointer]:
+          - /url: /jelajahi
+        - link "Dasbor Host" [ref=f5e15] [cursor=pointer]:
+          - /url: /dashboard
+        - link "Ruang saya" [ref=f5e16] [cursor=pointer]:
+          - /url: /rooms
+        - link "Privasi" [ref=f5e17] [cursor=pointer]:
+          - /url: /privasi
+  - main [ref=f5e21]:
+    - generic [ref=f5e22]:
+      - paragraph [ref=f5e23]: admin platform · AAL2 · pratinjau T-32
+      - heading "Laporan" [level=1] [ref=f5e24]
+      - paragraph [ref=f5e26]:
+        - text: Pratinjau kerangka (dev saja) memakai data tiruan
+        - code [ref=f5e27]: mockAdmin
+        - text: . Data nyata menyusul lewat RPC Admin saat T-57.
+      - navigation "Menu konsol admin" [ref=f5e28]:
+        - link "Ringkasan" [ref=f5e29] [cursor=pointer]:
+          - /url: /admin?state=preview
+        - link "Pengguna" [ref=f5e30] [cursor=pointer]:
+          - /url: /admin/users?state=preview
+        - link "Laporan" [ref=f5e31] [cursor=pointer]:
+          - /url: /admin/reports?state=preview
+        - link "Room" [ref=f5e32] [cursor=pointer]:
+          - /url: /admin/rooms?state=preview
+        - link "Audit" [ref=f5e33] [cursor=pointer]:
+          - /url: /admin/audit?state=preview
+      - paragraph [ref=f5e34]:
+        - text: Antrean laporan sesuai
+        - code [ref=f5e35]: admin_list_reports
+        - text: ": laporan ditampilkan bersama metadata room dan status katalog. Identitas pelapor tidak pernah ditampilkan — yang dihitung hanya pelapor unik (satu pelapor dihitung sekali per room, D-20)."
+      - table [ref=f5e37]:
+        - rowgroup [ref=f5e38]:
+          - row [ref=f5e39]:
+            - columnheader "Room" [ref=f5e40]
+            - columnheader "Status katalog" [ref=f5e41]
+            - columnheader "Laporan unik" [ref=f5e42]
+            - columnheader "Alasan" [ref=f5e43]
+            - columnheader "Terakhir" [ref=f5e44]
+            - columnheader "Aksi" [ref=f5e45]
+        - rowgroup [ref=f5e46]:
+          - row [ref=f5e47]:
+            - cell [ref=f5e48]:
+              - paragraph [ref=f5e49]: Kuis Malam Bonus
+              - paragraph [ref=f5e50]: m4kP2rVt9wQsJz1x
+            - cell "Tersembunyi" [ref=f5e51]
+            - cell "4/3" [ref=f5e53]
+            - cell "SPAM SPAM OTHER SPAM" [ref=f5e55]:
+              - generic [ref=f5e56]:
+                - generic [ref=f5e57]: SPAM
+                - generic [ref=f5e58]: SPAM
+                - generic [ref=f5e59]: OTHER
+                - generic [ref=f5e60]: SPAM
+            - cell "13 menit lalu" [ref=f5e61]
+            - cell [ref=f5e62]:
+              - generic [ref=f5e63]:
+                - button "Blokir" [disabled] [ref=f5e64]
+                - button "Turun dari FYP" [disabled] [ref=f5e65]
+          - row [ref=f5e66]:
+            - cell [ref=f5e67]:
+              - paragraph [ref=f5e68]: Kilat Balapan Liar
+              - paragraph [ref=f5e69]: q6tNv3mZ8KxRpd2w
+            - cell "Diblokir" [ref=f5e70]
+            - cell "7/3" [ref=f5e72]
+            - cell "ILLEGAL ABUSE ILLEGAL ABUSE OTHER" [ref=f5e74]:
+              - generic [ref=f5e75]:
+                - generic [ref=f5e76]: ILLEGAL
+                - generic [ref=f5e77]: ABUSE
+                - generic [ref=f5e78]: ILLEGAL
+                - generic [ref=f5e79]: ABUSE
+                - generic [ref=f5e80]: OTHER
+            - cell "1 jam lalu" [ref=f5e81]
+            - cell [ref=f5e82]:
+              - generic [ref=f5e83]:
+                - button "Blokir" [disabled] [ref=f5e84]
+                - button "Turun dari FYP" [disabled] [ref=f5e85]
+          - row [ref=f5e86]:
+            - cell [ref=f5e87]:
+              - paragraph [ref=f5e88]: Curhat Akhir Semester
+              - paragraph [ref=f5e89]: j9qXc2Lm7BvHt4kd
+            - cell "Tampak di FYP" [ref=f5e90]
+            - cell "1/3" [ref=f5e92]
+            - cell "ABUSE" [ref=f5e94]
+            - cell "2 jam lalu" [ref=f5e97]
+            - cell [ref=f5e98]:
+              - generic [ref=f5e99]:
+                - button "Blokir" [disabled] [ref=f5e100]
+                - button "Turun dari FYP" [disabled] [ref=f5e101]
+          - row [ref=f5e102]:
+            - cell [ref=f5e103]:
+              - paragraph [ref=f5e104]: Rapat & Koordinasi KKN
+              - paragraph [ref=f5e105]: k3tK9mQp2weR7uds
+            - cell "Tidak di FYP" [ref=f5e106]
+            - cell "2/3" [ref=f5e108]
+            - cell "OTHER OTHER" [ref=f5e110]:
+              - generic [ref=f5e111]:
+                - generic [ref=f5e112]: OTHER
+                - generic [ref=f5e113]: OTHER
+            - cell "kemarin" [ref=f5e114]
+            - cell [ref=f5e115]:
+              - generic [ref=f5e116]:
+                - button "Blokir" [disabled] [ref=f5e117]
+                - button "Turun dari FYP" [disabled] [ref=f5e118]
+          - row [ref=f5e119]:
+            - cell [ref=f5e120]:
+              - paragraph [ref=f5e121]: Latihan Korps Drum Band
+              - paragraph [ref=f5e122]: g5Tz8wMq2BfxLr4y
+            - cell "Tampak di FYP" [ref=f5e123]
+            - cell "2/3" [ref=f5e125]
+            - cell "SPAM OTHER" [ref=f5e127]:
+              - generic [ref=f5e128]:
+                - generic [ref=f5e129]: SPAM
+                - generic [ref=f5e130]: OTHER
+            - cell "2 hari lalu" [ref=f5e131]
+            - cell [ref=f5e132]:
+              - generic [ref=f5e133]:
+                - button "Blokir" [disabled] [ref=f5e134]
+                - button "Turun dari FYP" [disabled] [ref=f5e135]
+      - generic [ref=f5e136]:
+        - heading "Niat laporan" [level=2] [ref=f5e137]
+        - paragraph [ref=f5e138]:
+          - text: "\"Turun dari FYP\" menyetel katalog ke"
+          - code [ref=f5e139]: HIDDEN
+          - text: tanpa mengunci akses member yang sudah ada; "Blokir" menyetel
+          - code [ref=f5e140]: BANNED
+          - text: lewat
+          - code [ref=f5e141]: admin_set_listing
+          - text: . Room privat tidak bisa dikembalikan ke FYP (
+          - code [ref=f5e142]: VISIBILITY_LOCKED
+          - text: ).
+        - paragraph [ref=f5e143]: Aksi dalam tabel belum berfungsi — disambungkan saat T-57.
+  - contentinfo [ref=f5e144]:
+    - generic [ref=f5e145]:
+      - generic [ref=f5e146]:
+        - generic [ref=f5e147]:
+          - paragraph [ref=f5e148]: umpomenfess room
+          - paragraph [ref=f5e149]: "Room chat anonim untuk obrolan berbatas waktu: aktif 7 hari, arsip 15 hari, lalu dihapus permanen. Bagian ekosistem UMPOMENFESS."
+        - navigation "Navigasi footer" [ref=f5e150]:
+          - link "Jelajahi room publik" [ref=f5e151] [cursor=pointer]:
+            - /url: /jelajahi
+          - link "Dasbor Host" [ref=f5e152] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Ruang saya" [ref=f5e153] [cursor=pointer]:
+            - /url: /rooms
+          - link "Aturan konten" [ref=f5e154] [cursor=pointer]:
+            - /url: /aturan-konten
+          - link "Privasi" [ref=f5e155] [cursor=pointer]:
+            - /url: /privasi
+          - link "Batas anonimitas" [ref=f5e156] [cursor=pointer]:
+            - /url: /batas-anonimitas
+          - link "Menfess, situs utama" [ref=f5e157] [cursor=pointer]:
+            - /url: https://umpomenfess.my.id
+            - text: Menfess utama ↗
+      - generic [ref=f5e158]: © 2026 umpomenfess — room.umpomenfess.my.id

@@ -1,0 +1,15 @@
+---
+import Base from '../../layouts/Base.astro';
+import AuthCallback from '../../components/auth/AuthCallback';
+import { safeNext } from '../../components/auth/authMessages';
+
+export const prerender = false;
+const next = safeNext(Astro.url.searchParams.get('next'));
+---
+
+<Base title="Konfirmasi email — umpomenfess room" noindex>
+  <section class="narrow auth">
+    <p class="eyebrow">akun Host</p>
+    <AuthCallback client:load next={next} />
+  </section>
+</Base>

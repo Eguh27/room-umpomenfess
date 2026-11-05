@@ -1,0 +1,30 @@
+- generic [active] [ref=e1]:
+  - link "Lompat ke konten" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=e3]:
+    - link "umpomenfess room — beranda" [ref=e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e10]: umpomenfess
+      - generic [ref=e12]: room
+  - main [ref=e13]:
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e16]: ✧ Ngobrol Santai (demo)
+        - generic [ref=e17]: demo /r/demo
+      - region [ref=e18]:
+        - generic [ref=e19]: 1 ROOM AKTIF
+        - heading "Keluar dulu dari room yang masih aktif" [level=1] [ref=e20]
+        - paragraph [ref=e21]:
+          - text: Sesi anonim hanya boleh punya satu keanggotaan aktif. Kamu masih tercatat di
+          - strong [ref=e22]: Ngobrol Santai (demo)
+          - text: . Keluar dari room itu dulu, lalu buka link ini lagi.
+        - link "Keluar dari Ngobrol Santai (demo) dan gabung ke sini" [ref=e23] [cursor=pointer]:
+          - /url: /r/demo?state=chat
+        - link "Buka Ruang saya" [ref=e24] [cursor=pointer]:
+          - /url: /rooms
+        - paragraph [ref=e25]: Pratinjau statis; alur keluar-lalu-gabung nyata disambung T-52a.
+  - generic [ref=e28]:
+    - button [ref=e29]
+    - button [ref=e35]
+    - button [ref=e39]
+    - button [ref=e44]

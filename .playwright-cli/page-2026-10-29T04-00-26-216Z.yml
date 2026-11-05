@@ -1,0 +1,123 @@
+- generic [active] [ref=f5e1]:
+  - link "Lompat ke konten" [ref=f5e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f5e3]:
+    - generic [ref=f5e4]:
+      - link "umpomenfess room — beranda" [ref=f5e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f5e10]: umpomenfess
+        - generic [ref=f5e12]: room
+      - navigation "Navigasi utama" [ref=f5e13]:
+        - link "Dasbor Host" [ref=f5e14] [cursor=pointer]:
+          - /url: /dashboard
+        - link "Ruang saya" [ref=f5e15] [cursor=pointer]:
+          - /url: /rooms
+        - link "Privasi" [ref=f5e16] [cursor=pointer]:
+          - /url: /privasi
+      - link "Masuk" [ref=f5e17] [cursor=pointer]:
+        - /url: /login
+  - main [ref=f5e18]:
+    - generic [ref=f5e19]:
+      - generic [ref=f5e20]:
+        - paragraph [ref=f5e21]: room.umpomenfess.my.id
+        - heading "Room chat anonim dalam enam karakter." [level=1] [ref=f5e22]
+        - paragraph [ref=f5e23]: Host membuat room privat atau publik, lalu membagikan link plus password bila privat. Guest masuk tanpa akun dan tampil dengan handle acak sembilan karakter. Obrolan tampil sebagai teks — tidak bisa mengirim gambar, file, atau tautan pelacakan.
+        - generic [ref=f5e24]:
+          - link "Masuk sebagai Host" [ref=f5e25] [cursor=pointer]:
+            - /url: /login
+          - link "Pratinjau room Guest" [ref=f5e26] [cursor=pointer]:
+            - /url: /r/demo
+        - list "Ringkasan aturan" [ref=f5e27]:
+          - listitem [ref=f5e28]: 7 hari aktif, 15 hari arsip
+          - listitem [ref=f5e29]: Guest tanpa akun
+          - listitem [ref=f5e30]: Handle acak, bukan nomor
+          - listitem [ref=f5e31]: Room publik punya disclaimer
+      - generic [ref=f5e34]:
+        - generic [ref=f5e35]: ✧ pesan masuk
+        - generic [ref=f5e36]:
+          - generic [ref=f5e37]:
+            - generic [ref=f5e38]: k7v9m2qx1
+            - paragraph [ref=f5e41]: Terima kasih roomnya, koordinasi jadi jauh lebih gampang.
+          - generic [ref=f5e42]:
+            - generic [ref=f5e44]:
+              - generic [ref=f5e45]: a5d8k2r7t
+              - generic [ref=f5e46]: HOST
+            - paragraph [ref=f5e47]: Dengan senang hati. Link ini aktif seminggu ya.
+          - generic [ref=f5e48]: Ada yang sedang mengetik…
+        - generic [ref=f5e53]:
+          - generic [ref=f5e54]: K3TX9M
+          - generic [ref=f5e55]: "@umpomenfess"
+    - generic [ref=f5e56]:
+      - heading "Cara kerja" [level=2] [ref=f5e57]
+      - list [ref=f5e58]:
+        - listitem [ref=f5e59]:
+          - generic [aria-hidden] [ref=f5e60]: "1"
+          - generic [ref=f5e61]:
+            - heading "Host bikin room" [level=3] [ref=f5e62]
+            - paragraph [ref=f5e63]: Pilih privat atau publik, atur kapasitas 2–75 Guest, persetujuan, jeda idle, dan indikator mengetik. Room publik punya disclaimer sebelum masuk.
+        - listitem [ref=f5e64]:
+          - generic [aria-hidden] [ref=f5e65]: "2"
+          - generic [ref=f5e66]:
+            - heading "Bagikan link + password" [level=3] [ref=f5e67]
+            - paragraph [ref=f5e68]: Room privat memakai password enam karakter yang tampil sekali. Guest masuk tanpa membuat akun dan tampil dengan handle acak sembilan karakter — bukan nomor urut.
+        - listitem [ref=f5e69]:
+          - generic [aria-hidden] [ref=f5e70]: "3"
+          - generic [ref=f5e71]:
+            - heading "Room menutup sendiri" [level=3] [ref=f5e72]
+            - paragraph [ref=f5e73]: Aktif 7 hari, tetap terbaca untuk Host 15 hari (bisa diekspor ke .txt), setelah itu dihapus permanen — tidak ada yang menumpuk.
+    - generic [ref=f5e74]:
+      - heading "Dua peran, satu tanggung jawab" [level=2] [ref=f5e75]
+      - generic [ref=f5e76]:
+        - article [ref=f5e77]:
+          - generic [ref=f5e78]: ✧ Host
+          - heading "Moderator room" [level=3] [ref=f5e79]
+          - paragraph [ref=f5e80]: Verifikasi Guest yang menunggu, keluarkan pelanggar, tutup room lebih awal. Melihat anggota hanya sebagai handle acak — sistem tidak pernah menyerahkan identitas Guest kepada Host.
+          - paragraph [ref=f5e81]: "Batas tier Free: 3 room aktif, maksimum 40 Guest per room."
+          - link "Buat akun Host" [ref=f5e82] [cursor=pointer]:
+            - /url: /register
+        - article [ref=f5e83]:
+          - generic [ref=f5e84]: ✧ Guest
+          - heading "Tanpa akun, tanpa nama" [level=3] [ref=f5e85]
+          - paragraph [ref=f5e86]:
+            - text: Masuk lewat link room dengan password bila privat, lalu tampil dengan handle acak. Kalau tidak ikut aktif, kamu keluar otomatis biar kursi tidak monopoli — cukup tekan
+            - strong [ref=f5e87]: Masuk lagi
+            - text: .
+          - paragraph [ref=f5e88]: Sesi anonim hanya boleh di 1 room aktif; akun login maksimum 5 room.
+          - link "Coba pratinjau" [ref=f5e89] [cursor=pointer]:
+            - /url: /r/demo
+      - paragraph [ref=f5e90]:
+        - text: Bagian dari ekosistem
+        - link "Menfess, situs utama" [ref=f5e91] [cursor=pointer]:
+          - /url: https://umpomenfess.my.id
+          - text: umpomenfess.my.id ↗
+        - text: . Baca
+        - link "privasi" [ref=f5e92] [cursor=pointer]:
+          - /url: /privasi
+        - text: dan
+        - link "batas anonimitas" [ref=f5e93] [cursor=pointer]:
+          - /url: /batas-anonimitas
+        - text: sebelum membagi room.
+  - contentinfo [ref=f5e94]:
+    - generic [ref=f5e95]:
+      - generic [ref=f5e96]:
+        - generic [ref=f5e97]:
+          - paragraph [ref=f5e98]: umpomenfess room
+          - paragraph [ref=f5e99]: "Room chat anonim untuk obrolan berbatas waktu: aktif 7 hari, arsip 15 hari, lalu dihapus permanen. Bagian ekosistem UMPOMENFESS."
+        - navigation "Navigasi footer" [ref=f5e100]:
+          - link "Dasbor Host" [ref=f5e101] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Ruang saya" [ref=f5e102] [cursor=pointer]:
+            - /url: /rooms
+          - link "Privasi" [ref=f5e103] [cursor=pointer]:
+            - /url: /privasi
+          - link "Batas anonimitas" [ref=f5e104] [cursor=pointer]:
+            - /url: /batas-anonimitas
+          - link "Menfess, situs utama" [ref=f5e105] [cursor=pointer]:
+            - /url: https://umpomenfess.my.id
+            - text: Menfess utama ↗
+      - generic [ref=f5e106]: © 2026 umpomenfess — room.umpomenfess.my.id
+  - generic [ref=f5e109]:
+    - button [ref=f5e110]
+    - button [ref=f5e116]
+    - button [ref=f5e120]
+    - button [ref=f5e125]

@@ -1,4 +1,6 @@
 ---
+import AuthNav from './auth/AuthNav';
+
 interface Props {
   /** compact = halaman chat: sembunyikan nav, sediakan slot aksi kanan. */
   compact?: boolean;
@@ -22,11 +24,14 @@ const { compact = false } = Astro.props;
     {!compact && (
       <>
         <nav class="site-nav" aria-label="Navigasi utama">
+          <a href="/jelajahi">Jelajahi</a>
           <a href="/dashboard">Dasbor Host</a>
           <a href="/rooms">Ruang saya</a>
           <a href="/privasi">Privasi</a>
         </nav>
-        <a class="btn btn--brand btn--sm nav-cta" href="/login">Masuk</a>
+        <span class="nav-cta">
+          <AuthNav client:idle />
+        </span>
       </>
     )}
 

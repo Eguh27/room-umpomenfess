@@ -1,0 +1,17 @@
+- generic [active] [ref=f39e1]:
+  - link "Lompat ke konten" [ref=f39e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f39e3]:
+    - link "umpomenfess room — beranda" [ref=f39e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f39e10]: umpomenfess
+      - generic [ref=f39e12]: room
+  - main [ref=f39e13]:
+    - generic [ref=f39e15]:
+      - generic [ref=f39e16]: ✧ Ngobrol Santai (demo)
+      - generic [ref=f39e17]: demo /r/devroom000000001
+  - generic [ref=f39e20]:
+    - button [ref=f39e21]
+    - button [ref=f39e27]
+    - button [ref=f39e31]
+    - button [ref=f39e36]
