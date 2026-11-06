@@ -16,7 +16,7 @@ function saveJoinContext(success: JoinSuccess): void {
       `roomJoin:${success.roomId}`,
       JSON.stringify({
         memberId: success.memberId,
-        displayName: success.displayName,
+        handle: success.handle,
         status: success.status,
       }),
     );

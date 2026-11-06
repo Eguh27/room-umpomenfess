@@ -133,7 +133,7 @@ export function ApprovedStage({ success, slug }: { success: JoinSuccess; slug: s
       <span className="badge badge--active">MASUK</span>
       <h1>Berhasil masuk</h1>
       <p className="stage__body">
-        Kamu tampil di room ini sebagai <Handle handle={success.displayName} />. Handle ini dipakai
+        Kamu tampil di room ini sebagai <Handle handle={success.handle} />. Handle ini dipakai
         sampai kamu keluar.
       </p>
       <a className="btn btn--primary btn--block" href={`/r/${slug}?state=chat`}>
@@ -174,7 +174,7 @@ export function PendingStage({
         {busy ? 'Menyegarkan…' : 'Segarkan status'}
       </button>
       <span className="pill">
-        <Handle handle={success.displayName} /> · lobi
+        <Handle handle={success.handle} /> · lobi
       </span>
     </Stage>
   );

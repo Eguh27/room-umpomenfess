@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import StickerDecor from '../../components/StickerDecor.astro';
 import JoinRoom from '../../components/JoinRoom';
+import RoomChat from '../../components/chat/RoomChat';
 import Handle from '../../components/Handle.astro';
 import {
   guestRoomName,
@@ -21,6 +22,8 @@ const state = Astro.url.searchParams.get('state') ?? '';
 
 <Base title={`${guestRoomName} — room Guest`} noindex bare>
   {state === 'chat' ? (
+    <RoomChat client:load slug={slug ?? ''} mode="GUEST" dev={import.meta.env.DEV} />
+  ) : state === 'chat-mock' ? (
     <div class="grid chat-only">
       <div class="roombar row row--between">
         <a class="roombar__back" href="/rooms">

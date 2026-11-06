@@ -9,7 +9,7 @@ export type JoinSuccess = {
   roomId: string;
   memberId: string;
   /** Kontrak B saat ini masih `displayName`; T-52a menggantinya dengan handle server. */
-  displayName: string;
+  handle: string;
 };
 
 export type JoinFailure = {

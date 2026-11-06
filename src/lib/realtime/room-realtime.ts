@@ -38,6 +38,7 @@ export interface RoomRealtimeOptions {
   initialMembers?: RoomMember[];
   initialStatus?: MemberStatus | null;
   pageSize?: number;
+  typingEffective?: boolean;
   createClientMsgId?: () => string;
   now?: () => Date;
 }
@@ -49,7 +50,10 @@ export type CreateRoomRealtimeOptions = Omit<RoomRealtimeOptions, 'client'> & {
 /**
  * Satu instance = satu room yang sedang dibuka.
  * - Pesan: Postgres Changes INSERT + backfill `list_messages(p_after_id)` setiap SUBSCRIBED.
+ * - Paginasi riwayat: `loadOlderMessages()` memuat riwayat sebelum id terkecil.
  * - Status member: Postgres Changes pada room_members (Guest hanya menerima barisnya sendiri).
+ * - Indikator mengetik: Realtime Broadcast agregat tanpa identitas di channel `typing:<room_id>`.
+ * - Heartbeat: memanggil `touch_activity` secara berkala untuk mencegah auto-kick idle.
  * - Kirim optimistis: id sementara negatif, diganti baris server dengan client_msg_id yang sama.
  */
 export class RoomRealtime {
@@ -58,19 +62,31 @@ export class RoomRealtime {
   private readonly memberId: string | null;
   private readonly self: RoomRealtimeOptions['self'];
   private readonly pageSize: number;
+  private readonly typingEffective: boolean;
   private readonly createClientMsgId: () => string;
   private readonly now: () => Date;
   private readonly store = new MessageStore();
   private readonly members = new Map<string, RoomMember>();
   private readonly listeners = new Set<() => void>();
   private channel: RealtimeChannelLike | null = null;
+  private typingChannel: RealtimeChannelLike | null = null;
   private status: RealtimeConnectionStatus = 'idle';
   private selfStatus: MemberStatus | null = null;
   private historyLoaded = false;
+  private hasMoreHistory = true;
+  private isLoadingOlder = false;
   private lastError: RealtimeError | null = null;
   private snapshot: RoomRealtimeSnapshot;
   private backfillPromise: Promise<void> | null = null;
   private stopped = false;
+
+  // Typing state
+  private readonly activeTypers = new Map<string, number>();
+  private typingTimer: ReturnType<typeof setInterval> | null = null;
+  private lastTypingSentAt = 0;
+
+  // Heartbeat state
+  private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(options: RoomRealtimeOptions) {
     this.client = options.client;
@@ -78,6 +94,7 @@ export class RoomRealtime {
     this.memberId = options.memberId;
     this.self = options.self;
     this.pageSize = Math.min(Math.max(options.pageSize ?? BACKFILL_PAGE_SIZE, 1), 100);
+    this.typingEffective = Boolean(options.typingEffective);
     this.createClientMsgId = options.createClientMsgId ?? (() => crypto.randomUUID());
     this.now = options.now ?? (() => new Date());
     this.store.addServerMany(options.initialMessages ?? []);
@@ -117,11 +134,56 @@ export class RoomRealtime {
     );
     this.channel = channel;
     channel.subscribe((status) => this.handleSubscribeStatus(status));
+
+    // Typing broadcast channel (hanya jika fitur aktif)
+    if (this.typingEffective) {
+      const typingChannel = this.client.channel(`typing:${this.roomId}`, {
+        config: { private: true },
+      });
+      typingChannel.on(
+        'broadcast',
+        { event: 'typing' },
+        (msg: { payload?: Record<string, unknown> }) => {
+          const sender = (msg.payload?.senderId as string) || (msg.payload?.handle as string);
+          if (sender && sender !== this.memberId && sender !== this.self.handle) {
+            this.activeTypers.set(sender, Date.now() + 6000);
+            this.updateTypingCount();
+          }
+        },
+      );
+      this.typingChannel = typingChannel;
+      typingChannel.subscribe(() => undefined);
+      this.typingTimer = setInterval(() => this.updateTypingCount(), 1000);
+    }
+
+    // Heartbeat untuk anggota terdaftar
+    this.startHeartbeat();
   }
 
   stop(): void {
     if (this.stopped) return;
     this.stopped = true;
+
+    if (this.typingTimer) {
+      clearInterval(this.typingTimer);
+      this.typingTimer = null;
+    }
+    this.stopHeartbeat();
+
+    if (this.typingChannel) {
+      const tc = this.typingChannel;
+      this.typingChannel = null;
+      try {
+        if (this.client.removeChannel) {
+          void Promise.resolve(this.client.removeChannel(tc)).catch(() => undefined);
+        } else {
+          void Promise.resolve(tc.unsubscribe()).catch(() => undefined);
+        }
+      } catch {
+        // Channel mungkin sudah tertutup
+      }
+    }
+
     const channel = this.channel;
     this.channel = null;
     this.setStatus('closed');
@@ -134,7 +196,7 @@ export class RoomRealtime {
         void Promise.resolve(channel.unsubscribe()).catch(() => undefined);
       }
     } catch {
-      // Channel mungkin sudah tertutup; tidak ada yang perlu dilakukan.
+      // Channel mungkin sudah tertutup
     }
   }
 
@@ -181,63 +243,208 @@ export class RoomRealtime {
       createdAt: this.now().toISOString(),
     });
     this.emit();
-    return this.sendOptimistic(optimistic);
+
+    try {
+      const { data, error } = await this.client.rpc<ChatMessage[] | ChatMessage>('send_message', {
+        p_room_id: this.roomId,
+        p_content: trimmed,
+        p_client_msg_id: clientMsgId,
+      });
+
+      if (error) {
+        this.setError(error.message);
+        this.store.markFailed(clientMsgId, error.message);
+        this.emit();
+        return { ok: false, error: error.message };
+      }
+
+      const rows = toArray(data);
+      const server = rows.find((r) => r.client_msg_id === clientMsgId) ?? rows[0];
+      if (server) {
+        this.store.addServer(server);
+        this.emit();
+        return { ok: true, message: server };
+      }
+      return { ok: true, message: optimistic };
+    } catch {
+      this.setError('SERVER_ERROR');
+      this.store.markFailed(clientMsgId, 'SERVER_ERROR');
+      this.emit();
+      return { ok: false, error: 'SERVER_ERROR' };
+    }
   }
 
   async retryMessage(clientMsgId: string): Promise<SendResult> {
     if (this.stopped) return { ok: false, error: 'REALTIME_CLOSED' };
+    const pending = this.store.getByClientId(clientMsgId);
+    if (!pending || !pending.optimistic) return { ok: false, error: 'NOT_FOUND' };
 
-    const current = this.store.getByClientId(clientMsgId);
-    if (!current?.optimistic) return { ok: false, error: 'NOT_FOUND' };
-
-    const updated = this.store.markSending(clientMsgId);
+    this.store.markSending(clientMsgId);
     this.emit();
-    return this.sendOptimistic(updated ?? current);
-  }
 
-  private async sendOptimistic(message: ChatMessage): Promise<SendResult> {
     try {
       const { data, error } = await this.client.rpc<ChatMessage[] | ChatMessage>('send_message', {
         p_room_id: this.roomId,
-        p_content: message.content,
-        p_client_msg_id: message.client_msg_id,
+        p_content: pending.content,
+        p_client_msg_id: clientMsgId,
       });
 
       if (error) {
-        // Realtime bisa lebih dulu tiba daripada respons RPC. Kalau baris server
-        // sudah masuk lewat Realtime, jangan tandai pesan sebagai gagal.
-        const current = this.store.getByClientId(message.client_msg_id);
-        if (current && !current.optimistic) {
-          this.lastError = null;
-          this.emit();
-          return { ok: true, message: current };
-        }
-        this.store.markFailed(message.client_msg_id, error.message);
         this.setError(error.message);
+        this.store.markFailed(clientMsgId, error.message);
+        this.emit();
         return { ok: false, error: error.message };
       }
 
-      const row = toArray(data)[0];
-      if (!row) {
-        const current = this.store.getByClientId(message.client_msg_id);
-        if (current && !current.optimistic) {
-          this.lastError = null;
-          this.emit();
-          return { ok: true, message: current };
-        }
-        this.store.markFailed(message.client_msg_id, 'SERVER_ERROR');
-        this.setError('SERVER_ERROR');
-        return { ok: false, error: 'SERVER_ERROR' };
+      const rows = toArray(data);
+      const server = rows.find((r) => r.client_msg_id === clientMsgId) ?? rows[0];
+      if (server) {
+        this.store.addServer(server);
+        this.emit();
+        return { ok: true, message: server };
+      }
+      return { ok: true, message: pending };
+    } catch {
+      this.setError('SERVER_ERROR');
+      this.store.markFailed(clientMsgId, 'SERVER_ERROR');
+      this.emit();
+      return { ok: false, error: 'SERVER_ERROR' };
+    }
+  }
+
+  /** Paginasi memuat riwayat pesan yang lebih lama (T-41). */
+  async loadOlderMessages(): Promise<boolean> {
+    if (this.stopped || this.isLoadingOlder || !this.hasMoreHistory) return false;
+    const firstId = this.store.getFirstServerId();
+    if (firstId === null || firstId <= 1) {
+      this.hasMoreHistory = false;
+      this.emit();
+      return false;
+    }
+
+    this.isLoadingOlder = true;
+    this.emit();
+
+    try {
+      const { data, error } = await this.client.rpc<ChatMessage[] | ChatMessage>('list_messages', {
+        p_room_id: this.roomId,
+        p_before_id: firstId,
+        p_limit: this.pageSize,
+      });
+
+      if (this.stopped) return false;
+      if (error) {
+        this.isLoadingOlder = false;
+        this.emit();
+        return false;
       }
 
-      this.store.addServer(row);
-      this.lastError = null;
+      const rows = toArray(data);
+      if (rows.length < this.pageSize) {
+        this.hasMoreHistory = false;
+      }
+      this.store.addServerMany(rows);
+      this.isLoadingOlder = false;
       this.emit();
-      return { ok: true, message: row };
+      return true;
     } catch {
-      this.store.markFailed(message.client_msg_id, 'SERVER_ERROR');
-      this.setError('SERVER_ERROR');
-      return { ok: false, error: 'SERVER_ERROR' };
+      this.isLoadingOlder = false;
+      this.emit();
+      return false;
+    }
+  }
+
+  /** Memicu siaran mengetik (T-43) dengan throttle 5 detik. */
+  sendTyping(): void {
+    if (this.stopped || !this.typingEffective || !this.typingChannel) return;
+    const now = Date.now();
+    if (now - this.lastTypingSentAt < 5000) return;
+    this.lastTypingSentAt = now;
+    if (typeof this.typingChannel.send === 'function') {
+      void Promise.resolve(
+        this.typingChannel.send({
+          type: 'broadcast',
+          event: 'typing',
+          payload: { senderId: this.memberId ?? this.self.handle },
+        }),
+      ).catch(() => undefined);
+    }
+  }
+
+  private updateTypingCount(): void {
+    const now = Date.now();
+    let changed = false;
+    for (const [id, expiresAt] of this.activeTypers.entries()) {
+      if (expiresAt <= now) {
+        this.activeTypers.delete(id);
+        changed = true;
+      }
+    }
+    if (changed || this.snapshot.typingCount !== this.activeTypers.size) {
+      this.emit();
+    }
+  }
+
+  /** Heartbeat sentuhan aktivitas agar tidak dikeluarkan idle (T-42). */
+  private startHeartbeat(): void {
+    if (typeof window === 'undefined' || this.heartbeatTimer) return;
+    this.heartbeatTimer = setInterval(() => {
+      this.touchActivity();
+    }, 4 * 60 * 1000);
+
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    }
+  }
+
+  private stopHeartbeat(): void {
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = null;
+    }
+    if (typeof document !== 'undefined') {
+      document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    }
+  }
+
+  private handleVisibilityChange = (): void => {
+    if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+      this.touchActivity();
+    }
+  };
+
+  touchActivity(): void {
+    if (this.stopped || !this.memberId) return;
+    void Promise.resolve(
+      this.client.rpc('touch_activity', { p_room_id: this.roomId }),
+    ).catch(() => undefined);
+  }
+
+  /** Masuk kembali bila terkena IDLE (T-42). */
+  async rejoin(): Promise<boolean> {
+    if (this.stopped) return false;
+    try {
+      const { error } = await this.client.rpc('rejoin_room', { p_room_id: this.roomId });
+      if (error) return false;
+      this.selfStatus = 'APPROVED';
+      await this.refresh();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /** Keluar sukarela dari room (T-42). */
+  async leave(): Promise<boolean> {
+    if (this.stopped) return false;
+    try {
+      const { error } = await this.client.rpc('leave_room', { p_room_id: this.roomId });
+      if (error) return false;
+      this.selfStatus = 'LEFT';
+      this.emit();
+      return true;
+    } catch {
+      return false;
     }
   }
 
@@ -278,7 +485,11 @@ export class RoomRealtime {
           return;
         }
 
-        this.store.addServerMany(toArray(data));
+        const rows = toArray(data);
+        if (rows.length < INITIAL_PAGE_SIZE) {
+          this.hasMoreHistory = false;
+        }
+        this.store.addServerMany(rows);
         this.historyLoaded = true;
         this.lastError = null;
         this.emit();
@@ -356,6 +567,9 @@ export class RoomRealtime {
       members: [...this.members.values()].sort(compareMembers),
       selfStatus: this.selfStatus,
       historyLoaded: this.historyLoaded,
+      hasMoreHistory: this.hasMoreHistory,
+      isLoadingOlder: this.isLoadingOlder,
+      typingCount: this.activeTypers.size,
       lastError: this.lastError,
     };
   }

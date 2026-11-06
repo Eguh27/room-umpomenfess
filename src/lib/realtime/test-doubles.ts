@@ -6,20 +6,36 @@ import type {
 } from './types';
 
 type RowCallback = (payload: { new: Record<string, unknown> }) => void;
+type BroadcastCallback = (payload: { payload: Record<string, unknown> }) => void;
 
 /** Channel tiruan: merekam listener dan bisa memicu event secara manual. */
 export class FakeChannel implements RealtimeChannelLike {
   readonly handlers: Array<{ filter: PostgresChangeFilter; callback: RowCallback }> = [];
+  readonly broadcastHandlers: Array<{ event: string; callback: BroadcastCallback }> = [];
+  readonly sentBroadcasts: Array<{ event: string; payload?: Record<string, unknown> }> = [];
   statusCallback: ((status: string, error?: Error) => void) | null = null;
   unsubscribed = false;
 
   on(
-    _event: 'postgres_changes',
-    filter: PostgresChangeFilter,
-    callback: RowCallback,
+    event: 'postgres_changes' | 'broadcast',
+    filter: PostgresChangeFilter | { event: string },
+    callback: any,
   ): RealtimeChannelLike {
-    this.handlers.push({ filter, callback });
+    if (event === 'broadcast') {
+      this.broadcastHandlers.push({ event: (filter as { event: string }).event, callback });
+    } else {
+      this.handlers.push({ filter: filter as PostgresChangeFilter, callback });
+    }
     return this;
+  }
+
+  send(message: {
+    type: 'broadcast';
+    event: string;
+    payload?: Record<string, unknown>;
+  }): Promise<unknown> {
+    this.sentBroadcasts.push({ event: message.event, payload: message.payload });
+    return Promise.resolve('ok');
   }
 
   subscribe(callback: (status: string, error?: Error) => void): RealtimeChannelLike {
@@ -36,6 +52,14 @@ export class FakeChannel implements RealtimeChannelLike {
     for (const handler of this.handlers) {
       if (handler.filter.table === table) {
         handler.callback({ new: row as Record<string, unknown> });
+      }
+    }
+  }
+
+  emitBroadcast(event: string, payload: Record<string, unknown>): void {
+    for (const handler of this.broadcastHandlers) {
+      if (handler.event === event) {
+        handler.callback({ payload });
       }
     }
   }

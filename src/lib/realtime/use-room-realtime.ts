@@ -23,6 +23,7 @@ export interface UseRoomRealtimeOptions {
   initialMessages?: ChatMessage[];
   initialMembers?: RoomMember[];
   initialStatus?: MemberStatus | null;
+  typingEffective?: boolean;
   createClientMsgId?: () => string;
 }
 
@@ -30,6 +31,10 @@ export interface UseRoomRealtimeResult {
   snapshot: RoomRealtimeSnapshot;
   sendMessage: (content: string) => Promise<SendResult>;
   retryMessage: (clientMsgId: string) => Promise<SendResult>;
+  loadOlderMessages: () => Promise<boolean>;
+  sendTyping: () => void;
+  rejoin: () => Promise<boolean>;
+  leave: () => Promise<boolean>;
 }
 
 /** Hook tipis untuk React island; logika ada di RoomRealtime (framework-agnostic). */
@@ -44,6 +49,7 @@ export function useRoomRealtime(options: UseRoomRealtimeOptions): UseRoomRealtim
     initialMessages,
     initialMembers,
     initialStatus,
+    typingEffective,
     createClientMsgId,
   } = options;
 
@@ -57,10 +63,11 @@ export function useRoomRealtime(options: UseRoomRealtimeOptions): UseRoomRealtim
         initialMessages,
         initialMembers,
         initialStatus,
+        typingEffective,
         createClientMsgId,
       }),
     // Data awal bersifat snapshot saat room dibuka; perubahan berikutnya datang dari Realtime.
-    [client, roomId, memberId, senderType, handle, senderBadge, initialStatus],
+    [client, roomId, memberId, senderType, handle, senderBadge, initialStatus, typingEffective],
   );
 
   useEffect(() => {
@@ -78,5 +85,9 @@ export function useRoomRealtime(options: UseRoomRealtimeOptions): UseRoomRealtim
     snapshot,
     sendMessage: (content) => realtime.sendMessage(content),
     retryMessage: (clientMsgId) => realtime.retryMessage(clientMsgId),
+    loadOlderMessages: () => realtime.loadOlderMessages(),
+    sendTyping: () => realtime.sendTyping(),
+    rejoin: () => realtime.rejoin(),
+    leave: () => realtime.leave(),
   };
 }
