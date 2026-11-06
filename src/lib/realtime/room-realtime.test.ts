@@ -267,4 +267,74 @@ describe('RoomRealtime', () => {
       error: 'REALTIME_CLOSED',
     });
   });
+
+  it('memuat riwayat lebih lama (paginasi loadOlderMessages)', async () => {
+    const { client, rt } = setup({
+      initialMessages: [message({ id: 10, content: 'pesan 10' })],
+    });
+    await start(rt, client);
+
+    client.rpcHandler = (name, args) => {
+      if (name === 'list_messages' && args.p_before_id === 10) {
+        return {
+          data: [
+            message({ id: 8, content: 'pesan 8', client_msg_id: CLIENT_2 }),
+            message({ id: 9, content: 'pesan 9', client_msg_id: CLIENT_3 }),
+          ],
+          error: null,
+        };
+      }
+      return { data: null, error: null };
+    };
+
+    const loaded = await rt.loadOlderMessages();
+    expect(loaded).toBe(true);
+    expect(rt.getSnapshot().messages.map((m) => m.id)).toEqual([8, 9, 10]);
+  });
+
+  it('menerima dan mengirim sinyal mengetik (typing indicator)', async () => {
+    const client = new FakeClient();
+    const rt = new RoomRealtime({
+      client,
+      roomId: ROOM_ID,
+      memberId: MEMBER_ID,
+      self: { senderType: 'GUEST', handle: 'wu32t76e3' },
+      typingEffective: true,
+      initialMessages: [],
+    });
+
+    rt.start();
+    const typingChannel = client.channels[1];
+    expect(typingChannel).toBeDefined();
+
+    typingChannel?.emitBroadcast('typing', { senderId: 'other-user' });
+    expect(rt.getSnapshot().typingCount).toBe(1);
+
+    rt.sendTyping();
+    expect(typingChannel?.sentBroadcasts).toContainEqual({
+      event: 'typing',
+      payload: { senderId: MEMBER_ID },
+    });
+
+    rt.stop();
+  });
+
+  it('bisa rejoin dan leave room', async () => {
+    const { client, rt } = setup({ initialStatus: 'IDLE' });
+    await start(rt, client);
+
+    client.rpcHandler = (name) => {
+      if (name === 'rejoin_room') return { data: null, error: null };
+      if (name === 'leave_room') return { data: null, error: null };
+      return { data: null, error: null };
+    };
+
+    const rejoined = await rt.rejoin();
+    expect(rejoined).toBe(true);
+    expect(rt.getSnapshot().selfStatus).toBe('APPROVED');
+
+    const left = await rt.leave();
+    expect(left).toBe(true);
+    expect(rt.getSnapshot().selfStatus).toBe('LEFT');
+  });
 });

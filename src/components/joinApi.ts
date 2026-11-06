@@ -96,14 +96,14 @@ async function readResponseBody(res: Response): Promise<JoinOutcome> {
     isJoinStatus(record.status) &&
     typeof record.roomId === 'string' &&
     typeof record.memberId === 'string' &&
-    typeof record.displayName === 'string'
+    typeof record.handle === 'string'
   ) {
     return {
       ok: true,
       status: record.status,
       roomId: record.roomId,
       memberId: record.memberId,
-      displayName: record.displayName,
+      handle: record.handle,
     };
   }
   return { ok: false, code: 'SERVER_ERROR' };

@@ -91,6 +91,16 @@ export class MessageStore {
     return last;
   }
 
+  getFirstServerId(): number | null {
+    let first: number | null = null;
+    for (const message of this.byId.values()) {
+      if (!message.optimistic && (first === null || message.id < first)) {
+        first = message.id;
+      }
+    }
+    return first;
+  }
+
   clear(): void {
     this.byId.clear();
     this.byClientId.clear();

@@ -49,6 +49,9 @@ export interface RoomRealtimeSnapshot {
   members: RoomMember[];
   selfStatus: MemberStatus | null;
   historyLoaded: boolean;
+  hasMoreHistory: boolean;
+  isLoadingOlder: boolean;
+  typingCount: number;
   lastError: RealtimeError | null;
 }
 
@@ -78,6 +81,16 @@ export interface RealtimeChannelLike {
     filter: PostgresChangeFilter,
     callback: (payload: { new: Record<string, unknown> }) => void,
   ): RealtimeChannelLike;
+  on(
+    event: 'broadcast',
+    filter: { event: string },
+    callback: (payload: { payload: Record<string, unknown> }) => void,
+  ): RealtimeChannelLike;
+  send?(message: {
+    type: 'broadcast';
+    event: string;
+    payload?: Record<string, unknown>;
+  }): Promise<unknown> | unknown;
   subscribe(callback: (status: string, error?: Error) => void): RealtimeChannelLike;
   unsubscribe(): Promise<unknown> | unknown;
 }

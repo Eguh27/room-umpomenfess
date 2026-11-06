@@ -475,3 +475,57 @@ Isi singkat: apa yang dibuat/diminta, file terkait, cara tes, hal yang perlu dik
 - **Ditunda:** T-75…T-81 (token/Google) sampai chat inti jalan. T-74 boleh disiapkan H/L di latar belakang.
 - **Usul percepatan (belum disetujui):** pecah T-53 menjadi T-53a chat inti dan T-53b polish; T-53a mulai setelah T-42 + T-52a tanpa menunggu T-41/T-43.
 - **Tidak mengubah kontrak/kode.** Catatan rute ada di `TODO.md` bagian "Rute cepat MVP".
+
+
+## 2026-11-06 14:35 — [F] HANDOFF T-52a
+
+- **Selesai:** Blocker perbaikan tipe `JoinSuccess` pada modul Join Room.
+- **Perubahan:**
+  - `src/components/joinTypes.ts`: Mengganti properti `displayName` menjadi `handle` pada `JoinSuccess`.
+  - `src/components/joinApi.ts`: Menyimpan dan membaca `handle` dari session storage `uf_room_guest_info`.
+  - `src/components/JoinRoom.tsx`: Menggunakan `result.handle` saat join berhasil dan redirect.
+  - `src/components/JoinScreens.tsx`: Menampilkan `result.handle` pada `ApprovedScreen`.
+- **Verifikasi:** `npm test` lolos, `astro check` tidak lagi melaporkan error tipe `displayName`.
+
+## 2026-11-06 14:35 — [R] HANDOFF T-41..T-43
+
+- **Selesai:** Penyelesaian fitur realtime pesan, pagination riwayat, ekspor chat .txt, indikator mengetik agregat, dan heartbeat.
+- **Perubahan:**
+  - `src/lib/realtime/message-store.ts`: Menambahkan method `getFirstServerId(): number | null` untuk pagination top-scroll.
+  - `src/lib/realtime/message-export.ts` & `src/lib/realtime/message-export.test.ts`: Implementasi pemformatan ekspor `.txt` sesuai spesifikasi `TASK.md` (header nama room + waktu ekspor WIB format `DD-MM-YYYY HH:mm [WIB]`, body baris format `[DD-MM-YYYY HH:mm] <handle>: content`, indentasi 2-spasi untuk pesan multiline) serta helper `downloadMessagesAsTxt` via Blob URL.
+  - `src/lib/realtime/types.ts`: Menambahkan properti snapshot (`hasMoreHistory`, `isLoadingOlder`, `typingCount`), serta dukungan broadcast pada `RealtimeChannelLike`.
+  - `src/lib/realtime/test-doubles.ts`: Menambahkan broadcast mocking pada `FakeChannel`.
+  - `src/lib/realtime/room-realtime.ts`:
+    - `loadOlderMessages()`: Mengambil riwayat pesan sebelum ID terlama via RPC `list_messages(p_room_id, p_before_id, ...)`.
+    - `sendTyping()` & `updateTypingCount()`: Broadcast anonim `{ s: 1 }` ke channel private `typing:<room_id>` dengan debounce 2 detik, serta pembersihan otomatis counter pengetik setelah 3 detik tidak ada sinyal.
+    - Heartbeat `touch_activity()`: Berjalan setiap 4 menit dan saat tab browser kembali aktif (`visibilitychange`). Transisi status `IDLE`, `KICKED`, `LEFT` otomatis ditangani dengan memutus channel realtime bila status bukan `APPROVED`.
+    - `rejoin()` dan `leave()`: Menghubungkan RPC `rejoin_room` dan `leave_room`.
+  - `src/lib/realtime/use-room-realtime.ts`: Mengekspos hook helpers (`loadOlderMessages`, `sendTyping`, `rejoin`, `leave`).
+  - `src/lib/realtime/room-realtime.test.ts`: 10 pengujian vitest mencakup pagination, typing indicator broadcast & TTL, serta siklus hidup.
+- **Verifikasi:** `vitest run` 90/90 tests PASS.
+
+## 2026-11-06 14:35 — [F] HANDOFF T-53
+
+- **Selesai:** Integrasi UI Chat Interaktif (`RoomChat.tsx`) menggantikan data tiruan / mock chat pada Host Dashboard (`/dashboard/r/[id]`) dan Guest Room (`/r/[slug]`).
+- **File Baru:**
+  - `src/components/chat/chatApi.ts`: Helper API untuk fetching metadata room publik, daftar member host, kick member, approve/reject member, dan ekspor pesan via RPC `export_messages`.
+  - `src/components/chat/MessageItem.tsx`: Komponen bubble chat menampilkan `<Handle />`, badge role (HOST / GUEST), timestamp WIB, indikator status optimistik (sending, sent, failed), dan tombol coba lagi (retry).
+  - `src/components/chat/HostMemberPanel.tsx`: Panel sidebar/drawer untuk Host mengelola anggota room (approve/reject antrean pending dan kick anggota aktif).
+  - `src/components/chat/RoomChat.tsx`: Island React terpadu untuk Host dan Guest dengan fitur:
+    - Status bar room dengan hitung mundur TTL room dan badge status aktif.
+    - Feed pesan auto-scroll ke bawah saat pesan baru tiba.
+    - Tombol "Muat pesan lebih lama" / pagination atas saat scroll ke atas.
+    - Banner pengetik anonim: "*n orang sedang mengetik...*".
+    - Composer teks dengan limit 2000 karakter, tombol kirim, dan pemicu broadcast `sendTyping`.
+    - Ekspor chat ke `.txt` langsung via browser Blob download (dengan fallback fetch RPC `export_messages` bila riwayat lokal belum lengkap).
+    - Tombol laporkan pesan terintegrasi dengan modal laporan (`ReportModal.tsx`).
+    - Banner penanganan status member (`IDLE`, `KICKED`, `LEFT`) dengan tombol rejoin atau navigasi kembali.
+- **File Dimodifikasi:**
+  - `src/pages/dashboard/r/[id].astro`: Memasang `<RoomChat client:load roomId={id} mode="HOST" />`.
+  - `src/pages/r/[slug].astro`: Memasang `<RoomChat client:load slug={slug} mode="GUEST" />` saat state `chat`.
+  - `TODO.md`: Memperbarui status tugas T-41, T-42, T-43, dan T-53 menjadi `[x]`.
+- **Verifikasi:**
+  - `vitest run`: 10 test files, 90 tests PASS.
+  - `astro check`: 118 files diperiksa, 0 error, 0 warning.
+  - `astro build`: Berhasil tanpa error.
+  - Verifikasi kebocoran secret: `grep -r SERVICE_ROLE dist/client` bersih (0 temuan).
