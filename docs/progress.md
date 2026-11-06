@@ -451,3 +451,14 @@ Isi singkat: apa yang dibuat/diminta, file terkait, cara tes, hal yang perlu dik
 - **Peran sesi ini:** hanya mengelola/memantau task (TODO.md), **tidak menyentuh kode**. Implementasi diserahkan ke peran D/B/F/S.
 - **Artefak "kode lanjut" yang harus dibuang (T-82):** `supabase/migrations/0013_guest_transfer.sql`, `supabase/tests/rpc/390_guest_transfer.test.sql`, `src/pages/api/guest/transfer.ts`, `src/pages/api/guest/redeem.ts`, `src/lib/server/transfer-errors.ts`; revert `src/lib/schemas.ts`, `src/lib/supabase/server.ts`, `src/components/joinTypes.ts`. Semua belum di-commit. Entri Opsi 2 di atas bersifat historis dan **tidak boleh dilanjutkan**.
 - **Task baru:** T-74…T-82 di `TODO.md` bagian **ADDENDUM-02**. Urutan: T-82 → T-74 → T-75 (D) → T-76 (B) → T-77 (F); jalur Google T-78/T-79 setelah T-74; T-80 setelah T-76+T-79; T-81 paralel.
+
+## 2026-11-06 11:00 — [B] HANDOFF T-82
+
+- **Selesai:** TODO T-82 `[x]`. Artefak "kode lanjut" (Opsi 2 historis — **dilarang dilanjutkan**) dibersihkan total.
+- **Catatan penting:** artefak ternyata sudah **ter-commit** oleh manusia di `78cbd4f` ("ubah plan"), bukan lagi untracked. Jadi T-82 dieksekusi sebagai commit penghapusan, bukan sekadar discard working tree.
+- **Dihapus:** `supabase/migrations/0013_guest_transfer.sql`, `supabase/tests/rpc/390_guest_transfer.test.sql`, `src/pages/api/guest/transfer.ts`, `src/pages/api/guest/redeem.ts`, `src/lib/server/transfer-errors.ts`.
+- **Direvert ke state `78cbd4f^`:** `src/lib/schemas.ts` (hapus `guestTransferRedeemSchema` + tipenya), `src/lib/supabase/server.ts` (hapus `AdoptGuestRow`), `src/components/joinTypes.ts` (`handle` → `displayName`; perubahan ke handle diserahkan ke **T-52a**). `git diff 78cbd4f^ -- <3 file>` kosong = revert persis.
+- **Verifikasi:** tidak ada referensi `transfer-errors`/`guest_transfer`/`guestTransfer`/`adopt_guest`/`guest/transfer`/`guest/redeem`/`AdoptGuestRow` tersisa di `src`/`supabase`; `npm test` **85/85**; `astro check` **0 error, 0 warning** (112 file, 1 hint pre-existing `ts(80006)` di `src/components/host/hostApi.ts` milik F — bukan dari T-82).
+- **Untuk D (T-75):** nomor `0013` kini bebas dan dipakai untuk migration `guest_tokens`; tidak ada sisa tabel/RPC guest_transfer di repo. DB lokal mungkin masih menyimpan objek dari migration lama sampai `supabase db reset` berikutnya.
+- **Untuk F (T-77):** `JoinSuccess` kembali memakai `displayName`; jangan ubah ke `handle` sebelum T-52a.
+- **Bukan bagian commit ini:** suntingan manusia yang belum ter-commit di `TODO.md` (klarifikasi T-74/magic link), `docs/progress.md` (klarifikasi 2026-11-06), `package.json`, `src/middleware.ts`, `supabase/config.toml` — tidak di-stage.

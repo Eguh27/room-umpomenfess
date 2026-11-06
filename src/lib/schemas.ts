@@ -16,18 +16,6 @@ export const joinRequestSchema = z.object({
 });
 export type JoinRequest = z.infer<typeof joinRequestSchema>;
 
-export const guestTransferRedeemSchema = z.object({
-  // Kode dibuat server: 32 byte acak -> base64url (43 karakter).
-  code: z
-    .string()
-    .trim()
-    .min(20)
-    .max(128)
-    .regex(/^[A-Za-z0-9_-]+$/),
-  turnstileToken: z.string().min(1).max(4096),
-});
-export type GuestTransferRedeemRequest = z.infer<typeof guestTransferRedeemSchema>;
-
 export const reportReasons = ['SPAM', 'ABUSE', 'ILLEGAL', 'OTHER'] as const;
 
 export const reportRequestSchema = z.object({
