@@ -28,7 +28,7 @@ const CspParts = {
   dev: {
     // Vite dev memakai inline script/eval untuk HMR; dev bukan gerbang keamanan.
     'script-src': "'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com",
-    'connect-src': `${CONNECT_SRC_BASE} ${supabaseOrigin} ${supabaseWsOrigin} http://127.0.0.1:4321 ws://127.0.0.1:4321`,
+    'connect-src': `${CONNECT_SRC_BASE} ${supabaseOrigin} ${supabaseWsOrigin} ws: http://127.0.0.1:4321 ws://127.0.0.1:4321`,
   },
   prod: {
     'script-src': "'self' https://challenges.cloudflare.com",
