@@ -6,6 +6,30 @@ Format: `ID [Peran] (Prioritas) judul — depends — verifikasi`. Spesifikasi d
 
 Legenda prioritas ADDENDUM-01: **(M1)** chat inti · **(M2)** aturan lengkap · **(M3)** admin, FYP, rilis. Dalam satu wave, kerjakan M1 dulu.
 
+## Rute cepat MVP (2026-11-06)
+
+Target MVP: **Host login → buat room → Guest join lewat link → chat realtime dua arah → deploy.** FYP, admin console, token tamu, dan Google OAuth **bukan** syarat MVP.
+
+**P0 — mulai sekarang (paralel):**
+
+1. **H-01 (H)** setup Supabase/Turnstile/Vercel/DNS — lead time paling panjang dan mengunci T-70.
+2. **T-44 (R, M1)** modul sesi — membuka T-52a dan T-53.
+3. **T-52 (F)** selesaikan halaman Guest; lanjut **T-52a** setelah T-44.
+4. **Tinjau T-51 (H)** — dasbor Host sudah code-complete; tanpa tinjauan, jalur Host belum dianggap selesai.
+5. **T-64 High (D)** S-60-01 + S-60-02 — prasyarat deploy, bukan prasyarat chat; kerjakan paralel.
+
+**P1 — gerbang MVP:**
+
+6. **T-42 (R, M1)** heartbeat/status; lalu **T-41** dan **T-43** (bisa paralel bila ada agent R kedua).
+7. **T-53 (F, M1)** ruang chat — gerbang utama MVP.
+8. **T-70 (L)** deploy setelah T-53, perbaikan pre-deploy T-64, dan H-01 siap.
+
+**P2 — setelah MVP jalan:** T-54, T-55a, T-61a, T-62, T-63, T-65, T-56/T-57 (di balik flag), T-60a, T-71.
+**P3 — ditunda:** T-75…T-81 (token/Google). T-74 boleh disiapkan H/L di latar belakang; implementasi menunggu MVP.
+**Parkir:** T-30 (token Figma); tinjauan T-32/T-22/T-55 tidak menghambat MVP.
+
+**Usul percepatan (butuh persetujuan manusia):** pecah T-53 menjadi **T-53a chat inti** (kirim/terima, panel member, countdown, handle) dan **T-53b polish** (paginasi riwayat T-41 + indikator mengetik T-43 + ekspor). T-53a bisa mulai setelah T-42 + T-52a; T-53b menyusul. Tanpa pemecahan ini, T-53 menunggu T-41 dan T-43.
+
 ## Wave 0 — Fondasi
 
 - [x] T-00 [L] Kerangka project: Astro 7 + Vercel + React, `astro:env`, helper `ip.ts` + tes, header keamanan, workflow CI & keep-alive — verifikasi: `npm test`, `npm run check`, `npm run build` lolos (sudah diverifikasi saat zip dibuat)
@@ -96,9 +120,9 @@ Legenda prioritas ADDENDUM-01: **(M1)** chat inti · **(M2)** aturan lengkap · 
 
 ## ADDENDUM-02 — Identitas Guest via token + Host Google
 
-Keputusan manusia 2026-11-05: Guest memakai **token tamu**, bukan kode sekali pakai. Token 32 byte acak, disimpan SHA-256, berlaku **7 hari sliding** (diperbarui tiap dipakai) dan boleh dirotasi/dicabut. Token hanya diterbitkan setelah member **`APPROVED`**, **mendampingi** sesi browser Supabase (bukan menggantikan `persistSession`), dan hanya untuk user anonim. Login token tetap menghasilkan sesi Supabase anonim, jadi RPC Host otomatis menolak (`NOT_HOST`). Host memakai email/password (sudah ada) atau **Google OAuth** (baru). Artefak desain "kode lanjut" dibuang; mulai dari nol.
+Keputusan manusia 2026-11-05: Guest memakai **token tamu**, bukan kode sekali pakai. Token 32 byte acak, disimpan SHA-256, berlaku **7 hari sliding** (diperbarui tiap dipakai) dan boleh dirotasi/dicabut. Token hanya diterbitkan setelah member **`APPROVED`**, **mendampingi** sesi browser Supabase (bukan menggantikan `persistSession`), dan hanya untuk user anonim. Login token tetap menghasilkan sesi Supabase anonim, jadi RPC Host otomatis menolak (`NOT_HOST`). Host memakai email/password (sudah ada) atau **Google OAuth** (baru). Metode email yang dimaksud adalah **email/password yang sudah ada**; magic link tidak dipakai. Artefak desain "kode lanjut" dibuang; mulai dari nol.
 
-- [ ] T-74 [H/L] (M1) Keputusan & sinkronisasi dokumen: tambah **D-23** (Guest token: 7 hari sliding, terbit setelah APPROVED, mendampingi sesi, satu token aktif, rotasi/revoke) dan **D-24** (Host login email/password + Google OAuth; akun Google non-anonim boleh membuat room sesuai tier) ke TASK.md; hapus "Google OAuth" dan "penautan perangkat" dari Backlog E10; perbarui alur Guest bagian 11 — verifikasi: D-23/D-24 tertulis; tidak ada kontradiksi D-03/E10
+- [ ] T-74 [H/L] (M1) Keputusan & sinkronisasi dokumen: tambah **D-23** (Guest token: 7 hari sliding, terbit setelah APPROVED, mendampingi sesi, satu token aktif, rotasi/revoke) dan **D-24** (Host login email/password yang sudah ada, tanpa magic link, + Google OAuth; akun Google non-anonim boleh membuat room sesuai tier) ke TASK.md; hapus "Google OAuth" dan "penautan perangkat" dari Backlog E10; perbarui alur Guest bagian 11 — verifikasi: D-23/D-24 tertulis; tidak ada kontradiksi D-03/E10
 - [ ] T-75 [D] (M2) Migration **0013 `guest_tokens`**: tabel `guest_tokens(token_hash pk, user_id → auth.users on delete cascade, created_at, last_used_at, expires_at, revoked_at)`, partial unique satu token aktif per user, RLS aktif tanpa policy, revoke all; RPC service-only `issue_guest_token` (anon + APPROVED, cabut token lama, TTL 7 hari), `login_guest_token` (lock token+user, sliding expiry, adopsi `member_identities` bila device baru, kembalikan room/handle/old_user_id), `rotate_guest_token`, `revoke_guest_token`; pgTAP — depends T-74, T-19 — verifikasi: `supabase db reset`; `supabase test db` hijau; tes expiry/adoption/rotasi/grant
 - [ ] T-76 [B] (M2) Endpoint token: `POST /api/guest/token` (terbit; Bearer anonim; wajib APPROVED; Turnstile + rate limit `ip_hash`; respons token sekali + `expiresAt`), `POST /api/guest/token/login` (Turnstile; tukar token → adopsi; hapus user lama best-effort), `POST /api/guest/token/rotate`, `POST /api/guest/token/revoke`; zod + pemetaan `TOKEN_INVALID`/`TOKEN_EXPIRED`/`NOT_ANONYMOUS`/`NOT_MEMBER`/`IDENTITY_IN_USE`/`RATE_LIMITED`; tes unit — depends T-75, T-20 — verifikasi: tes unit; token tidak pernah masuk log
 - [ ] T-77 [F] (M2) UI token tamu: panel di layar APPROVED/room ("Buat token", tampil sekali + salin + kedaluwarsa, "Perbarui", "Cabut") dan pintu masuk "Punya token tamu?" di `/r/<slug>` (input + Turnstile → login → redirect room); keadaan token invalid/expired/rate-limited/akun login — depends T-76, T-52, T-44 — verifikasi: manual dua browser; token lama mati setelah rotasi; device lama kehilangan akses

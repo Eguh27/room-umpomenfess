@@ -452,6 +452,10 @@ Isi singkat: apa yang dibuat/diminta, file terkait, cara tes, hal yang perlu dik
 - **Artefak "kode lanjut" yang harus dibuang (T-82):** `supabase/migrations/0013_guest_transfer.sql`, `supabase/tests/rpc/390_guest_transfer.test.sql`, `src/pages/api/guest/transfer.ts`, `src/pages/api/guest/redeem.ts`, `src/lib/server/transfer-errors.ts`; revert `src/lib/schemas.ts`, `src/lib/supabase/server.ts`, `src/components/joinTypes.ts`. Semua belum di-commit. Entri Opsi 2 di atas bersifat historis dan **tidak boleh dilanjutkan**.
 - **Task baru:** T-74…T-82 di `TODO.md` bagian **ADDENDUM-02**. Urutan: T-82 → T-74 → T-75 (D) → T-76 (B) → T-77 (F); jalur Google T-78/T-79 setelah T-74; T-80 setelah T-76+T-79; T-81 paralel.
 
+### 2026-11-06 — Klarifikasi manusia
+
+- **Email = email/password yang sudah ada.** Tidak ada magic link. Google OAuth tetap sesuai D-24. Tidak ada perubahan kontrak lain; TODO ADDENDUM-02 diperjelas.
+
 ## 2026-11-06 11:00 — [B] HANDOFF T-82
 
 - **Selesai:** TODO T-82 `[x]`. Artefak "kode lanjut" (Opsi 2 historis — **dilarang dilanjutkan**) dibersihkan total.
@@ -462,3 +466,12 @@ Isi singkat: apa yang dibuat/diminta, file terkait, cara tes, hal yang perlu dik
 - **Untuk D (T-75):** nomor `0013` kini bebas dan dipakai untuk migration `guest_tokens`; tidak ada sisa tabel/RPC guest_transfer di repo. DB lokal mungkin masih menyimpan objek dari migration lama sampai `supabase db reset` berikutnya.
 - **Untuk F (T-77):** `JoinSuccess` kembali memakai `displayName`; jangan ubah ke `handle` sebelum T-52a.
 - **Bukan bagian commit ini:** suntingan manusia yang belum ter-commit di `TODO.md` (klarifikasi T-74/magic link), `docs/progress.md` (klarifikasi 2026-11-06), `package.json`, `src/middleware.ts`, `supabase/config.toml` — tidak di-stage.
+
+## 2026-11-06 — Rencana rute cepat MVP (task management, tanpa ubah kode)
+
+- **Definisi MVP:** Host login → buat room → Guest join lewat link → chat realtime dua arah → deploy. FYP, admin console, token tamu, dan Google OAuth bukan syarat MVP.
+- **P0 paralel:** H-01 (setup eksternal, lead time terpanjang), T-44 (R, membuka T-52a/T-53), selesaikan T-52 (F), tinjau T-51 (H), perbaiki S-60-01/S-60-02 (D, prasyarat deploy).
+- **P1:** T-42 (R) lalu T-41/T-43; T-52a setelah T-44; T-53 sebagai gerbang MVP; T-70 setelah T-53 + perbaikan pre-deploy T-64 + H-01.
+- **Ditunda:** T-75…T-81 (token/Google) sampai chat inti jalan. T-74 boleh disiapkan H/L di latar belakang.
+- **Usul percepatan (belum disetujui):** pecah T-53 menjadi T-53a chat inti dan T-53b polish; T-53a mulai setelah T-42 + T-52a tanpa menunggu T-41/T-43.
+- **Tidak mengubah kontrak/kode.** Catatan rute ada di `TODO.md` bagian "Rute cepat MVP".
