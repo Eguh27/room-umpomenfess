@@ -1,81 +1,72 @@
 ---
 import Base from '../layouts/Base.astro';
-import Handle from '../components/Handle.astro';
-import { guestRoomName, myRooms } from '../components/mockData';
+import MyRooms from '../components/myrooms/MyRooms';
+import { SESSION_COOKIE } from '../components/auth/sessionCookie';
+import { verifyAccessTokenUser } from '../lib/supabase/server';
+
+export const prerender = false;
+const token = Astro.cookies.get(SESSION_COOKIE)?.value;
+const user = token ? await verifyAccessTokenUser(token) : null;
+const isAnonymous = user?.isAnonymous ?? true;
+const isLoggedIn = Boolean(user && !user.isAnonymous);
 ---
 
 <Base title="Ruang saya — umpomenfess room" noindex>
   <section class="narrow myrooms">
-    <p class="eyebrow">Akun login · Guest</p>
-    <h1>Ruang saya</h1>
-    <p class="myrooms__sub">
-      Daftar room yang kamu ikuti dengan akun ini. Guest anonim tidak memakai halaman ini — mereka
-      hanya melihat info "kamu sedang di room X" dari sesi di browser.
-    </p>
-
-    <ul class="rooms">
-      {myRooms.map((room) => (
-        <li class="room">
-          <div class="room__info">
-            <h3>{room.name}</h3>
-            <p class="room__meta">
-              {room.endsIn}
-              {room.handle && (
-                <span>
-                  {' · kamu: '}
-                  <Handle handle={room.handle} />
-                </span>
-              )}
-            </p>
-          </div>
-          {room.status === 'APPROVED' ? (
-            <span class="badge badge--active">{room.unread} belum dibaca</span>
-          ) : (
-            <span class="badge badge--pending">nunggu setuju</span>
-          )}
-          <div class="room__actions">
-            {room.status === 'APPROVED' ? (
-              <a class="btn btn--sm btn--brand" href={`/r/${room.slug}?state=chat`}>
-                Buka
-              </a>
-            ) : (
-              <button class="btn btn--sm btn--ghost" type="button" disabled>
-                Tunggu
-              </button>
-            )}
-          </div>
-        </li>
-      ))}
-    </ul>
-
-    <div class="card warn">
-      <h2>Tentang penanda "belum dibaca"</h2>
-      <p>Ditampung di penyimpanan lokal browser (localStorage). Penanda hilang kalau:</p>
-      <ul>
-        <li>kamu membersihkan data situs (storage lokal ikut terhapus),</li>
-        <li>berganti perangkat atau browser,</li>
-        <li>
-          atau browser menyingkirkan data situs yang lama tidak dibuka (Safari kira-kira tujuh
-          hari).
-        </li>
-      </ul>
-      <p class="help">
-        Keanggotaanmu tetap tersimpan di server — room bisa dibuka ulang lewat link yang sama;
-        penanda belum dibaca mulai dari nol.
-      </p>
-      <p class="help">Pratinjau statis (T-31). Daftar nyata memakai RPC my_rooms saat T-54.</p>
+    <div class="row row--between" style="align-items: flex-start; margin-bottom: var(--space-4);">
+      <div>
+        <p class="eyebrow">{isLoggedIn ? 'Akun login · Guest' : 'Sesi Tamu'}</p>
+        <h1>Ruang saya</h1>
+      </div>
+      {isLoggedIn && (
+        <a class="btn btn--ghost" href="/dashboard">
+          Dasbor Host
+        </a>
+      )}
     </div>
 
-    <div class="card">
-      <h2>Kalau kamu Guest anonim</h2>
-      <p>
-        Halaman ini khusus akun login. Sesi anonim hanya boleh punya satu room aktif — kalau kamu
-        sedang di <strong>{guestRoomName}</strong>, keluar dulu dari room itu untuk gabung ke room
-        lain.
+    {!user ? (
+      <div class="card" style="padding: 32px 24px; text-align: center;">
+        <h2>Masuk untuk melihat room kamu</h2>
+        <p class="help" style="margin: 12px 0 20px;">
+          Daftar "Ruang saya" tersimpan untuk pengguna yang masuk dengan akun.
+        </p>
+        <a class="btn btn--primary" href="/login?next=/rooms">
+          Masuk ke Akun
+        </a>
+      </div>
+    ) : isAnonymous ? (
+      <div class="card">
+        <h2>Kamu menggunakan sesi anonim</h2>
+        <p>
+          Sesi anonim hanya boleh mengikuti <strong>1 room aktif</strong> dalam satu waktu. Riwayat room disimpan langsung di browser perangkat ini.
+        </p>
+        <p class="help" style="margin: 12px 0 20px;">
+          Ingin mengikuti hingga 5 room sekaligus dan menyimpannya lintas sesi? Masuk atau daftarkan akun Host/Guest.
+        </p>
+        <div class="row" style="gap: 8px;">
+          <a class="btn btn--primary" href="/login?next=/rooms">
+            Masuk / Buat Akun
+          </a>
+          <a class="btn btn--ghost" href="/">
+            Beranda
+          </a>
+        </div>
+      </div>
+    ) : (
+      <>
+        <p class="myrooms__sub">
+          Daftar room yang kamu ikuti dengan akun ini. Akun login dapat mengikuti hingga maksimum 5 room aktif secara bersamaan.
+        </p>
+        <MyRooms client:load />
+      </>
+    )}
+
+    <div class="card" style="margin-top: var(--space-6);">
+      <h2>Tentang penyimpanan room</h2>
+      <p style="color: var(--ink-soft); margin-top: 8px;">
+        Setiap room aktif selama 7 hari sebelum ditutup otomatis. Keanggotaanmu tersimpan aman di server dan dapat diakses kembali kapan saja selama room masih aktif.
       </p>
-      <a class="btn btn--sm btn--ghost" href="/r/demo?state=chat">
-        Kembali ke room
-      </a>
     </div>
   </section>
 </Base>
@@ -86,21 +77,21 @@ import { guestRoomName, myRooms } from '../components/mockData';
   }
   .myrooms h1 {
     font-size: var(--step-3);
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-1);
   }
   .myrooms__sub {
     color: var(--ink-soft);
     margin: 0 0 var(--space-5);
   }
 
-  .rooms {
+  :global(.rooms) {
     list-style: none;
     margin: 0 0 var(--space-6);
     padding: 0;
     display: grid;
     gap: var(--space-3);
   }
-  .room {
+  :global(.room) {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -111,35 +102,20 @@ import { guestRoomName, myRooms } from '../components/mockData';
     padding: var(--space-4);
     box-shadow: var(--shadow-sm);
   }
-  .room__info {
+  :global(.room__info) {
     flex: 1 1 220px;
     min-width: 0;
   }
-  .room__info h3 {
+  :global(.room__info h3) {
     font-size: var(--step-0);
     margin: 0 0 2px;
   }
-  .room__meta {
+  :global(.room__meta) {
     margin: 0;
     font-size: var(--step--1);
     color: var(--text-muted);
   }
-  .room__actions {
+  :global(.room__actions) {
     margin-left: auto;
-  }
-
-  .warn h2 {
-    font-size: var(--step-1);
-    margin-bottom: var(--space-2);
-  }
-  .warn p {
-    color: var(--ink-soft);
-  }
-  .warn ul {
-    margin: var(--space-2) 0;
-    padding-left: 1.2em;
-    color: var(--ink-soft);
-    display: grid;
-    gap: 4px;
   }
 </style>
