@@ -9,6 +9,7 @@ import HostMemberPanel from './HostMemberPanel';
 import ReportModal from '../ReportModal';
 import {
   fetchFullExportMessages,
+  fetchHostRoom,
   fetchPublicRoom,
   fetchRoomMembers,
   formatRemainingTime,
@@ -76,35 +77,20 @@ export default function RoomChat({ roomId: initialRoomId, slug: initialSlug, mod
             }
           }
 
-          // Dapatkan detail room Host dari DB
-          const { data: roomRow, error: roomErr } = await client
-            .from('rooms')
-            .select('id, slug, name, status, visibility, typing_enabled, max_guests, expires_at, closed_at')
-            .eq('id', initialRoomId)
-            .maybeSingle();
-
-          if (roomErr || !roomRow) {
-            if (alive) setError('Room tidak ditemukan atau kamu bukan pemiliknya.');
+          // Dapatkan detail room Host via RPC list_hosted_rooms
+          const hostRoomRes = await fetchHostRoom(initialRoomId);
+          if (!hostRoomRes.ok) {
+            if (alive) setError(hostRoomRes.error || 'Room tidak ditemukan atau kamu bukan pemiliknya.');
             setLoading(false);
             return;
           }
 
           if (alive) {
-            setRoom({
-              id: roomRow.id,
-              slug: roomRow.slug,
-              name: roomRow.name,
-              status: roomRow.status === 'ACTIVE' ? 'ACTIVE' : 'CLOSED',
-              visibility: roomRow.visibility,
-              typingEffective: Boolean(roomRow.typing_enabled),
-              maxGuests: roomRow.max_guests,
-              expiresAt: roomRow.expires_at,
-              closedAt: roomRow.closed_at,
-            });
+            setRoom(hostRoomRes.data);
           }
 
           // Dapatkan daftar member awal untuk Host
-          const membersRes = await fetchRoomMembers(roomRow.id);
+          const membersRes = await fetchRoomMembers(hostRoomRes.data.id);
           if (membersRes.ok && alive) {
             setInitialMembers(membersRes.data);
           }

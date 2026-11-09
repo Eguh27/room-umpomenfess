@@ -1,16 +1,39 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import RoomChat from '../../../components/chat/RoomChat';
+import { SESSION_COOKIE } from '../../../components/auth/sessionCookie';
+import { getServiceClient, verifyAccessTokenUser } from '../../../lib/supabase/server';
 import '../../../../design/chat.css';
 
 export const prerender = false;
 const { id } = Astro.params;
+
+if (!id) return Astro.redirect('/dashboard');
+
+// 1. SSR Guard: Pastikan Host terautentikasi & bukan akun anonim
+const token = Astro.cookies.get(SESSION_COOKIE)?.value;
+const user = token ? await verifyAccessTokenUser(token) : null;
+
+if (!user) return Astro.redirect(`/login?next=/dashboard/r/${id}`);
+if (user.isAnonymous) return Astro.redirect('/rooms');
+
+// 2. Verifikasi kepemilikan room Host di server
+const service = getServiceClient();
+const { data: roomRow } = await service
+  .from('rooms')
+  .select('id, name, host_id')
+  .eq('id', id)
+  .maybeSingle();
+
+if (!roomRow || roomRow.host_id !== user.userId) {
+  return Astro.redirect('/dashboard');
+}
 ---
 
-<Base title="Room Chat — Host" noindex bare>
+<Base title={`${roomRow.name} — Host`} noindex bare>
   <RoomChat
     client:load
-    roomId={id ?? ''}
+    roomId={id}
     mode="HOST"
     dev={import.meta.env.DEV}
   />

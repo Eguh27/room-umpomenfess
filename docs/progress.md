@@ -550,3 +550,18 @@ Isi singkat: apa yang dibuat/diminta, file terkait, cara tes, hal yang perlu dik
   - `astro check`: 119 files, 0 error, 0 warning, 1 hint pre-existing.
   - `astro build`: Server build sukses (48s).
   - Secret check: `dist/client` bersih dari `SERVICE_ROLE` (0 temuan).
+
+
+## 2026-11-09 11:22 — [F] HANDOFF Perbaikan Akses Room Chat Host
+
+- **Selesai:** Perbaikan bug error *"Room tidak ditemukan atau kamu bukan pemiliknya"* saat Host masuk ke room-chat di `/dashboard/r/[id]`.
+- **Perubahan:**
+  - `src/components/chat/chatApi.ts`: Menambahkan helper `fetchHostRoom(roomId)` yang menggunakan RPC resmi `list_hosted_rooms()` untuk mengambil data room Host beserta status aktif dan visibilitasnya.
+  - `src/components/chat/RoomChat.tsx`: Mengganti query langsung ke tabel `rooms` dengan `fetchHostRoom(initialRoomId)` sehingga tidak lagi meminta kolom non-fisik `status` atau kolom tak berizin `visibility`.
+  - `src/pages/dashboard/r/[id].astro`: Menambahkan SSR Auth Guard (redirect non-login ke `/login`, redirect anonim ke `/rooms`) serta validasi server bahwa `roomRow.host_id === user.userId`. Judul halaman kini dinamis memuat nama room Host.
+  - `src/pages/r/[slug].astro`: Menyelaraskan nama kolom pemilik dari `created_by` menjadi `host_id` dan menghapus kolom `status` pada query server.
+- **Verifikasi:**
+  - `vitest run`: 10 test files, 90 passed tests.
+  - `astro check`: 119 files, 0 errors, 0 warnings, 1 hint pre-existing.
+  - `astro build`: Server build sukses (34s).
+  - Secret check: `dist/client` bersih dari `SERVICE_ROLE` (0 temuan).

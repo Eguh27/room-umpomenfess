@@ -17,14 +17,14 @@ if (!slug) {
 const service = getServiceClient();
 const { data: roomRow } = await service
   .from('rooms')
-  .select('id, name, created_by, status, visibility, closed_at, expires_at')
+  .select('id, name, host_id, visibility, closed_at, expires_at')
   .eq('slug', slug)
   .maybeSingle();
 
 // 2. Deteksi apakah pengunjung adalah Host pembuat room ini
 const token = Astro.cookies.get(SESSION_COOKIE)?.value;
 const user = token ? await verifyAccessTokenUser(token) : null;
-if (user && !user.isAnonymous && roomRow && roomRow.created_by === user.userId) {
+if (user && !user.isAnonymous && roomRow && roomRow.host_id === user.userId) {
   return Astro.redirect(`/dashboard/r/${roomRow.id}`);
 }
 

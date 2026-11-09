@@ -40,6 +40,37 @@ export async function fetchPublicRoom(slug: string): Promise<ApiResult<RoomMetad
   };
 }
 
+/** Mengambil metadata room milik Host via RPC list_hosted_rooms. */
+export async function fetchHostRoom(roomId: string): Promise<ApiResult<RoomMetadata>> {
+  const client = getBrowserClient();
+  const { data, error } = await client.rpc('list_hosted_rooms');
+
+  if (error) {
+    return { ok: false, error: error.message };
+  }
+
+  const rows = (data as any[]) ?? [];
+  const target = rows.find((r) => r.id === roomId);
+  if (!target) {
+    return { ok: false, error: 'Room tidak ditemukan atau kamu bukan pemiliknya.' };
+  }
+
+  return {
+    ok: true,
+    data: {
+      id: target.id,
+      slug: target.slug,
+      name: target.name,
+      status: target.status === 'ACTIVE' ? 'ACTIVE' : 'CLOSED',
+      visibility: target.visibility,
+      typingEffective: Boolean(target.typing_effective),
+      maxGuests: target.max_guests,
+      expiresAt: target.expires_at,
+      closedAt: target.closed_at,
+    },
+  };
+}
+
 /** Mengambil daftar anggota room untuk Host (panggilan awal sebelum Realtime). */
 export async function fetchRoomMembers(roomId: string): Promise<ApiResult<RoomMember[]>> {
   const client = getBrowserClient();
