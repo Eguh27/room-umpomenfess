@@ -1,377 +1,65 @@
 ---
 import Base from '../../layouts/Base.astro';
-import StickerDecor from '../../components/StickerDecor.astro';
 import JoinRoom from '../../components/JoinRoom';
 import RoomChat from '../../components/chat/RoomChat';
-import Handle from '../../components/Handle.astro';
-import {
-  guestRoomName,
-  guestRoomVisibility,
-  guestStates,
-  chat,
-  guestSelfHandle,
-} from '../../components/mockData';
+import { SESSION_COOKIE } from '../../components/auth/sessionCookie';
+import { getServiceClient, verifyAccessTokenUser } from '../../lib/supabase/server';
 import '../../../design/chat.css';
 
 export const prerender = false;
 const { slug } = Astro.params;
-// Tanpa `?state=` → flow join hidup (island React, T-52).
-// Dengan `?state=` → pratinjau statis T-31 tetap tersedia.
+
+if (!slug) {
+  return Astro.redirect('/');
+}
+
+// 1. Ambil data room dari database (SSR)
+const service = getServiceClient();
+const { data: roomRow } = await service
+  .from('rooms')
+  .select('id, name, created_by, status, visibility, closed_at, expires_at')
+  .eq('slug', slug)
+  .maybeSingle();
+
+// 2. Deteksi apakah pengunjung adalah Host pembuat room ini
+const token = Astro.cookies.get(SESSION_COOKIE)?.value;
+const user = token ? await verifyAccessTokenUser(token) : null;
+if (user && !user.isAnonymous && roomRow && roomRow.created_by === user.userId) {
+  return Astro.redirect(`/dashboard/r/${roomRow.id}`);
+}
+
 const state = Astro.url.searchParams.get('state') ?? '';
+const roomName = roomRow?.name ?? 'Room Chat';
 ---
 
-<Base title={`${guestRoomName} — room Guest`} noindex bare>
-  {state === 'chat' ? (
-    <RoomChat client:load slug={slug ?? ''} mode="GUEST" dev={import.meta.env.DEV} />
-  ) : state === 'chat-mock' ? (
-    <div class="grid chat-only">
-      <div class="roombar row row--between">
-        <a class="roombar__back" href="/rooms">
-          ← Ruang saya
-        </a>
-        <div class="row roombar__chips" aria-label="Status keanggotaan">
-          <span class="badge badge--active">AKTIF</span>
-          {guestRoomVisibility === 'PUBLIC' && <span class="badge badge--pending">PUBLIK</span>}
-          <span class="pill">
-            kamu: <Handle handle={guestSelfHandle} />
-          </span>
-          <span class="pill">sisa 6 hari</span>
-        </div>
-      </div>
-      <section class="glass-card chat-panel" aria-label={`Percakapan di ${guestRoomName}`}>
-        <div class="chat-head">
-          <h1 class="chat-head__name">{guestRoomName}</h1>
-          <span class="pill">demo /r/{slug}</span>
-        </div>
-        <div class="chat-log">
-          <p class="dy-divider">Hari ini · 14:00 WIB</p>
-          {chat.map((m) => (
-            <article class:list={['msg', { 'msg--host': m.sender === 'HOST' }]}>
-              <span class="msg__meta">
-                <Handle handle={m.handle} badge={m.badge} /> · {m.time}
-              </span>
-              <p class="msg__bubble">{m.text}</p>
-            </article>
-          ))}
-          <p class="typing">
-            <span class="typing__dots">
-              <i></i>
-              <i></i>
-              <i></i>
-            </span>
-            Ada yang sedang mengetik…
-          </p>
-        </div>
-        <div class="composer">
-          <input
-            class="input"
-            type="text"
-            placeholder={`Kirim sebagai ${guestSelfHandle}…`}
-            aria-label="Tulis pesan"
-          />
-          <button class="btn btn--primary" type="button" aria-label="Kirim pesan">
-            Kirim
-          </button>
-        </div>
-        <p class="help chat-note">
-          Teks saja — tidak ada gambar, file, atau tautan. Host melihatmu sebagai handle acak, bukan
-          nama atau akunmu. Di room publik, siapa pun yang join bisa membaca dan menyalin isi chat.
-        </p>
-      </section>
-    </div>
-  ) : state === '' ? (
-    <JoinRoom client:load slug={slug ?? ''} dev={import.meta.env.DEV} />
-  ) : (
+<Base title={roomRow ? `${roomName} — room Guest` : 'Room tidak ditemukan — umpomenfess room'} noindex bare>
+  {!roomRow ? (
     <div class="auth-stage">
-      <div class="stage-head row row--between">
-        <span class="st-tag">✧ {guestRoomName}</span>
-        <span class="pill">demo /r/{slug}</span>
+      <div class="glass-card" style="max-width: 440px; margin: 0 auto; padding: 32px 24px; text-align: center;">
+        <h1 style="font-size: var(--step-2); margin-bottom: 12px; color: var(--red-deep, #c53030);">
+          Room Tidak Ditemukan
+        </h1>
+        <p style="color: var(--ink-soft); margin-bottom: 24px;">
+          Room dengan tautan ini tidak ditemukan atau sudah kedaluwarsa dan dihapus permanen.
+        </p>
+        <a class="btn btn--primary btn--block" href="/">
+          Kembali ke Beranda
+        </a>
       </div>
-
-      {/* ---------- langkah disclaimer (default) ---------- */}
-      {state === 'disclaimer' && (
-        <section class="glass-card stage" aria-labelledby="t-disclaimer">
-          <div class="stage__icon" aria-hidden="true">
-            <StickerDecor variant="envelope" style="width:30px" />
-          </div>
-          <h1 id="t-disclaimer">Sebelum masuk room</h1>
-          <ul class="stage__list">
-            <li>Percakapan ini berbentuk teks saja — bisa dibaca Host yang membuat room.</li>
-            <li>
-              Kamu tampil dengan handle acak sembilan karakter, bukan nama atau akun. Host tidak
-              pernah menerima identitas akunmu.
-            </li>
-            <li>
-              <strong>Room publik:</strong> isi chat dapat dibaca dan disalin siapa pun yang join.
-            </li>
-            <li>Room aktif 7 hari, arsip 15 hari, setelah itu dihapus permanen.</li>
-          </ul>
-          <a class="btn btn--primary btn--block" href={`/r/${slug}`}>
-            Verifikasi &amp; lanjut — flow hidup
-          </a>
-          <p class="help">
-            Pratinjau statis. Flow interaktif berada di halaman tanpa parameter <code>?state=</code>
-            .
-          </p>
-          <details class="demo-details">
-            <summary>Lihat keadaan lain (pratinjau T-31)</summary>
-            <ul class="demo-links">
-              {guestStates
-                .filter((s) => s.key !== 'disclaimer')
-                .map((s) => (
-                  <li>
-                    <a href={`/r/${slug}?state=${s.key}`}>{s.label}</a>
-                  </li>
-                ))}
-            </ul>
-          </details>
-        </section>
-      )}
-
-      {/* ---------- form password ---------- */}
-      {state === 'password' && (
-        <section class="glass-card stage" aria-labelledby="t-password">
-          <h1 id="t-password">Masuk room</h1>
-          <p class="stage__sub">Tanyakan passwordnya ke orang yang membagikan link ini.</p>
-          <form method="post" action="/api/rooms/join" novalidate>
-            <div class="field">
-              <label for="pw">Password room</label>
-              <input
-                class="input input--code"
-                id="pw"
-                name="password"
-                maxlength="6"
-                inputmode="text"
-                autocomplete="off"
-                autocapitalize="characters"
-                spellcheck="false"
-                pattern="[A-Za-z0-9]{6}"
-                required
-              />
-              <p class="help">Enam karakter — huruf dan angka yang tidak mirip (tanpa 0/O, 1/I).</p>
-            </div>
-            <div class="turnstile-ph" aria-hidden="true">
-              <svg
-                viewBox="0 0 24 24"
-                width="18"
-                height="18"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M12 3l7 3v5c0 4.4-3 8.4-7 9.6-4-1.2-7-5.2-7-9.6V6z" />
-                <path d="M9.5 12l1.8 1.8L15 10" />
-              </svg>
-              Widget Turnstile — placeholder (T-52)
-            </div>
-            <button class="btn btn--primary btn--block" type="submit" disabled>
-              Kirim &amp; masuk
-            </button>
-            <p class="help">
-              Pratinjau statis — form yang berfungsi ada di halaman tanpa parameter{' '}
-              <code>?state=</code>.
-            </p>
-          </form>
-          <details class="demo-details">
-            <summary>Kegagalan percobaan berlebih memicu kunci</summary>
-            <p class="help">
-              Lima password salah dari jaringan yang sama dalam 15 menit mengunci percobaan selama
-              15 menit — lihat keadaan
-              <a href={`/r/${slug}?state=salah`}>password salah</a> dan
-              <a href={`/r/${slug}?state=kunci`}>terkunci</a>.
-            </p>
-          </details>
-        </section>
-      )}
-
-      {/* ---------- password salah ---------- */}
-      {state === 'salah' && (
-        <section class="glass-card stage" aria-labelledby="t-salah">
-          <div class="stage__icon stage__icon--warn" aria-hidden="true">
-            <StickerDecor variant="chat" style="width:34px" />
-          </div>
-          <h1 id="t-salah">Password salah</h1>
-          <div class="error-note" role="alert">
-            Periksa lagi — huruf besar-kecil tidak berpengaruh, tapi satu karakter yang salah cukup
-            membuat gagal.
-          </div>
-          <p class="stage__body">
-            Lima password yang salah dari jaringan yang sama dalam 15 menit membuat percobaan masuk
-            terkunci sementara.
-          </p>
-          <a class="btn btn--primary btn--block" href={`/r/${slug}?state=password`}>
-            Coba lagi
-          </a>
-        </section>
-      )}
-
-      {/* ---------- terkunci ---------- */}
-      {state === 'kunci' && (
-        <section class="glass-card stage" aria-labelledby="t-kunci">
-          <div class="stage__icon stage__icon--warn" aria-hidden="true">
-            <StickerDecor variant="chat" style="width:34px" />
-          </div>
-          <h1 id="t-kunci">Terlalu banyak percobaan</h1>
-          <p class="stage__count" role="timer" aria-label="Sisa waktu tunggu">
-            09:47
-          </p>
-          <p class="stage__body">
-            Percobaan masuk dari jaringanmu terkunci sementara. Tunggu hitung mundur di atas
-            selesai, lalu <a href={`/r/${slug}?state=password`}>coba masuk lagi</a>.
-          </p>
-        </section>
-      )}
-
-      {/* ---------- kursi penuh ---------- */}
-      {state === 'penuh' && (
-        <section class="glass-card stage" aria-labelledby="t-penuh">
-          <div class="stage__icon" aria-hidden="true">
-            <StickerDecor variant="photo" style="width:36px" />
-          </div>
-          <h1 id="t-penuh">Kursi penuh (40/40)</h1>
-          <p class="stage__body">
-            Password sudah benar, tapi kapasitas room sudah habis. Guest yang diam dilepas otomatis
-            — coba lagi beberapa saat, tanpa perlu password baru.
-          </p>
-          <a class="btn btn--ghost btn--block" href={`/r/${slug}?state=password`}>
-            Coba lagi nanti
-          </a>
-        </section>
-      )}
-
-      {/* ---------- menunggu persetujuan ---------- */}
-      {state === 'pending' && (
-        <section class="glass-card stage" aria-labelledby="t-pending">
-          <span class="badge badge--pending">MENUNGGU PERSETUJUAN</span>
-          <h1 id="t-pending">Kamu tertulis di lobi</h1>
-          <p class="stage__body">
-            Host perlu menyetujui permintaanmu. Boleh tutup halaman ini — balik kapan saja lewat
-            link yang sama; handle acakmu baru diberikan saat disetujui.
-          </p>
-          <p class="stage__foot help">
-            Permintaan yang tidak disetujui dalam 24 jam gugur sendiri.
-          </p>
-          <a class="btn btn--ghost btn--block" href={`/r/${slug}?state=pending`}>
-            Segarkan status
-          </a>
-        </section>
-      )}
-
-      {/* ---------- ditolak ---------- */}
-      {state === 'ditolak' && (
-        <section class="glass-card stage" aria-labelledby="t-ditolak">
-          <span class="badge badge--danger">DITOLAK</span>
-          <h1 id="t-ditolak">Permintaanmu ditolak</h1>
-          <p class="stage__body">
-            Host memutuskan tidak memasukkanmu ke room ini. Link yang sama tidak bisa dipakai ulang
-            untuk room yang sama — hubungi Host bila kamu merasa ini salah.
-          </p>
-          <a class="btn btn--ghost btn--block" href="/rooms">
-            Kembali ke Ruang saya
-          </a>
-        </section>
-      )}
-
-      {/* ---------- dikeluarkan ---------- */}
-      {state === 'keluar' && (
-        <section class="glass-card stage" aria-labelledby="t-keluar">
-          <span class="badge badge--danger">DIKELUARKAN</span>
-          <h1 id="t-keluar">Kamu dikeluarkan dari room</h1>
-          <p class="stage__body">
-            Host mengeluarkanmu dari {guestRoomName}. Handle-mu di room ini ditutup dan tidak bisa
-            dipakai lagi — lihat room lain di
-            <a href="/rooms">Ruang saya</a>.
-          </p>
-        </section>
-      )}
-
-      {/* ---------- idle keluar otomatis ---------- */}
-      {state === 'idle' && (
-        <section class="glass-card stage" aria-labelledby="t-idle">
-          <span class="pill">keluar otomatis</span>
-          <h1 id="t-idle">Kamu keluar otomatis karena tidak aktif</h1>
-          <p class="stage__body">
-            Kursi dilepas supaya orang lain bisa masuk. Rejoin memakai password dan handle yang sama
-            — keanggotaanmu di room ini belum hilang.
-          </p>
-          <a class="btn btn--primary btn--block" href={`/r/${slug}?state=chat`}>
-            Masuk lagi
-          </a>
-          <p class="stage__foot help">
-            Bila password room sudah diganti Host, kamu diminta password baru.
-          </p>
-        </section>
-      )}
-
-      {/* ---------- room ditutup ---------- */}
-      {state === 'tutup' && (
-        <section class="glass-card stage" aria-labelledby="t-tutup">
-          <span class="badge badge--muted">DITUTUP</span>
-          <h1 id="t-tutup">Room sudah ditutup</h1>
-          <p class="stage__body">
-            Percakapan terkunci untuk semua orang. Hanya Host yang masih bisa membaca dan
-            mengekspornya selama 15 hari, lalu isi room dihapus permanen.
-          </p>
-          <a class="btn btn--ghost btn--block" href="/rooms">
-            Kembali ke Ruang saya
-          </a>
-        </section>
-      )}
-
-      {/* ---------- satu room aktif (anonim) ---------- */}
-      {state === 'satu' && (
-        <section class="glass-card stage" aria-labelledby="t-satu">
-          <span class="badge badge--pending">1 ROOM AKTIF</span>
-          <h1 id="t-satu">Keluar dulu dari room yang masih aktif</h1>
-          <p class="stage__body">
-            Sesi anonim hanya boleh punya satu keanggotaan aktif. Kamu masih tercatat di{' '}
-            <strong>{guestRoomName}</strong>. Keluar dari room itu dulu, lalu buka link ini lagi.
-          </p>
-          <a class="btn btn--brand btn--block" href={`/r/${slug}?state=chat`}>
-            Keluar dari {guestRoomName} dan gabung ke sini
-          </a>
-          <a class="btn btn--ghost btn--block" href="/rooms">
-            Buka Ruang saya
-          </a>
-          <p class="help">Pratinjau statis; alur keluar-lalu-gabung nyata disambung T-52a.</p>
-        </section>
-      )}
-
-      {/* ---------- batas 5 room ---------- */}
-      {state === 'maks' && (
-        <section class="glass-card stage" aria-labelledby="t-maks">
-          <span class="badge badge--active">5/5 ROOM</span>
-          <h1 id="t-maks">Kamu sudah di 5 room aktif</h1>
-          <p class="stage__body">
-            Akun login boleh mengikuti maksimum 5 room. Tinggalkan salah satu di{' '}
-            <a href="/rooms">Ruang saya</a> untuk membuka kursi.
-          </p>
-          <a class="btn btn--brand btn--block" href="/rooms">
-            Lihat Ruang saya
-          </a>
-        </section>
-      )}
     </div>
+  ) : state === 'chat' || state === 'chat-mock' ? (
+    <RoomChat client:load slug={slug} mode="GUEST" dev={import.meta.env.DEV} />
+  ) : (
+    <JoinRoom client:load slug={slug} dev={import.meta.env.DEV} />
   )}
 </Base>
 
 <style>
-  .chat-only {
-    display: grid;
-    gap: var(--space-3);
-  }
-  .chat-note {
-    margin: 0;
-  }
-  .roombar__back {
-    font: 700 0.875rem var(--font-sans);
-    color: var(--teal-strong);
-    text-decoration: none;
-  }
-  .roombar .pill {
-    font-size: calc(var(--step--1) - 1px);
-    padding: 5px 10px;
+  .auth-stage {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
   }
 </style>

@@ -23,9 +23,21 @@ export default function DashboardRooms({ dev }: { dev: boolean }) {
   const [error, setError] = useState('');
   const [flash, setFlash] = useState('');
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
   /** Hasil create_room terakhir — panel password sekali-tampil milik parent agar
    * tetap terlihat walau form digantikan kartu batas kuota. */
   const [oneTime, setOneTime] = useState<CreatedRoom | null>(null);
+
+  const copyGuestLink = async (slug: string) => {
+    try {
+      const url = `${window.location.origin}/r/${slug}`;
+      await navigator.clipboard.writeText(url);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2500);
+    } catch {
+      // Browser mungkin melarang clipboard tanpa interaksi langsung
+    }
+  };
 
   const load = useCallback(async () => {
     const result = await fetchHostedRooms();
@@ -158,9 +170,18 @@ export default function DashboardRooms({ dev }: { dev: boolean }) {
             ) : (
               <p className="help">Room publik tidak memakai password — cukup bagikan linknya.</p>
             )}
-            <a className="btn btn--sm btn--ghost" href={`/r/${oneTime.slug}`}>
-              Buka halaman room
-            </a>
+            <div className="row" style={{ gap: '8px', marginTop: '14px', flexWrap: 'wrap' }}>
+              <a className="btn btn--sm btn--brand" href={`/dashboard/r/${oneTime.room_id}`}>
+                Masuk ke Ruang Chat
+              </a>
+              <button
+                type="button"
+                className="btn btn--sm btn--ghost"
+                onClick={() => void copyGuestLink(oneTime.slug)}
+              >
+                {copiedLink ? '✓ Link Guest Disalin!' : 'Salin Link Undangan Guest'}
+              </button>
+            </div>
           </div>
         </details>
       )}

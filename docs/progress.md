@@ -529,3 +529,24 @@ Isi singkat: apa yang dibuat/diminta, file terkait, cara tes, hal yang perlu dik
   - `astro check`: 118 files diperiksa, 0 error, 0 warning.
   - `astro build`: Berhasil tanpa error.
   - Verifikasi kebocoran secret: `grep -r SERVICE_ROLE dist/client` bersih (0 temuan).
+
+
+## 2026-11-09 10:35 — [F] HANDOFF Perbaikan Navigasi & T-54
+
+- **Selesai:** Perbaikan bug navigasi Host pasca-buat room, pembersihan residu mock chat di `/r/[slug]`, auto-redirect Host dari link Guest, serta implementasi halaman `/rooms` terhubung ke database via RPC `my_rooms()` (T-54).
+- **Perubahan:**
+  - `src/components/host/DashboardRooms.tsx`: Panel password sekali-tampil kini memisahkan tombol utama *"Masuk ke Ruang Chat"* (`/dashboard/r/${oneTime.room_id}`) dan tombol aksi *"Salin Link Undangan Guest"* (clipboard `https://<origin>/r/${oneTime.slug}` dengan feedback status disalin).
+  - `src/pages/r/[slug].astro`:
+    - Mengambil metadata room secara dinamis di SSR via `rooms` table / `get_room_public`.
+    - Auto-redirect: Bila user yang terautentikasi (Host pembuat room) membuka `/r/[slug]`, sistem melakukan redirect 302 otomatis ke `/dashboard/r/[id]`.
+    - Membersihkan impor dan ketergantungan `mockData.ts` (`guestRoomName`, `chat-mock`, dsb.).
+    - Seluruh alur obrolan (`state === 'chat'`) langsung memuat live `<RoomChat mode="GUEST" />`.
+  - `src/components/JoinScreens.tsx`: Memperbarui teks panduan pada layar persetujuan untuk langsung menuju ruang percakapan aktif.
+  - `src/components/myrooms/MyRooms.tsx`: Komponen island React baru memanggil RPC `my_rooms()` untuk akun login, menampilkan daftar room riil, sisa waktu aktif, handle yang digunakan, dan tombol *"Buka Chat"*.
+  - `src/pages/rooms.astro`: Menghapus data tiruan `myRooms` dari `mockData.ts` dan memasang `<MyRooms client:load />` untuk user terautentikasi serta banner informatif untuk sesi anonim.
+  - `TODO.md`: Memperbarui status tugas T-54 menjadi `[x]`.
+- **Verifikasi:**
+  - `vitest run`: 10 test files, 90 passed tests.
+  - `astro check`: 119 files, 0 error, 0 warning, 1 hint pre-existing.
+  - `astro build`: Server build sukses (48s).
+  - Secret check: `dist/client` bersih dari `SERVICE_ROLE` (0 temuan).

@@ -140,7 +140,7 @@ export function ApprovedStage({ success, slug }: { success: JoinSuccess; slug: s
         Lanjut ke percakapan
       </a>
       <p className="stage__foot help">
-        Percakapan berjalan di halaman chat — bagian realtime disambung T-53.
+        Klik tombol di atas untuk membuka ruang percakapan langsung.
       </p>
     </Stage>
   );
