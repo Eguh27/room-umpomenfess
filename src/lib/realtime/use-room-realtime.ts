@@ -14,6 +14,8 @@ import type {
 export interface UseRoomRealtimeOptions {
   client: SupabaseClient;
   roomId: string;
+  /** Bila false, Realtime tidak akan memulai koneksi WebSocket (default: true). */
+  enabled?: boolean;
   memberId: string | null;
   senderType: SenderType;
   /** Handle pengirim saat ini, dari respons join/login. */
@@ -35,6 +37,7 @@ export interface UseRoomRealtimeResult {
   sendTyping: () => void;
   rejoin: () => Promise<boolean>;
   leave: () => Promise<boolean>;
+  reconnect: () => void;
 }
 
 /** Hook tipis untuk React island; logika ada di RoomRealtime (framework-agnostic). */
@@ -42,6 +45,7 @@ export function useRoomRealtime(options: UseRoomRealtimeOptions): UseRoomRealtim
   const {
     client,
     roomId,
+    enabled = true,
     memberId,
     senderType,
     handle,
@@ -71,9 +75,10 @@ export function useRoomRealtime(options: UseRoomRealtimeOptions): UseRoomRealtim
   );
 
   useEffect(() => {
+    if (!enabled || !roomId || roomId.trim() === '') return;
     realtime.start();
     return () => realtime.stop();
-  }, [realtime]);
+  }, [realtime, enabled, roomId]);
 
   const snapshot = useSyncExternalStore(
     realtime.subscribe,
@@ -89,5 +94,6 @@ export function useRoomRealtime(options: UseRoomRealtimeOptions): UseRoomRealtim
     sendTyping: () => realtime.sendTyping(),
     rejoin: () => realtime.rejoin(),
     leave: () => realtime.leave(),
+    reconnect: () => realtime.reconnect(),
   };
 }

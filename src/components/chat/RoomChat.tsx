@@ -146,10 +146,14 @@ export default function RoomChat({ roomId: initialRoomId, slug: initialSlug, mod
   }, [client, initialRoomId, initialSlug, mode]);
 
   // 2. Realtime hook connection
+  const effectiveRoomId = (mode === 'HOST' ? (initialRoomId || room?.id) : room?.id) ?? '';
+  const isReady = !loading && Boolean(effectiveRoomId);
+
   const realtimeOptions = useMemo(
     () => ({
       client,
-      roomId: room?.id ?? '',
+      roomId: isReady ? effectiveRoomId : '',
+      enabled: isReady,
       memberId,
       senderType: mode,
       handle: selfHandle,
@@ -157,7 +161,7 @@ export default function RoomChat({ roomId: initialRoomId, slug: initialSlug, mod
       initialMembers: mode === 'HOST' ? initialMembers : undefined,
       typingEffective: room?.typingEffective,
     }),
-    [client, room?.id, room?.typingEffective, memberId, mode, selfHandle, selfBadge, initialMembers],
+    [client, isReady, effectiveRoomId, memberId, mode, selfHandle, selfBadge, initialMembers, room?.typingEffective],
   );
 
   const {
@@ -168,6 +172,7 @@ export default function RoomChat({ roomId: initialRoomId, slug: initialSlug, mod
     sendTyping,
     rejoin,
     leave,
+    reconnect,
   } = useRoomRealtime(realtimeOptions);
 
   // Auto-scroll saat pesan baru masuk
@@ -268,6 +273,28 @@ export default function RoomChat({ roomId: initialRoomId, slug: initialSlug, mod
           <span className={`badge ${room.visibility === 'PUBLIC' ? 'badge--pending' : 'badge--muted'}`}>
             {room.visibility === 'PUBLIC' ? 'PUBLIK' : 'PRIVAT'}
           </span>
+          {snapshot.status === 'connecting' && (
+            <span className="badge badge--pending" title="Sedang menyambungkan ke realtime">Menghubungkan…</span>
+          )}
+          {snapshot.status === 'connected' && (
+            <span className="badge badge--active" title="Saluran realtime terhubung">Terhubung</span>
+          )}
+          {(snapshot.status === 'error' || snapshot.status === 'closed') && (
+            <button
+              type="button"
+              className="badge"
+              onClick={() => reconnect()}
+              title="Koneksi terputus. Klik untuk coba menyambung ulang"
+              style={{
+                cursor: 'pointer',
+                border: 'none',
+                background: 'var(--red-deep, #c53030)',
+                color: '#fff',
+              }}
+            >
+              Terputus (Coba lagi)
+            </button>
+          )}
           <span className="pill">
             kamu: <Handle handle={selfHandle} badge={selfBadge} />
           </span>
@@ -359,6 +386,31 @@ export default function RoomChat({ roomId: initialRoomId, slug: initialSlug, mod
               <p style={{ margin: '4px 0 0', fontSize: '0.85rem' }}>
                 Permintaan bergabungmu sedang ditinjau oleh Host di lobi.
               </p>
+            </div>
+          )}
+
+          {/* Alert Status Koneksi Realtime Error */}
+          {snapshot.status === 'error' && (
+            <div
+              className="card warn"
+              style={{
+                padding: '8px 12px',
+                marginBottom: '12px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ fontSize: '0.85rem' }}>
+                Koneksi obrolan real-time terputus{snapshot.lastError ? ` (${snapshot.lastError.code})` : ''}.
+              </span>
+              <button
+                type="button"
+                className="btn btn--sm btn--primary"
+                onClick={() => reconnect()}
+              >
+                Sambung Ulang
+              </button>
             </div>
           )}
 
