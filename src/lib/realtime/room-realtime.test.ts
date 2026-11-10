@@ -337,4 +337,43 @@ describe('RoomRealtime', () => {
     expect(left).toBe(true);
     expect(rt.getSnapshot().selfStatus).toBe('LEFT');
   });
+
+  it('tidak memulai channel dan tidak memanggil RPC jika roomId kosong', async () => {
+    const client = new FakeClient();
+    const rt = new RoomRealtime({
+      client,
+      roomId: '',
+      memberId: MEMBER_ID,
+      self: { senderType: 'GUEST', handle: 'wu32t76e3' },
+    });
+
+    rt.start();
+    expect(client.channelNames).toEqual([]);
+    expect(rt.getSnapshot().status).toBe('idle');
+
+    const result = await rt.sendMessage('halo');
+    expect(result).toEqual({ ok: false, error: 'REALTIME_CLOSED' });
+    expect(client.rpcCalls).toEqual([]);
+  });
+
+  it('dapat menyambung kembali dengan reconnect() setelah koneksi terputus', async () => {
+    const { client, rt } = setup({ initialMessages: [] });
+    const channel1 = await start(rt, client);
+    expect(rt.getSnapshot().status).toBe('connected');
+
+    // Simulasikan channel error
+    channel1.emitStatus('CHANNEL_ERROR');
+    expect(rt.getSnapshot().status).toBe('error');
+
+    // Panggil reconnect
+    rt.reconnect();
+    expect(rt.getSnapshot().status).toBe('connecting');
+    const channel2 = client.channels[client.channels.length - 1];
+    expect(channel2).toBeDefined();
+    channel2?.emitStatus('SUBSCRIBED');
+    await flush();
+
+    expect(rt.getSnapshot().status).toBe('connected');
+    expect(rt.getSnapshot().lastError).toBeNull();
+  });
 });

@@ -109,6 +109,7 @@ export class RoomRealtime {
 
   start(): void {
     if (this.channel || this.stopped) return;
+    if (!this.roomId || this.roomId.trim() === '') return;
     this.setStatus('connecting');
 
     const channel = this.client.channel(`${CHANNEL_PREFIX}${this.roomId}`);
@@ -200,6 +201,48 @@ export class RoomRealtime {
     }
   }
 
+  /** Menyambung kembali saluran Realtime jika terputus atau mengalami error. */
+  reconnect(): void {
+    if (!this.roomId || this.roomId.trim() === '') return;
+    this.stopped = false;
+
+    if (this.typingTimer) {
+      clearInterval(this.typingTimer);
+      this.typingTimer = null;
+    }
+    this.stopHeartbeat();
+
+    if (this.typingChannel) {
+      const tc = this.typingChannel;
+      this.typingChannel = null;
+      try {
+        if (this.client.removeChannel) {
+          void Promise.resolve(this.client.removeChannel(tc)).catch(() => undefined);
+        } else {
+          void Promise.resolve(tc.unsubscribe()).catch(() => undefined);
+        }
+      } catch {
+        // Channel mungkin sudah tertutup
+      }
+    }
+
+    const channel = this.channel;
+    this.channel = null;
+    if (channel) {
+      try {
+        if (this.client.removeChannel) {
+          void Promise.resolve(this.client.removeChannel(channel)).catch(() => undefined);
+        } else {
+          void Promise.resolve(channel.unsubscribe()).catch(() => undefined);
+        }
+      } catch {
+        // Channel mungkin sudah tertutup
+      }
+    }
+
+    this.start();
+  }
+
   subscribe = (listener: () => void): (() => void) => {
     this.listeners.add(listener);
     return () => {
@@ -223,7 +266,7 @@ export class RoomRealtime {
   }
 
   async sendMessage(content: string): Promise<SendResult> {
-    if (this.stopped) return { ok: false, error: 'REALTIME_CLOSED' };
+    if (this.stopped || !this.roomId || this.roomId.trim() === '') return { ok: false, error: 'REALTIME_CLOSED' };
 
     const trimmed = content.trim();
     if (trimmed.length === 0) return { ok: false, error: 'INVALID_INPUT' };
@@ -275,7 +318,7 @@ export class RoomRealtime {
   }
 
   async retryMessage(clientMsgId: string): Promise<SendResult> {
-    if (this.stopped) return { ok: false, error: 'REALTIME_CLOSED' };
+    if (this.stopped || !this.roomId || this.roomId.trim() === '') return { ok: false, error: 'REALTIME_CLOSED' };
     const pending = this.store.getByClientId(clientMsgId);
     if (!pending || !pending.optimistic) return { ok: false, error: 'NOT_FOUND' };
 
@@ -314,7 +357,9 @@ export class RoomRealtime {
 
   /** Paginasi memuat riwayat pesan yang lebih lama (T-41). */
   async loadOlderMessages(): Promise<boolean> {
-    if (this.stopped || this.isLoadingOlder || !this.hasMoreHistory) return false;
+    if (this.stopped || !this.roomId || this.roomId.trim() === '' || this.isLoadingOlder || !this.hasMoreHistory) {
+      return false;
+    }
     const firstId = this.store.getFirstServerId();
     if (firstId === null || firstId <= 1) {
       this.hasMoreHistory = false;
@@ -466,6 +511,7 @@ export class RoomRealtime {
   }
 
   private async runBackfill(): Promise<void> {
+    if (!this.roomId || this.roomId.trim() === '') return;
     try {
       if (this.store.getLastServerId() <= 0) {
         // Riwayat awal: 50 pesan terakhir. Pesan yang lebih lama dimuat oleh

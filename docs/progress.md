@@ -565,3 +565,30 @@ Isi singkat: apa yang dibuat/diminta, file terkait, cara tes, hal yang perlu dik
   - `astro check`: 119 files, 0 errors, 0 warnings, 1 hint pre-existing.
   - `astro build`: Server build sukses (34s).
   - Secret check: `dist/client` bersih dari `SERVICE_ROLE` (0 temuan).
+
+
+## 2026-11-10 10:42 — [R/F] HANDOFF Perbaikan Modul Realtime Chat & Koneksi WebSocket
+
+- **Selesai:** Perbaikan bug saluran Realtime Chat yang gagal tersambung setelah pengguna masuk ke antarmuka percakapan.
+- **Perubahan:**
+  - `src/lib/realtime/room-realtime.ts`:
+    - Menambahkan guard validasi `roomId` pada metode `start()`, `runBackfill()`, `sendMessage()`, `retryMessage()`, dan `loadOlderMessages()` untuk mencegah pembentukan channel WebSocket atau pemanggilan RPC `list_messages` dengan UUID kosong `""`.
+    - Menambahkan metode `reconnect()` untuk menyambung ulang koneksi WebSocket jika terputus atau mengalami error tanpa menghilangkan riwayat pesan lokal di `MessageStore`.
+  - `src/lib/realtime/use-room-realtime.ts`:
+    - Menambahkan properti `enabled?: boolean` pada `UseRoomRealtimeOptions` (default: `true`).
+    - Menambahkan pengondisian pada `useEffect` agar `realtime.start()` hanya dipanggil saat `enabled !== false` dan `roomId` valid.
+    - Mengekspos fungsi `reconnect: () => realtime.reconnect()` ke dalam `UseRoomRealtimeResult`.
+  - `src/lib/realtime/room-realtime.test.ts`:
+    - Menambahkan unit test untuk verifikasi guard `roomId` kosong (tidak membuat channel dan menolak pesan secara aman).
+    - Menambahkan unit test untuk verifikasi mekanisme `reconnect()` setelah simulasi kegagalan koneksi channel.
+  - `src/components/chat/RoomChat.tsx`:
+    - Menetapkan `effectiveRoomId` (`initialRoomId` pada mode Host atau `room?.id` pada mode Guest) dan menunda start Realtime (`enabled: isReady`) hingga proses `init()` asinkron selesai secara utuh. Hal ini meniadakan *channel churning* dan *race condition*.
+    - Menambahkan indikator status Realtime di bilah atas chat (`roombar__chips`): status `Menghubungkan…` (pending), `Terhubung` (aktif), dan `Terputus (Coba lagi)` interaktif (Opsi A terpilih).
+    - Menambahkan banner peringatan jika status koneksi error disertai tombol *"Sambung Ulang"*.
+    - Memastikan form pengiriman pesan tetap mengizinkan pengiriman optimistis dengan umpan balik visual yang jelas.
+- **Verifikasi:**
+  - `vitest run`: 10 test files, 92 passed tests (12 tests pada `room-realtime.test.ts`, +2 tests baru).
+  - `astro check`: 119 files, 0 errors, 0 warnings, 1 hint pre-existing.
+  - `tsc --noEmit`: 0 error tipe TypeScript.
+  - `astro build`: Server & client build sukses (44s).
+  - Secret check: `dist/client` bersih dari `SERVICE_ROLE` (0 temuan).
