@@ -53,7 +53,8 @@ export type CreateRoomRealtimeOptions = Omit<RoomRealtimeOptions, 'client'> & {
  * - Paginasi riwayat: `loadOlderMessages()` memuat riwayat sebelum id terkecil.
  * - Status member: Postgres Changes pada room_members (Guest hanya menerima barisnya sendiri).
  * - Indikator mengetik: Realtime Broadcast agregat tanpa identitas di channel `typing:<room_id>`.
- * - Heartbeat: memanggil `touch_activity` secara berkala untuk mencegah auto-kick idle.
+ * - Heartbeat: memanggil `touch_activity` secara berkala (120s) untuk mencegah auto-kick idle.
+ * - Presence: melacak status aktif online tanpa membocorkan user_id (privasi anonim).
  * - Kirim optimistis: id sementara negatif, diganti baris server dengan client_msg_id yang sama.
  */
 export class RoomRealtime {
@@ -68,6 +69,7 @@ export class RoomRealtime {
   private readonly store = new MessageStore();
   private readonly members = new Map<string, RoomMember>();
   private readonly listeners = new Set<() => void>();
+  private readonly onlineMemberIds = new Set<string>();
   private channel: RealtimeChannelLike | null = null;
   private typingChannel: RealtimeChannelLike | null = null;
   private status: RealtimeConnectionStatus = 'idle';
@@ -133,6 +135,11 @@ export class RoomRealtime {
       },
       (payload) => this.handleMember(payload.new),
     );
+    channel.on(
+      'presence',
+      { event: 'sync' },
+      () => this.handlePresenceSync(),
+    );
     this.channel = channel;
     channel.subscribe((status) => this.handleSubscribeStatus(status));
 
@@ -187,10 +194,14 @@ export class RoomRealtime {
 
     const channel = this.channel;
     this.channel = null;
+    this.onlineMemberIds.clear();
     this.setStatus('closed');
     if (!channel) return;
 
     try {
+      if (channel.untrack) {
+        void Promise.resolve(channel.untrack()).catch(() => undefined);
+      }
       if (this.client.removeChannel) {
         void Promise.resolve(this.client.removeChannel(channel)).catch(() => undefined);
       } else {
@@ -228,8 +239,12 @@ export class RoomRealtime {
 
     const channel = this.channel;
     this.channel = null;
+    this.onlineMemberIds.clear();
     if (channel) {
       try {
+        if (channel.untrack) {
+          void Promise.resolve(channel.untrack()).catch(() => undefined);
+        }
         if (this.client.removeChannel) {
           void Promise.resolve(this.client.removeChannel(channel)).catch(() => undefined);
         } else {
@@ -435,7 +450,7 @@ export class RoomRealtime {
     if (typeof window === 'undefined' || this.heartbeatTimer) return;
     this.heartbeatTimer = setInterval(() => {
       this.touchActivity();
-    }, 4 * 60 * 1000);
+    }, 120 * 1000);
 
     if (typeof document !== 'undefined') {
       document.addEventListener('visibilitychange', this.handleVisibilityChange);
@@ -453,8 +468,31 @@ export class RoomRealtime {
   }
 
   private handleVisibilityChange = (): void => {
-    if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+    if (typeof document === 'undefined') return;
+
+    if (document.visibilityState === 'visible') {
+      // Tab aktif kembali (wake-up)
+      if (this.status === 'error' || this.status === 'closed') {
+        this.reconnect();
+        return;
+      }
+
+      if (this.status === 'connected') {
+        void this.refresh();
+      }
+
       this.touchActivity();
+      if (!this.heartbeatTimer) {
+        this.heartbeatTimer = setInterval(() => {
+          this.touchActivity();
+        }, 120 * 1000);
+      }
+    } else if (document.visibilityState === 'hidden') {
+      // Tab diminimalkan/ditinggal: jeda heartbeat timer untuk efisiensi daya/kuota
+      if (this.heartbeatTimer) {
+        clearInterval(this.heartbeatTimer);
+        this.heartbeatTimer = null;
+      }
     }
   };
 
@@ -499,6 +537,16 @@ export class RoomRealtime {
     if (status === 'SUBSCRIBED') {
       this.lastError = null;
       this.setStatus('connected');
+      if (this.channel?.track) {
+        void Promise.resolve(
+          this.channel.track({
+            memberId: this.memberId,
+            handle: this.self.handle,
+            senderType: this.self.senderType,
+            onlineAt: Date.now(),
+          }),
+        ).catch(() => undefined);
+      }
       void this.refresh();
       return;
     }
@@ -508,6 +556,24 @@ export class RoomRealtime {
       return;
     }
     if (status === 'CLOSED') this.setStatus('closed');
+  }
+
+  private handlePresenceSync(): void {
+    if (!this.channel?.presenceState) return;
+    const state = this.channel.presenceState<{
+      memberId?: string;
+      handle?: string;
+      senderType?: string;
+    }>();
+    this.onlineMemberIds.clear();
+    for (const presences of Object.values(state)) {
+      for (const p of presences) {
+        if (p.memberId) {
+          this.onlineMemberIds.add(p.memberId);
+        }
+      }
+    }
+    this.emit();
   }
 
   private async runBackfill(): Promise<void> {
@@ -617,6 +683,7 @@ export class RoomRealtime {
       isLoadingOlder: this.isLoadingOlder,
       typingCount: this.activeTypers.size,
       lastError: this.lastError,
+      onlineMemberIds: Array.from(this.onlineMemberIds),
     };
   }
 }

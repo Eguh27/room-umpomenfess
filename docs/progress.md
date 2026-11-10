@@ -592,3 +592,38 @@ Isi singkat: apa yang dibuat/diminta, file terkait, cara tes, hal yang perlu dik
   - `tsc --noEmit`: 0 error tipe TypeScript.
   - `astro build`: Server & client build sukses (44s).
   - Secret check: `dist/client` bersih dari `SERVICE_ROLE` (0 temuan).
+
+
+## 2026-11-10 13:47 — [R/F] HANDOFF Refactor & Penguatan Engine Realtime Chat (4 Pilar)
+
+- **Selesai:** Refactor dan penguatan arsitektur Realtime Chat sesuai blueprint teknis 4 pilar:
+  1. **MessageStore (Deduplikasi & Optimistic UI):**
+     - Indeks pesan berbasis `Map` untuk pencarian $O(1)$.
+     - Penanganan rekonsiliasi data server vs data optimistik berbasis `client_msg_id` dan `id` mencegah duplikasi ketika event WebSocket dan balasan REST RPC masuk bersamaan.
+     - Penambahan getter `getSortedMessages()` dengan pengurutan stabil ascending berdasarkan `created_at` lalu `id`.
+  2. **Paginasi Berbasis Kursor & Infinite Scroll:**
+     - Penambahan sentry `topSentryRef` dan observer `IntersectionObserver` di `RoomChat.tsx` untuk memicu pemuatan pesan riwayat lama (`loadOlderMessages()`) secara otomatis saat scroll menyentuh batas atas.
+     - Penyelarasan scroll anchoring dengan kompensasi selisih `scrollHeight` di `useLayoutEffect` agar posisi viewport pengguna tidak meloncat ketika riwayat pesan disisipkan di atas.
+     - Menyediakan tombol fallback manual *"Muat pesan sebelumnya"* bila observer tidak tersedia (Opsi A terpilih).
+  3. **Supabase Presence (Pelacakan Aktivitas Online):**
+     - Tracking anggota aktif via channel Phoenix WebSocket Presence (`memberId`, `handle`, `senderType`, `onlineAt`) tanpa membocorkan `user_id` Guest kepada Host maupun client lain (menjaga aturan anonimitas `AGENTS.md`).
+     - State `onlineMemberIds` diekspos melalui snapshot dan dikonsumsi oleh `HostMemberPanel.tsx` untuk menampilkan indikator titik hijau `🟢 Online` atau abu-abu `⚪ Offline` di samping handle anggota yang disetujui (Opsi A terpilih).
+     - Tetap mempertahankan denyut heartbeat `touch_activity` RPC (interval 120s saat tab aktif) agar cron Postgres pembersih sesi idle tidak terganggu.
+  4. **Resiliensi Koneksi (Visibility Tab & Wake-Up):**
+     - Integrasi listener `visibilitychange` pada dokumen browser: saat tab kembali aktif (`visible`), sistem secara otomatis mengecek status koneksi channel, melakukan reconnect jika terputus, memperbarui pesan yang tertinggal (`runBackfill`), mengirim `touchActivity()`, dan mengaktifkan kembali interval heartbeat.
+     - Saat tab di latar belakang (`hidden`), interval heartbeat dijeda untuk menghemat sumber daya.
+- **File terkait:**
+  - `src/lib/realtime/types.ts`
+  - `src/lib/realtime/message-store.ts`
+  - `src/lib/realtime/message-store.test.ts`
+  - `src/lib/realtime/test-doubles.ts`
+  - `src/lib/realtime/room-realtime.ts`
+  - `src/lib/realtime/room-realtime.test.ts`
+  - `src/components/chat/HostMemberPanel.tsx`
+  - `src/components/chat/RoomChat.tsx`
+- **Verifikasi:**
+  - `npm.cmd test` / `vitest run`: 10 test files, 95 passed tests (+3 tests baru, termasuk presence tanpa leak `user_id` dan pengurutan MessageStore).
+  - `astro check`: 119 files, 0 errors, 0 warnings, 1 hint pre-existing.
+  - `tsc --noEmit`: 0 error tipe TypeScript.
+  - `npm.cmd run build`: Server & client build sukses (45s).
+  - Secret check: `dist/client` bersih dari `SERVICE_ROLE` (0 temuan).

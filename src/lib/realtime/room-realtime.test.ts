@@ -376,4 +376,27 @@ describe('RoomRealtime', () => {
     expect(rt.getSnapshot().status).toBe('connected');
     expect(rt.getSnapshot().lastError).toBeNull();
   });
+
+  it('melacak status online via Presence tanpa membocorkan user_id', async () => {
+    const { client, rt } = setup({ initialMessages: [] });
+    const channel = await start(rt, client);
+
+    expect(channel.trackedState).toMatchObject({
+      memberId: MEMBER_ID,
+      handle: 'wu32t76e3',
+      senderType: 'GUEST',
+    });
+    // Pastikan tidak ada user_id yang dibocorkan ke presence
+    expect(channel.trackedState).not.toHaveProperty('user_id');
+
+    channel.mockPresenceState = {
+      'key-1': [{ memberId: MEMBER_ID, handle: 'wu32t76e3', senderType: 'GUEST' }],
+      'key-2': [{ memberId: MEMBER_2_ID, handle: 'guest2', senderType: 'GUEST' }],
+    };
+    channel.emitPresence('sync');
+    await flush();
+
+    expect(rt.getSnapshot().onlineMemberIds).toContain(MEMBER_ID);
+    expect(rt.getSnapshot().onlineMemberIds).toContain(MEMBER_2_ID);
+  });
 });

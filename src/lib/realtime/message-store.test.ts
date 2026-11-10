@@ -92,4 +92,28 @@ describe('MessageStore', () => {
     expect(store.markFailed('tidak-ada', 'X')).toBeNull();
     expect(store.markSending('tidak-ada')).toBeNull();
   });
+
+  it('getSortedMessages mengembalikan daftar pesan terurut determinatif', () => {
+    const store = new MessageStore();
+    store.addServer(message({ id: 5, client_msg_id: 'c5' }));
+    store.addServer(message({ id: 2, client_msg_id: 'c2' }));
+    optimistic(store, 'opt-1');
+
+    const sorted = store.getSortedMessages();
+    expect(sorted.map((m) => m.id)).toEqual([2, 5, -1]);
+  });
+
+  it('menangani race condition ketika server row duplikat masuk berturut-turut', () => {
+    const store = new MessageStore();
+    optimistic(store, 'c-race');
+
+    // Simulasikan pesan server tiba dari REST backfill dan Realtime event bersamaan
+    const serverRow = message({ id: 20, client_msg_id: 'c-race' });
+    store.addServer(serverRow);
+    store.addServer(serverRow); // Duplikat simultan
+
+    expect(store.getSortedMessages()).toHaveLength(1);
+    expect(store.getSortedMessages()[0]?.id).toBe(20);
+    expect(store.getSortedMessages()[0]?.optimistic).toBeUndefined();
+  });
 });
