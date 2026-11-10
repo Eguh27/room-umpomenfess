@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { getBrowserClient } from '../../lib/supabase/browser';
 import { useRoomRealtime } from '../../lib/realtime/use-room-realtime';
 import { downloadExportTxt, formatExportTxt } from '../../lib/realtime/message-export';
@@ -44,6 +44,9 @@ export default function RoomChat({ roomId: initialRoomId, slug: initialSlug, mod
   const [exporting, setExporting] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const chatLogRef = useRef<HTMLDivElement | null>(null);
+  const topSentryRef = useRef<HTMLDivElement | null>(null);
+  const prevScrollHeightRef = useRef<number>(0);
+  const prevScrollTopRef = useRef<number>(0);
   const isAutoScrollEnabled = useRef(true);
 
   // 1. Initial Load: metadata & identity
@@ -175,11 +178,41 @@ export default function RoomChat({ roomId: initialRoomId, slug: initialSlug, mod
     reconnect,
   } = useRoomRealtime(realtimeOptions);
 
-  // Auto-scroll saat pesan baru masuk
+  // Scroll anchoring saat pesan lama dimuat ke atas (mencegah viewport meloncat)
+  useLayoutEffect(() => {
+    if (chatLogRef.current && prevScrollHeightRef.current > 0) {
+      const heightDiff = chatLogRef.current.scrollHeight - prevScrollHeightRef.current;
+      chatLogRef.current.scrollTop = prevScrollTopRef.current + heightDiff;
+      prevScrollHeightRef.current = 0;
+    }
+  }, [snapshot.messages]);
+
+  // Auto-scroll saat pesan baru masuk di bagian bawah
   useEffect(() => {
-    if (!chatLogRef.current || !isAutoScrollEnabled.current) return;
+    if (!chatLogRef.current || !isAutoScrollEnabled.current || prevScrollHeightRef.current > 0) return;
     chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
   }, [snapshot.messages]);
+
+  // Infinite scroll otomatis memantau sentry element paling atas
+  useEffect(() => {
+    if (!topSentryRef.current || !snapshot.hasMoreHistory || snapshot.isLoadingOlder) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          if (chatLogRef.current) {
+            prevScrollHeightRef.current = chatLogRef.current.scrollHeight;
+            prevScrollTopRef.current = chatLogRef.current.scrollTop;
+          }
+          void loadOlderMessages();
+        }
+      },
+      { threshold: 0.1, root: chatLogRef.current },
+    );
+
+    observer.observe(topSentryRef.current);
+    return () => observer.disconnect();
+  }, [snapshot.hasMoreHistory, snapshot.isLoadingOlder, loadOlderMessages]);
 
   const handleScroll = useCallback(() => {
     if (!chatLogRef.current) return;
@@ -416,12 +449,24 @@ export default function RoomChat({ roomId: initialRoomId, slug: initialSlug, mod
 
           {/* Log Pesan */}
           <div className="chat-log" ref={chatLogRef} onScroll={handleScroll}>
+            {/* Sentry element untuk IntersectionObserver Infinite Scroll */}
+            {snapshot.hasMoreHistory && (
+              <div ref={topSentryRef} style={{ height: '1px', width: '100%' }} aria-hidden="true" />
+            )}
+
+            {/* Fallback manual button (Opsi A) */}
             {snapshot.hasMoreHistory && (
               <div style={{ textAlign: 'center', margin: '8px 0' }}>
                 <button
                   type="button"
                   className="btn btn--sm btn--ghost"
-                  onClick={() => loadOlderMessages()}
+                  onClick={() => {
+                    if (chatLogRef.current) {
+                      prevScrollHeightRef.current = chatLogRef.current.scrollHeight;
+                      prevScrollTopRef.current = chatLogRef.current.scrollTop;
+                    }
+                    void loadOlderMessages();
+                  }}
                   disabled={snapshot.isLoadingOlder}
                 >
                   {snapshot.isLoadingOlder ? 'Memuat riwayat…' : 'Muat pesan sebelumnya'}
@@ -493,7 +538,12 @@ export default function RoomChat({ roomId: initialRoomId, slug: initialSlug, mod
         </section>
 
         {/* Panel Samping Khusus Host */}
-        {mode === 'HOST' && <HostMemberPanel members={snapshot.members} />}
+        {mode === 'HOST' && (
+          <HostMemberPanel
+            members={snapshot.members}
+            onlineMemberIds={snapshot.onlineMemberIds}
+          />
+        )}
       </div>
 
       {/* Modal Lapor untuk Guest di Room Publik */}

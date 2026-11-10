@@ -43,6 +43,14 @@ export interface RealtimeError {
   at: string;
 }
 
+/** Payload Presence anonim (tanpa membocorkan user_id, mematuhi AGENTS.md Bagian 1). */
+export interface PresencePayload {
+  memberId: string | null;
+  handle: string;
+  senderType: SenderType;
+  onlineAt: number;
+}
+
 export interface RoomRealtimeSnapshot {
   status: RealtimeConnectionStatus;
   messages: ChatMessage[];
@@ -53,6 +61,8 @@ export interface RoomRealtimeSnapshot {
   isLoadingOlder: boolean;
   typingCount: number;
   lastError: RealtimeError | null;
+  /** Daftar memberId dari anggota yang saat ini terhubung di Presence. */
+  onlineMemberIds: string[];
 }
 
 export type SendResult = { ok: true; message: ChatMessage } | { ok: false; error: string };
@@ -86,11 +96,19 @@ export interface RealtimeChannelLike {
     filter: { event: string },
     callback: (payload: { payload: Record<string, unknown> }) => void,
   ): RealtimeChannelLike;
+  on(
+    event: 'presence',
+    filter: { event: 'sync' | 'join' | 'leave' },
+    callback: (payload?: unknown) => void,
+  ): RealtimeChannelLike;
   send?(message: {
     type: 'broadcast';
     event: string;
     payload?: Record<string, unknown>;
   }): Promise<unknown> | unknown;
+  track?(state: Record<string, unknown>): Promise<unknown> | unknown;
+  untrack?(): Promise<unknown> | unknown;
+  presenceState?<T = Record<string, unknown>>(): Record<string, T[]>;
   subscribe(callback: (status: string, error?: Error) => void): RealtimeChannelLike;
   unsubscribe(): Promise<unknown> | unknown;
 }

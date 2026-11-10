@@ -7,22 +7,28 @@ import type {
 
 type RowCallback = (payload: { new: Record<string, unknown> }) => void;
 type BroadcastCallback = (payload: { payload: Record<string, unknown> }) => void;
+type PresenceCallback = (payload?: unknown) => void;
 
 /** Channel tiruan: merekam listener dan bisa memicu event secara manual. */
 export class FakeChannel implements RealtimeChannelLike {
   readonly handlers: Array<{ filter: PostgresChangeFilter; callback: RowCallback }> = [];
   readonly broadcastHandlers: Array<{ event: string; callback: BroadcastCallback }> = [];
+  readonly presenceHandlers: Array<{ event: string; callback: PresenceCallback }> = [];
   readonly sentBroadcasts: Array<{ event: string; payload?: Record<string, unknown> }> = [];
   statusCallback: ((status: string, error?: Error) => void) | null = null;
   unsubscribed = false;
+  trackedState: Record<string, unknown> | null = null;
+  mockPresenceState: Record<string, unknown[]> = {};
 
   on(
-    event: 'postgres_changes' | 'broadcast',
+    event: 'postgres_changes' | 'broadcast' | 'presence',
     filter: PostgresChangeFilter | { event: string },
     callback: any,
   ): RealtimeChannelLike {
     if (event === 'broadcast') {
       this.broadcastHandlers.push({ event: (filter as { event: string }).event, callback });
+    } else if (event === 'presence') {
+      this.presenceHandlers.push({ event: (filter as { event: string }).event, callback });
     } else {
       this.handlers.push({ filter: filter as PostgresChangeFilter, callback });
     }
@@ -36,6 +42,20 @@ export class FakeChannel implements RealtimeChannelLike {
   }): Promise<unknown> {
     this.sentBroadcasts.push({ event: message.event, payload: message.payload });
     return Promise.resolve('ok');
+  }
+
+  track(state: Record<string, unknown>): Promise<unknown> {
+    this.trackedState = state;
+    return Promise.resolve('ok');
+  }
+
+  untrack(): Promise<unknown> {
+    this.trackedState = null;
+    return Promise.resolve('ok');
+  }
+
+  presenceState<T = Record<string, unknown>>(): Record<string, T[]> {
+    return this.mockPresenceState as Record<string, T[]>;
   }
 
   subscribe(callback: (status: string, error?: Error) => void): RealtimeChannelLike {
@@ -60,6 +80,14 @@ export class FakeChannel implements RealtimeChannelLike {
     for (const handler of this.broadcastHandlers) {
       if (handler.event === event) {
         handler.callback({ payload });
+      }
+    }
+  }
+
+  emitPresence(event: 'sync' | 'join' | 'leave', payload: unknown = {}): void {
+    for (const handler of this.presenceHandlers) {
+      if (handler.event === event) {
+        handler.callback(payload);
       }
     }
   }

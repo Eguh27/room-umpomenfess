@@ -5,10 +5,11 @@ import { decideMember, kickMember } from './chatApi';
 
 interface Props {
   members: RoomMember[];
+  onlineMemberIds?: string[];
   onActionComplete?: () => void;
 }
 
-export default function HostMemberPanel({ members }: Props) {
+export default function HostMemberPanel({ members, onlineMemberIds }: Props) {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -102,30 +103,45 @@ export default function HostMemberPanel({ members }: Props) {
           Belum ada member yang masuk.
         </p>
       ) : (
-        approvedMembers.map((m) => (
-          <div key={m.id} className="mp__row">
-            <span className="mp__avatar" aria-hidden="true">
-              {m.handle.slice(0, 2)}
-            </span>
-            <div className="mp__text">
-              <span className="mp__name">
-                <Handle handle={m.handle} badge={m.handle_verified ? 'VERIFIED' : null} />
+        approvedMembers.map((m) => {
+          const isOnline = onlineMemberIds ? onlineMemberIds.includes(m.id) : false;
+          return (
+            <div key={m.id} className="mp__row">
+              <span className="mp__avatar" aria-hidden="true">
+                {m.handle.slice(0, 2)}
               </span>
-              <span className="mp__meta">Aktif</span>
+              <div className="mp__text">
+                <span className="mp__name">
+                  <Handle handle={m.handle} badge={m.handle_verified ? 'VERIFIED' : null} />
+                </span>
+                <span className="mp__meta" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      backgroundColor: isOnline ? 'var(--green-light, #38a169)' : 'var(--muted, #a0aec0)',
+                    }}
+                    title={isOnline ? 'Online' : 'Offline'}
+                    aria-label={isOnline ? 'Online' : 'Offline'}
+                  />
+                  {isOnline ? 'Online' : 'Offline'}
+                </span>
+              </div>
+              <button
+                className="btn btn--sm btn--ghost"
+                type="button"
+                disabled={busyId === m.id}
+                onClick={() => handleKick(m.id)}
+                style={{ color: 'var(--red-deep, #c53030)' }}
+              >
+                Kick
+              </button>
             </div>
-            <button
-              className="btn btn--sm btn--ghost"
-              type="button"
-              disabled={busyId === m.id}
-              onClick={() => handleKick(m.id)}
-              style={{ color: 'var(--red-deep, #c53030)' }}
-            >
-              Kick
-            </button>
-          </div>
-        ))
+          );
+        })
       )}
     </aside>
   );
 }
-

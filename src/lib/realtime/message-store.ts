@@ -31,8 +31,15 @@ export class MessageStore {
       this.byClientId.delete(existingByClient.client_msg_id);
     }
 
-    this.byId.set(message.id, message);
-    this.byClientId.set(message.client_msg_id, message);
+    const serverClean: ChatMessage = {
+      ...message,
+      optimistic: undefined,
+      sendStatus: undefined,
+      errorCode: undefined,
+    };
+
+    this.byId.set(serverClean.id, serverClean);
+    this.byClientId.set(serverClean.client_msg_id, serverClean);
   }
 
   addServerMany(messages: ChatMessage[]): void {
@@ -69,6 +76,11 @@ export class MessageStore {
 
   getByClientId(clientMsgId: string): ChatMessage | undefined {
     return this.byClientId.get(clientMsgId);
+  }
+
+  /** Mengembalikan pesan terurut secara determinatif dari memory store. */
+  getSortedMessages(): ChatMessage[] {
+    return this.getMessages();
   }
 
   getMessages(): ChatMessage[] {
